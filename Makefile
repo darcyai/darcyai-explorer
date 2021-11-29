@@ -7,4 +7,4 @@ build:
 
 .PHONY: run
 run:
-	sudo docker run --privileged -p 3456:3456 -p 8080:8080 -v /dev:/dev darcy-ai-explorer:0.0.0-dev
+	sudo docker run --privileged -p 3456:3456 -p 8080:8080 -p 5000:5000 -v /dev:/dev darcy-ai-explorer:0.0.0-dev
