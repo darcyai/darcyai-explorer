@@ -34,12 +34,10 @@ def proxy_engine(*args, **kwargs):
 
 @app.route('/output/live', methods=['GET'])
 def proxy_live_view(*args, **kwargs):
-  resp = requests.request(
+  return requests.request(
       method='GET',
       url='http://localhost:3456/',
       allow_redirects=False)
-  response = Response(resp.iter_content(chunk_size=10*1024), resp.status_code, request.headers, content_type=resp.headers['Content-Type'])
-  return response
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

@@ -13,7 +13,13 @@ class ExplorerPipeline():
         self.input_stream = CameraStream(video_device="/dev/video0", fps=20)
 
         #Instantiate the Pipeline object and pass it the Camera Stream object as its input stream source
-        self.pipeline = Pipeline(input_stream=self.input_stream)
+        self.pipeline = Pipeline(
+            input_stream=self.input_stream, 
+            universal_rest_api=True,
+            rest_api_base_path="/",
+            rest_api_host="0.0.0.0",
+            rest_api_port=8080
+        )
 
         #Create a Live Feed output stream object and specify some URL parameters
         self.output_stream = LiveFeedStream(path="/", port=3456, host="0.0.0.0")
