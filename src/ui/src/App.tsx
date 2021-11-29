@@ -5,14 +5,14 @@ import './App.scss'
 
 import theme from './Theme'
 
-const baseURL = process.env.REACT_APP_BASE_URL ?? 'http://localhost'
+const baseURL = process.env.REACT_APP_BASE_URL ?? ''
 
 function App () {
   return (
     <div className='App'>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <img src={`${baseURL}:3456/`} alt='live-feed' />
+        <img src={`${baseURL}/output/live`} alt='live-feed' />
       </ThemeProvider>
     </div>
   )

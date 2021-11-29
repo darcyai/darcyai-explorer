@@ -29,11 +29,11 @@ def _proxy(url, *args, **kwargs):
 
 
 @app.route('/proxy/engine/<path:path>', methods=HTTP_METHODS)
-def proxy(*args, **kwargs):
+def proxy_engine(*args, **kwargs):
   return _proxy(request.url.replace(request.host_url, 'http://localhost:8080/').replace('/proxy/engine/', '/', 1), *args, **kwargs)
 
 @app.route('/output/live', methods=['GET'])
-def proxy(*args, **kwargs):
+def proxy_live_view(*args, **kwargs):
   resp = requests.request(
       method='GET',
       url='http://localhost:3456/',
