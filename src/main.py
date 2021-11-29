@@ -1,5 +1,6 @@
 from pipeline import ExplorerPipeline
-from flask import Flask, send_from_directory
+from flask import Flask, request, Response, send_from_directory
+import requests
 import os
 import threading
 
@@ -7,6 +8,25 @@ import threading
 # Configure and run SPA API
 #----------------------------------------------------------------------------#
 app = Flask('API', static_folder='./ui/build')
+HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH']
+
+@app.route('/proxy', methods=HTTP_METHODS)
+def proxy(*args, **kwargs):
+  port=int(request.headers.get('X-Proxy-Port', '5000'))
+  resp = requests.request(
+      method=request.method,
+      url=request.url.replace(request.host_url, 'http://localhost:{port}/'.format(port)),
+      headers={key: value for (key, value) in request.headers if key != 'Host'},
+      data=request.get_data(),
+      cookies=request.cookies,
+      allow_redirects=False)
+
+  excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
+  headers = [(name, value) for (name, value) in resp.raw.headers.items()
+              if name.lower() not in excluded_headers]
+
+  response = Response(resp.iter_content(chunk_size=10*1024), resp.status_code, headers, content_type=resp.headers['Content-Type'])
+  return response
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
