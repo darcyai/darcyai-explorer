@@ -1,3 +1,4 @@
+from requests.sessions import Request
 from pipeline import ExplorerPipeline
 from flask import Flask, request, Response, send_from_directory
 import requests
@@ -10,12 +11,10 @@ import threading
 app = Flask('API', static_folder='./ui/build')
 HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH']
 
-@app.route('/proxy', methods=HTTP_METHODS)
-def proxy(*args, **kwargs):
-  port=int(request.headers.get('X-Proxy-Port', '5000'))
+def _proxy(url, *args, **kwargs):
   resp = requests.request(
       method=request.method,
-      url=request.url.replace(request.host_url, 'http://localhost:{port}/'.format(port)),
+      url=url,
       headers={key: value for (key, value) in request.headers if key != 'Host'},
       data=request.get_data(),
       cookies=request.cookies,
@@ -26,6 +25,20 @@ def proxy(*args, **kwargs):
               if name.lower() not in excluded_headers]
 
   response = Response(resp.iter_content(chunk_size=10*1024), resp.status_code, headers, content_type=resp.headers['Content-Type'])
+  return response
+
+
+@app.route('/proxy/engine/<path:path>', methods=HTTP_METHODS)
+def proxy(*args, **kwargs):
+  return _proxy(request.url.replace(request.host_url, 'http://localhost:8080/').replace('/proxy/engine/', '/', 1), *args, **kwargs)
+
+@app.route('/output/live', methods=['GET'])
+def proxy(*args, **kwargs):
+  resp = requests.request(
+      method='GET',
+      url='http://localhost:3456/',
+      allow_redirects=False)
+  response = Response(resp.iter_content(chunk_size=10*1024), resp.status_code, request.headers, content_type=resp.headers['Content-Type'])
   return response
 
 @app.route('/', defaults={'path': ''})
