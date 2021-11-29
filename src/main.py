@@ -1,6 +1,6 @@
 from requests.sessions import Request
 from pipeline import ExplorerPipeline
-from flask import Flask, request, Response, send_from_directory
+from flask import Flask, request, Response, send_from_directory, stream_with_context
 import requests
 import os
 import threading
@@ -34,10 +34,8 @@ def proxy_engine(*args, **kwargs):
 
 @app.route('/output/live', methods=['GET'])
 def proxy_live_view(*args, **kwargs):
-  return requests.request(
-      method='GET',
-      url='http://localhost:3456/',
-      allow_redirects=False)
+    req = requests.get('http://localhost:3456/', stream = True)
+    return Response(stream_with_context(req.iter_content()), content_type = req.headers['content-type'])
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
