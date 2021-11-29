@@ -1,20 +1,18 @@
-import React from 'react';
-import logo from './logo.svg';
+import React from 'react'
 import { ThemeProvider } from '@mui/material/styles'
 import { CssBaseline } from '@mui/material'
-import './App.scss';
+import './App.scss'
 
 import theme from './Theme'
 
-function App() {
+function App () {
   return (
-    <div className="App">
+    <div className='App'>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        Hello
       </ThemeProvider>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
