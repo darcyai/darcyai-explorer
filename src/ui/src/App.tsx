@@ -12,12 +12,13 @@ import theme from './Theme'
 function App () {
   // Public API that will echo messages sent to it back to the client
   const socketUrl = 'ws://localhost:5000'
+  const [lastMessages, setLastMessages] = React.useState<string[]>([])
   React.useEffect(() => {
     const socket = io(socketUrl, {
       transports: ['websocket']
     })
 
-    console.log('Connecting socket')
+    console.log('Connecting socket...')
 
     socket.on('connected', () => {
       console.log('Connected socket')
@@ -26,14 +27,21 @@ function App () {
     socket.on('frame', (data) => {
       const m = new Date()
       const dateString = m.getUTCHours() + ':' + m.getUTCMinutes() + ':' + m.getUTCSeconds()
-      console.log('sent message at', data.pom.time, ', but received at', dateString)
+      const newMessage = 'sent message at' + data.pom.time + ', but received at' + dateString
+      console.log(newMessage)
+      setLastMessages(currentMessages => currentMessages.concat(newMessage).slice(-15))
     })
-  })
+
+    return () => { socket.close() }
+  }, [])
 
   return (
     <div className='App'>
       <ThemeProvider theme={theme}>
         <CssBaseline />
+        <div style={{ backgroundColor: 'black', color: 'white', minWidth: '1200px', minHeight: 800, margin: 'auto' }}>
+          {lastMessages.map((m, idx) => <div key={idx}>{m}<br/></div>)}
+        </div>
         {/* <img src={`${baseURL}/output/live`} alt='live-feed' /> */}
       </ThemeProvider>
     </div>
