@@ -134,3 +134,7 @@ dmypy.json
 *.iml
 *.ipr
 *.iws
+
+# VS Code files
+.vscode/*
+

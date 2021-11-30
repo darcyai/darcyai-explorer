@@ -5,7 +5,7 @@ from darcyai_engine.tests.perceptor_mock import PerceptorMock
 
 class ExplorerPipeline():    
     def __init__(self, send_frame_callback):
-        video_file = VideoFileStream(file_name="/Users/pixcell/Work/Edgeworx/darcy-ai-explorer/video.mp4")
+        video_file = VideoFileStream(file_name="video.mp4")
         self.__pipeline = Pipeline(input_stream=video_file,
                                    universal_rest_api=True,
                                    rest_api_base_path="",
