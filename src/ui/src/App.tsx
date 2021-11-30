@@ -7,7 +7,7 @@ import './App.scss'
 
 import theme from './Theme'
 
-const baseURL = process.env.REACT_APP_BASE_URL ?? ''
+// const baseURL = process.env.REACT_APP_BASE_URL ?? ''
 
 function App () {
   // Public API that will echo messages sent to it back to the client
@@ -34,7 +34,7 @@ function App () {
     <div className='App'>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <img src={`${baseURL}/output/live`} alt='live-feed' />
+        {/* <img src={`${baseURL}/output/live`} alt='live-feed' /> */}
       </ThemeProvider>
     </div>
   )

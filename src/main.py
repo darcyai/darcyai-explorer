@@ -7,11 +7,14 @@ import requests
 import os
 import threading
 from datetime import datetime
+import os
 
 #----------------------------------------------------------------------------#
 # Configure and run SPA API
 #----------------------------------------------------------------------------#
-app = Flask('API', static_folder='./ui/build')
+absolutepath = os.path.dirname(os.path.abspath(__file__))
+ui_build_path = os.path.join(absolutepath, 'ui/build')
+app = Flask('API', static_folder=ui_build_path)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, cors_allowed_origins="*")
 CORS(app)
@@ -62,7 +65,7 @@ def proxy_live_view(*args, **kwargs):
 @app.route('/<path:path>')
 def catch_all(path):
   try:
-    return send_from_directory('./ui/build', path)
+    return send_from_directory(ui_build_path, path)
   except BaseException:
     return app.send_static_file('index.html')
 
@@ -79,7 +82,7 @@ def send_frame(pom, input_data):
 
 def main():
   pipeline_instance = ExplorerPipeline(send_frame)
-  threading.Thread(runAPI, daemon=True).start()
+  threading.Thread(target=runAPI, daemon=True).start()
   pipeline_instance.run()
 
 if __name__ == "__main__":
