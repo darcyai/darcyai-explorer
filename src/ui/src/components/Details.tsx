@@ -4,8 +4,7 @@ import { Theme } from '@mui/material'
 import { usePipeline } from '../providers/Pipeline'
 
 import { ReactComponent as CloseIcon } from '../assets/close.svg'
-import { ReactComponent as ExpendIcon } from '../assets/close.svg'
-import { ReactComponent as CollapseIcon } from '../assets/close.svg'
+import { ReactComponent as ArrowIcon } from '../assets/next.svg'
 import sharedStyles from '../Theme/sharesdStyles'
 import clsx from 'clsx'
 import Config from './Config'
@@ -65,8 +64,8 @@ const Details: React.FC<DetailsProps> = ({ close }) => {
         <div className={classes.configTitle}>
           <span>Config</span>
           {showConfig ?
-            <ExpendIcon onClick={() => setShowConfig(false)} className={clsx(classes.iconColor, classes.actionIcon)} /> :
-            <CollapseIcon onClick={() => setShowConfig(true)} className={clsx(classes.iconColor, classes.actionIcon)} />
+            <ArrowIcon onClick={() => setShowConfig(false)} className={clsx(classes.iconColor, classes.actionIcon)} style={{ transform: 'rotate(90deg)' }} /> :
+            <ArrowIcon onClick={() => setShowConfig(true)} className={clsx(classes.iconColor, classes.actionIcon)} />
           }
         </div>
         {showConfig && <Config />}

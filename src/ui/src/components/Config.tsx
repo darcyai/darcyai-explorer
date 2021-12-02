@@ -27,7 +27,6 @@ const Config: React.FC = () => {
   const classes = useStyles()
   const { selectedStep, config } = usePipeline()
 
-  console.log({config})
   return (
     <div className={classes.root}>
       {config.map(item => (

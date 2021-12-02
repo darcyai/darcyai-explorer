@@ -12,6 +12,7 @@ FROM edgeworx/darcy-ai-coral-armv7l:dev
 
 RUN python3 -m pip install --upgrade darcyai-engine
 RUN python3 -m pip install --upgrade darcyai-coral
+RUN python3 -m pip install --upgrade flask_cors
 
 WORKDIR /src
 
