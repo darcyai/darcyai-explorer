@@ -6,6 +6,7 @@
     "@emotion/react": "^11.7.0",
     "@emotion/styled": "^11.6.0",
     "@mui/material": "^5.2.1",
+    "@mui/styles": "^5.2.2",
     "@testing-library/jest-dom": "^5.15.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
@@ -27,11 +28,15 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "proxy": "http://localhost:5000",
   "eslintConfig": {
     "extends": [
       "react-app",
       "react-app/jest"
     ]
+  },
+  "ts-standard": {
+    "project": "./tsconfig.json"
   },
   "browserslist": {
     "production": [
@@ -47,6 +52,6 @@
   },
   "devDependencies": {
     "node-sass": "^6.0.1",
-    "standard": "^16.0.4"
+    "ts-standard": "^11.0.0"
   }
 }

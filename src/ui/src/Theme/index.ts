@@ -55,6 +55,24 @@ let darkTheme = createTheme({
       contrastText: edgeColors.neutral[0]
     }
   },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: spacing / 4,
+        },
+        sizeSmall: {
+          padding: spacing,
+          height: spacing * 3,
+          lineHeight: 1,
+          font: 'normal normal medium 12px/16px Gilroy',
+          letterSpacing: 0,
+          color: edgeColors.neutral[4],
+          textTransform: 'uppercase'
+        }
+      }
+    }
+  }
 })
 
 darkTheme = responsiveFontSizes(darkTheme)
