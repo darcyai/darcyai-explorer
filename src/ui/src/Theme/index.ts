@@ -69,7 +69,16 @@ let darkTheme = createTheme({
           letterSpacing: 0,
           color: edgeColors.neutral[4],
           textTransform: 'uppercase'
-        }
+        },
+        containedPrimary: {
+          '&$disabled': {
+            opacity: 0.46,
+            backgroundColor: edgeColors.blue
+          },
+          '&:hover': {
+            backgroundColor: edgeColors.neutral[0]
+          }
+        },
       }
     }
   }

@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme: Theme) => {
       paddingBottom: theme.spacing(2),
       width: '100%',
       position: 'relative',
-      minHeight: theme.spacing(10),
+      minHeight: theme.spacing(12),
     },
     infoText: {
       display: 'flex',
@@ -89,7 +89,7 @@ const Landing: React.FC<LandingProps> = ({ inspect, showInspect }) => {
   const { selectedStep, hoveredStep, imageSrc } = usePipeline()
 
   const infoText = React.useMemo(() => {
-    const step = selectedStep ?? hoveredStep ?? null
+    const step = hoveredStep ?? selectedStep ?? null
     if (step === null) { return null }
     return (
       <div className={classes.infoText}>
