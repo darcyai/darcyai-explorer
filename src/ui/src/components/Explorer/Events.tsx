@@ -4,6 +4,7 @@ import { makeStyles } from '@mui/styles'
 import { Theme } from '@mui/material'
 import { usePipeline, EventItem } from '../../providers/Pipeline'
 import moment from 'moment'
+import ReactJSONView from '../JSONViewer'
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -102,7 +103,7 @@ const Events: React.FC = () => {
         const formatedTimestamp = moment.utc(event.timestamp * 1000).local().format(format)
         return selectedEvent === event.id ? (
           <div key={event.id} className={classes.details}>
-            {JSON.stringify(formatEvent(event, formatedTimestamp))}
+            <ReactJSONView src={formatEvent(event, formatedTimestamp)} />
           </div>
         ) : (
           <div key={event.id} onClick={() => selectEvent(event)} className={classes.item}>

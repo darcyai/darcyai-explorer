@@ -1,8 +1,10 @@
 import React from 'react'
-import { usePipeline, Pulse } from '../../providers/Pipeline'
+import { usePipeline, Pulse, perceptorNameByStep } from '../../providers/Pipeline'
+import { CollapsedFieldProps } from 'react-json-view'
 
 import { makeStyles } from '@mui/styles'
 import { Theme } from '@mui/material'
+import ReactJSONView from '../JSONViewer'
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -30,15 +32,39 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const POM: React.FC = () => {
   const classes = useStyles()
-  const { pulses, showFrame } = usePipeline()
+  const { pulses, showFrame, selectedStep, fetchPulses, isPlaying } = usePipeline()
   const [selectedPulse, setSelectedPulse] = React.useState<number | null>(null)
+  const timeoutRef = React.useRef<number | null>(null)
+
+  function pollPulses() {
+    fetchPulses()
+    timeoutRef.current = window.setTimeout(pollPulses, 1000)
+  }
+
+  React.useEffect(() => {
+    return () => {
+      if (timeoutRef.current != null) {
+        window.clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
+
+  React.useEffect(() => {
+    if (isPlaying) {
+      pollPulses()
+    } else {
+      showFrame(pulses[0].frame)
+      if (timeoutRef.current != null) {
+        window.clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [isPlaying])
 
   React.useEffect(() => {
     if (pulses.length === 0) {
       return
     }
     setSelectedPulse(pulses[0].id)
-    showFrame(pulses[0].frame)
   }, [pulses])
 
   const selectPulse = (pulse: Pulse) => {
@@ -46,12 +72,22 @@ const POM: React.FC = () => {
     showFrame(pulse.frame)
   }
 
+  const _shouldCollapse = React.useMemo(() => (field: CollapsedFieldProps) => {
+    if (field.name === 'root') {
+      return false
+    }
+    if (selectedStep != null && field.name === perceptorNameByStep(selectedStep)) {
+      return false
+    }
+    return true
+  }, [selectedStep])
+
   return (
     <div className={classes.root}>
       {pulses.map(pulse => {
         return selectedPulse === pulse.id ? (
           <div key={pulse.id} className={classes.details}>
-            {JSON.stringify(pulse.pom)}
+            <ReactJSONView src={pulse.pom} shouldCollapse={_shouldCollapse}/>
           </div>
         ) : (
           <div key={pulse.id} onClick={() => selectPulse(pulse)} className={classes.item}>

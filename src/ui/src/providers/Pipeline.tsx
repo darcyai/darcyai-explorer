@@ -71,20 +71,40 @@ export enum PipelineStep {
   OUTPUT = 'Output stream'
 }
 
+
+export const perceptorNameByStep: (step: PipelineStep) => string = (step: PipelineStep) => {
+  switch (step) {
+    case PipelineStep.INPUT:
+      return 'basic'
+    case PipelineStep.PEOPLE:
+      return 'basic'
+    case PipelineStep.MASK:
+      return 'basic'
+    case PipelineStep.QRCODE:
+      return 'basic'
+    case PipelineStep.CALLBACK:
+      return 'basic'
+    case PipelineStep.OUTPUT:
+      return 'basic'
+    default:
+      return ''
+  }
+}
+
 const stepConfigURL: (step: PipelineStep) => string = (step: PipelineStep) => {
   switch (step) {
     case PipelineStep.INPUT:
-      return '/perceptors/basic/config'
+      return ''
     case PipelineStep.PEOPLE:
-      return '/perceptors/basic/config'
+      return `/perceptors/${perceptorNameByStep(step)}/config`
     case PipelineStep.MASK:
-      return '/perceptors/basic/config'
+      return `/perceptors/${perceptorNameByStep(step)}/config`
     case PipelineStep.QRCODE:
-      return '/perceptors/basic/config'
+      return `/perceptors/${perceptorNameByStep(step)}/config`
     case PipelineStep.CALLBACK:
-      return '/perceptors/basic/config'
+      return `/perceptors/${perceptorNameByStep(step)}/config`
     case PipelineStep.OUTPUT:
-      return '/perceptors/basic/config'
+      return `/outputs/${perceptorNameByStep(step)}/config`
     default:
       return ''
   }
@@ -93,17 +113,17 @@ const stepConfigURL: (step: PipelineStep) => string = (step: PipelineStep) => {
 const stepEventURL: (step: PipelineStep) => string = (step: PipelineStep) => {
   switch (step) {
     case PipelineStep.INPUT:
-      return '/events/basic'
+      return `/events/${perceptorNameByStep(step)}`
     case PipelineStep.PEOPLE:
-      return '/events/basic'
+      return `/events/${perceptorNameByStep(step)}`
     case PipelineStep.MASK:
-      return '/events/basic'
+      return `/events/${perceptorNameByStep(step)}`
     case PipelineStep.QRCODE:
-      return '/events/basic'
+      return `/events/${perceptorNameByStep(step)}`
     case PipelineStep.CALLBACK:
-      return '/events/basic'
+      return `/events/${perceptorNameByStep(step)}`
     case PipelineStep.OUTPUT:
-      return '/events/basic'
+      return `/events/${perceptorNameByStep(step)}`
     default:
       return ''
   }
@@ -146,7 +166,12 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   }
 
   async function fetchPerceptorConfig(step: PipelineStep) {
-    const res = await window.fetch(`/pipeline/${stepConfigURL(step)}`)
+    const url = stepConfigURL(step)
+    if (url === '') { 
+      setConfig([])
+      return
+    }
+    const res = await window.fetch(`/pipeline/${url}`)
     const config = await res.json()
     setConfig(config)
   }
