@@ -1,14 +1,13 @@
 from darcyai_engine.perception_object_model import PerceptionObjectModel
 from pipeline import ExplorerPipeline
-from flask import Flask, request, send_from_directory, jsonify, stream_with_context, Response
-import requests
+from flask import Flask, send_from_directory, jsonify, stream_with_context, Response
 from flask_cors import CORS
 import os
 import threading
 import os
-import base64
-import cv2
-import numpy as np
+
+from datetime import timezone
+import datetime
 
 #----------------------------------------------------------------------------#
 # Configure and run SPA API
@@ -25,15 +24,26 @@ CORS(app)
 
 eventStore = {}
 
+def utc_now():
+  dt = datetime.datetime.now(timezone.utc)
+  utc_time = dt.replace(tzinfo=timezone.utc)
+  return utc_time.timestamp()
+
 def store_latest_event(perceptor_name, event_name):
   def event_handler(event_data):
+    def format_event(event_data):
+      timestamp = utc_now()
+      return {
+        'event_type': event_name,
+        'payload': event_data,
+        'id': event_name + '_' + str(timestamp),
+        'timestamp': timestamp
+      }
     if perceptor_name not in eventStore:
-      eventStore[perceptor_name] = {}
-    if event_name not in eventStore[perceptor_name]:
-      eventStore[perceptor_name][event_name] = [event_data]
+      eventStore[perceptor_name] = [format_event(event_data)]
     else:
-      eventStore[perceptor_name][event_name].append(event_data)
-      eventStore[perceptor_name][event_name] = eventStore[perceptor_name][event_name][-20:]
+      eventStore[perceptor_name].insert(0, format_event(event_data))
+      eventStore[perceptor_name] = eventStore[perceptor_name][:50]
     return None
   return event_handler
 

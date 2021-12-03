@@ -1,13 +1,20 @@
-import React, { ReactElement } from 'react'
+import React from 'react'
 
 const liveFeedSrc = '/live_feed'
 
-declare interface ConfigItem {
+export declare interface ConfigItem {
   default_value: any
   description: string
   name: string
   type: string
   value: any
+}
+
+export declare interface EventItem {
+  id: string
+  timestamp: number
+  event_type: string
+  payload: any
 }
 
 export declare interface Pulse {
@@ -22,7 +29,9 @@ declare interface PipelineProps {
 
 declare interface Pipeline {
   imageSrc: string
+  isPlaying: boolean
   pulses: Pulse[]
+  events: EventItem[]
   config: ConfigItem[]
   selectedStep: PipelineStep | undefined
   hoveredStep: PipelineStep | undefined
@@ -32,12 +41,15 @@ declare interface Pipeline {
   pauseLiveStream: () => void
   showFrame: (frame: string) => void
   fetchPulses: () => Promise<void>
+  fetchEvents: () => Promise<void>
 }
 
 const defaultValue: Pipeline = {
   imageSrc: liveFeedSrc,
+  isPlaying: true,
   pulses: [],
   config: [],
+  events: [],
   selectedStep: undefined,
   hoveredStep: undefined,
   selectStep: (step?: PipelineStep) => {},
@@ -45,6 +57,7 @@ const defaultValue: Pipeline = {
   playLiveStream: () => {},
   pauseLiveStream: () => {},
   fetchPulses: async () => {},
+  fetchEvents: async () => {},
   showFrame: (frame: string) => {},
 }
 
@@ -77,6 +90,25 @@ const stepConfigURL: (step: PipelineStep) => string = (step: PipelineStep) => {
   }
 }
 
+const stepEventURL: (step: PipelineStep) => string = (step: PipelineStep) => {
+  switch (step) {
+    case PipelineStep.INPUT:
+      return '/events/basic'
+    case PipelineStep.PEOPLE:
+      return '/events/basic'
+    case PipelineStep.MASK:
+      return '/events/basic'
+    case PipelineStep.QRCODE:
+      return '/events/basic'
+    case PipelineStep.CALLBACK:
+      return '/events/basic'
+    case PipelineStep.OUTPUT:
+      return '/events/basic'
+    default:
+      return ''
+  }
+}
+
 export const PipelineContext = React.createContext(defaultValue)
 export const usePipeline: () => Pipeline = () => React.useContext(PipelineContext)
 
@@ -85,7 +117,9 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   const [selectedStep, setSelectedStep] = React.useState<PipelineStep | undefined>(undefined)
   const [hoveredStep, setHoveredStep] = React.useState<PipelineStep | undefined>(PipelineStep.INPUT)
   const [pulses, setPulses] = React.useState<Pulse[]>([])
+  const [events, setEvents] = React.useState<EventItem[]>([])
   const [config, setConfig] = React.useState<ConfigItem[]>([])
+  const isPlaying = React.useMemo(() => !imageSrc.includes('base64'), [imageSrc])
 
   async function fetchPulses () {
     try {
@@ -93,6 +127,20 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
       const data = await res.json()
       setPulses(data)
     } catch (e) {
+      console.error(e)
+    }
+  }
+
+  async function fetchEvents () {
+    if (selectedStep === undefined) {
+      setEvents([])
+      return
+    }
+    try {
+      const res = await window.fetch(`${stepEventURL(selectedStep)}`)
+      const data = await res.json()
+      setEvents(data)
+    } catch(e) {
       console.error(e)
     }
   }
@@ -123,6 +171,8 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   return (
     <PipelineContext.Provider
       value={{
+        events,
+        isPlaying,
         pulses,
         config,
         imageSrc,
@@ -133,6 +183,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
         playLiveStream: () => { setImageSrc(liveFeedSrc) },
         pauseLiveStream: () => { pause() },
         fetchPulses: async () => fetchPulses(),
+        fetchEvents: async () => fetchEvents(),
         showFrame: (frame: string) => setImageSrc(frame)
       }}
     >

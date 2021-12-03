@@ -1,6 +1,8 @@
 import time
 from random import random
 
+import random
+
 from darcyai_engine.perceptor.perceptor import Perceptor
 from darcyai_engine.config import Config
 from darcyai_engine.serializable import Serializable
@@ -42,7 +44,8 @@ class BasicPerceptor(Perceptor):
 
         result = "Hello World #{}".format(self.__counter)
 
-        self.emit("event_1", result)
+        if random.randint(0, 100) > 95:
+            self.emit('event_1', result)
 
         return BasicPOM(result)
 

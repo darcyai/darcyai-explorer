@@ -6,6 +6,7 @@ import { Theme } from '@mui/material'
 import clsx from 'clsx'
 import { PipelineStep, usePipeline } from '../../providers/Pipeline'
 import POM from './POM'
+import Events from './Events'
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -83,7 +84,7 @@ const Explorer: React.FC = () => {
         <span className={tab === Tabs.CODE ? 'selected' : ''} onClick={selectCode}>{Tabs.CODE}</span>
       </div>
       <div className={classes.contentSection}>
-        {tab === Tabs.EVENTS && <div>Events</div>}
+        {tab === Tabs.EVENTS && <Events />}
         {tab === Tabs.POM && <POM />}
         {tab === Tabs.CODE && <div>Code</div>}
       </div>

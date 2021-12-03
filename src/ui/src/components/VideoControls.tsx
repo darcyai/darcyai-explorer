@@ -15,8 +15,7 @@ const useStyles = makeStyles<Theme>(theme => ({
 
 const VideoControls: React.FC = () => {
   const classes = useStyles()
-  const { imageSrc, pauseLiveStream, playLiveStream } = usePipeline()
-  const isPlaying = React.useMemo(() => !imageSrc.includes('base64'), [imageSrc])
+  const { imageSrc, isPlaying, pauseLiveStream, playLiveStream } = usePipeline()
 
   const toggleVideo = () => {
     if (isPlaying) {
