@@ -5,13 +5,16 @@ import Pipeline from './Pipeline'
 
 import { ReactComponent as InspectIcon } from '../assets/inspect.svg'
 import { usePipeline, PipelineStep } from '../providers/Pipeline'
+import VideoControls from './VideoControls'
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
     root: {
-      flex: 1,
       display: 'flex',
       flexDirection: 'column',
+      [theme.breakpoints.up('md')]: {
+        flex: 1
+      }
     }, 
     header: {
       display: 'flex',
@@ -49,14 +52,20 @@ const useStyles = makeStyles((theme: Theme) => {
       borderTop: `2px solid ${theme.palette.border ?? ''}`,
       paddingTop: theme.spacing(2),
       paddingBottom: theme.spacing(2),
+      paddingRight: theme.spacing(20),
       width: '100%',
       position: 'relative',
-      minHeight: theme.spacing(12),
+      minHeight: theme.spacing(14),
+      display: 'flex',
+      flexDirection: 'column',
     },
     infoText: {
       display: 'flex',
       flexDirection: 'column',
       gap: theme.spacing(1),
+      height: '100%',
+      justifyContent: 'space-between',
+      flex: 1,
     },
     infoTextTitle: {
       font: 'normal normal medium 13px/24px Gilroy',
@@ -66,6 +75,18 @@ const useStyles = makeStyles((theme: Theme) => {
     infoTextContent: {
       font: 'normal normal normal 13px/21px Gilroy',
       letterSpacing: '0.26px',
+    },
+    videoSection: {
+      position: 'relative',
+      width: '100%',
+      lineHeight: 0,
+      '& img': {
+        width: '100%',
+      }
+    },
+    pipelineContainer: {
+      width: '100%',
+      maxWidth: 954
     }
   }
 })
@@ -109,13 +130,18 @@ const Landing: React.FC<LandingProps> = ({ inspect, showInspect }) => {
             <h2>Click the Darcy AI pipeline below to see how this app was built</h2>
           </div>
         }
-        <Pipeline />
+        <div className={classes.pipelineContainer}>
+          <Pipeline />
+        </div>
         <div className={classes.headerBottomSection}>
           {infoText}
           {showInspect && <Button style={{ position: 'absolute', bottom: 16, right: 0, display: 'flex', gap: 8 }} onClick={inspect} size='small' variant='contained' color='primary'><InspectIcon /><span>Inspect</span></Button>}
         </div>
       </div>
-      <img src={imageSrc} alt='live_feed' />
+      <div className={classes.videoSection}>
+        <img src={imageSrc} alt='live_feed' />
+        <VideoControls />
+      </div>
     </div>
   )
 }

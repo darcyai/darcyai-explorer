@@ -8,6 +8,7 @@ import { ReactComponent as ArrowIcon } from '../assets/next.svg'
 import sharedStyles from '../Theme/sharesdStyles'
 import clsx from 'clsx'
 import Config from './Config'
+import Explorer from './Explorer'
 
 export interface DetailsProps {
   close: () => void
@@ -19,6 +20,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
+    [theme.breakpoints.up('md')]: {
+      height: 'calc(100vh - 40px)',
+    }
   },
   title: {
     minHeight: theme.spacing(8),
@@ -31,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'center',
     borderBottom: `1px solid ${theme.palette.border ?? ''}`,
   },
-  configTitle: {
+  sectionTitle: {
     font: 'normal normal 500 13px/24px Gilroy',
     letterSpacing: 0.26,
     textTransform: 'uppercase',
@@ -51,7 +55,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const Details: React.FC<DetailsProps> = ({ close }) => {
   const classes: any = useStyles()
-  const { pom, selectedStep } = usePipeline()
+  const { selectedStep } = usePipeline()
   const [showConfig, setShowConfig] = React.useState<boolean>(true)
 
   return (
@@ -61,7 +65,7 @@ const Details: React.FC<DetailsProps> = ({ close }) => {
         <CloseIcon onClick={close} className={clsx(classes.iconColor, classes.actionIcon)} />
       </div>
       <div className={classes.configContainer}>
-        <div className={classes.configTitle}>
+        <div className={classes.sectionTitle}>
           <span>Config</span>
           {showConfig ?
             <ArrowIcon onClick={() => setShowConfig(false)} className={clsx(classes.iconColor, classes.actionIcon)} style={{ transform: 'rotate(90deg)' }} /> :
@@ -70,6 +74,7 @@ const Details: React.FC<DetailsProps> = ({ close }) => {
         </div>
         {showConfig && <Config />}
       </div>
+      <Explorer />
     </div>
   )
 }

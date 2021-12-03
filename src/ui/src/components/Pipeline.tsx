@@ -36,7 +36,7 @@ const PipelineSVG: React.FC<PipelineSVGProps> = ({}) => {
   })
 
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="953.688" height="119.999" viewBox="0 0 953.688 119.999">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 953.688 119.999">
       <g id="node_graph" data-name="node graph" transform="translate(-23.074 -100.5)">
         <g id="node-IS" transform="translate(23.574 143)" {...stepProps(PipelineStep.INPUT)}>
           <rect id="outline" width="120.77" height="33.999" rx="2" fill="transparent" stroke="#5ac8fa" stroke-width="1"/>

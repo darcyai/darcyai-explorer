@@ -10,28 +10,42 @@ declare interface ConfigItem {
   value: any
 }
 
+export declare interface Pulse {
+  id: number
+  pom: any
+  frame: string
+}
+
 declare interface PipelineProps {
   setShowDetails: (v: boolean) => void
 }
 
 declare interface Pipeline {
   imageSrc: string
-  pom: any
+  pulses: Pulse[]
   config: ConfigItem[]
   selectedStep: PipelineStep | undefined
   hoveredStep: PipelineStep | undefined
   selectStep: (step?: PipelineStep) => void
   hoverStep: (step?: PipelineStep) => void
+  playLiveStream: () => void
+  pauseLiveStream: () => void
+  showFrame: (frame: string) => void
+  fetchPulses: () => Promise<void>
 }
 
 const defaultValue: Pipeline = {
   imageSrc: liveFeedSrc,
-  pom: {},
+  pulses: [],
   config: [],
   selectedStep: undefined,
   hoveredStep: undefined,
   selectStep: (step?: PipelineStep) => {},
-  hoverStep: (step?: PipelineStep) => {}
+  hoverStep: (step?: PipelineStep) => {},
+  playLiveStream: () => {},
+  pauseLiveStream: () => {},
+  fetchPulses: async () => {},
+  showFrame: (frame: string) => {},
 }
 
 
@@ -70,20 +84,33 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   const [imageSrc, setImageSrc] = React.useState < string > (liveFeedSrc)
   const [selectedStep, setSelectedStep] = React.useState<PipelineStep | undefined>(undefined)
   const [hoveredStep, setHoveredStep] = React.useState<PipelineStep | undefined>(PipelineStep.INPUT)
-  const [pom, setPOM] = React.useState<any>({})
+  const [pulses, setPulses] = React.useState<Pulse[]>([])
   const [config, setConfig] = React.useState<ConfigItem[]>([])
 
-  async function fetchFrame () {
-    const res = await window.fetch('/pulse/1')
-    const data = await res.json()
-    setImageSrc('data:image/jpeg;base64,' + data.data.frame)
-    setPOM(data.pom)
+  async function fetchPulses () {
+    try {
+      const res = await window.fetch('/pulses/history')
+      const data = await res.json()
+      setPulses(data)
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   async function fetchPerceptorConfig(step: PipelineStep) {
     const res = await window.fetch(`/pipeline/${stepConfigURL(step)}`)
     const config = await res.json()
     setConfig(config)
+  }
+
+  async function pause() {
+    try {
+      const res = await window.fetch('/current_pulse')
+      const data = await res.json()
+      setImageSrc(data.frame)
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   React.useEffect(() => {
@@ -96,13 +123,17 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   return (
     <PipelineContext.Provider
       value={{
-        pom,
+        pulses,
         config,
         imageSrc,
         selectedStep,
         hoveredStep,
         selectStep: (step?: PipelineStep) => { setSelectedStep(step); setShowDetails(true) },
         hoverStep: (step?: PipelineStep) => setHoveredStep(step),
+        playLiveStream: () => { setImageSrc(liveFeedSrc) },
+        pauseLiveStream: () => { pause() },
+        fetchPulses: async () => fetchPulses(),
+        showFrame: (frame: string) => setImageSrc(frame)
       }}
     >
       {children}

@@ -1,3 +1,4 @@
+from darcyai_engine.perception_object_model import PerceptionObjectModel
 from pipeline import ExplorerPipeline
 from flask import Flask, request, send_from_directory, jsonify, stream_with_context, Response
 import requests
@@ -24,13 +25,15 @@ CORS(app)
 
 eventStore = {}
 
-def store_latest_event(event_name):
+def store_latest_event(perceptor_name, event_name):
   def event_handler(event_data):
-    if event_name not in eventStore:
-      eventStore[event_name] = [event_data]
+    if perceptor_name not in eventStore:
+      eventStore[perceptor_name] = {}
+    if event_name not in eventStore[perceptor_name]:
+      eventStore[perceptor_name][event_name] = [event_data]
     else:
-      eventStore[event_name].append(event_data)
-      eventStore[event_name] = eventStore[event_name][-20:]
+      eventStore[perceptor_name][event_name].append(event_data)
+      eventStore[perceptor_name][event_name] = eventStore[perceptor_name][event_name][-20:]
     return None
   return event_handler
 
@@ -45,41 +48,37 @@ def get_all_events():
 def get_all_pom():
   return jsonify(pipeline_instance.get_pom().serialize())
 
-@app.route('/events/<string:event_name>')
-def get_events(event_name):
-  if event_name in eventStore:
-    return jsonify(eventStore[event_name])
+@app.route('/events/<string:perceptor_name>')
+def get_events(perceptor_name):
+  if perceptor_name in eventStore:
+    return jsonify(eventStore[perceptor_name])
   else:
-    return jsonify([])
+    return jsonify({})
+
+
+def format_pulse(pom: PerceptionObjectModel, pulse_number):
+  # Convert input to base64 image
+  input = pom.get_input_data()
+  serialized_pom = pom.serialize()
+  serialized_pom.pop('_PerceptionObjectModel__input_data') # Remove input data from serialized pom
+  return {
+    'frame': 'data:image/jpeg;base64,' + input.serialize()['frame'].decode('utf-8'),
+    'pom': serialized_pom,
+    'id': pulse_number
+  }
 
 @app.route('/current_pulse')
 def get_current_pulse():
-  return jsonify({ 'currentPulseNumber': pipeline_instance.get_current_pulse_number() })
-
-@app.route('/pulse/<int:pulse_number>')
-def get_historical_pulse(pulse_number):
-  latest_pulse = pipeline_instance.get_current_pulse_number()
-  if pulse_number > latest_pulse:
-    pulse_number = latest_pulse
-  if pulse_number < latest_pulse - 49:
-    pulse_number = 0
-  # input = pipeline_instance.get_historical_input(pulse_number)
-  # pom = pipeline_instance.get_historical_pom(pulse_number)
-  input = pipeline_instance.get_latest_input()
   pom = pipeline_instance.get_pom()
+  return jsonify(format_pulse(pom, pipeline_instance.get_current_pulse_number()))
 
-  # Convert input to base64 image
-  encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 100]
-  img_encode = cv2.imencode(".jpg", input.data.copy(), encode_param)[1]
-  frame = np.array(img_encode).tobytes()
-  return jsonify({
-    'data': {
-      'frame': base64.b64encode(frame).decode('utf-8'),
-      'timestamp': input.timestamp
-    },
-    'pom': pom.serialize(),
-    'pulseNumber': pulse_number
-  })
+@app.route('/pulses/history')
+def get_historical_pulse():
+  poms = pipeline_instance.get_pom_history()
+  pulses = []
+  for pulse_number, pom in poms.items():
+    pulses.append(format_pulse(pom, pulse_number))
+  return jsonify(pulses)
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

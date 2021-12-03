@@ -24,7 +24,7 @@ class ExplorerPipeline():
         self.__pipeline.add_output_stream("live_feed", self.__output_stream_callback, live_feed)
         basic_perceptor = BasicPerceptor()
         self.__pipeline.add_perceptor("basic", basic_perceptor, accelerator_idx=0, input_callback=self.__perceptor_input_callback)
-        basic_perceptor.on("event_1", event_cb("event_1"))
+        basic_perceptor.on("event_1", event_cb("basic", "event_1"))
 
     def run(self):
         self.__pipeline.run()
@@ -37,6 +37,9 @@ class ExplorerPipeline():
 
     def get_pom(self):
         return self.__pipeline.get_pom()
+
+    def get_pom_history(self):
+        return self.__pipeline.get_pom_history()
 
     def get_latest_input(self):
         return self.__pipeline.get_latest_input()
