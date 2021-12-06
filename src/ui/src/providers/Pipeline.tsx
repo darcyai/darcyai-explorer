@@ -220,7 +220,10 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(config),
+        body: JSON.stringify(config.reduce((acc: any, item: ConfigItem) => {
+          acc[item.name] = item.value
+          return acc
+        }, {})),
       })
       if (!res.ok) {
         throw new Error(`Failed to save config:\n ${res.statusText}`)
