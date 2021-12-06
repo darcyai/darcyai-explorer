@@ -1,4 +1,6 @@
 import React from 'react'
+import { debounce } from 'lodash'
+import { useFeedback } from './Feedback'
 
 const liveFeedSrc = '/live_feed'
 
@@ -42,6 +44,8 @@ declare interface Pipeline {
   showFrame: (frame: string) => void
   fetchPulses: () => Promise<void>
   fetchEvents: () => Promise<void>
+  updateConfig: (key: string, value: any) => void
+  saveConfig: () => Promise<void>
 }
 
 const defaultValue: Pipeline = {
@@ -59,6 +63,8 @@ const defaultValue: Pipeline = {
   fetchPulses: async () => {},
   fetchEvents: async () => {},
   showFrame: (frame: string) => {},
+  updateConfig: (key: string, value: any) => {},
+  saveConfig: async () => {},
 }
 
 
@@ -140,14 +146,16 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   const [events, setEvents] = React.useState<EventItem[]>([])
   const [config, setConfig] = React.useState<ConfigItem[]>([])
   const isPlaying = React.useMemo(() => !imageSrc.includes('base64'), [imageSrc])
+  const { pushErrorFeedBack } = useFeedback()
 
   async function fetchPulses () {
     try {
       const res = await window.fetch('/pulses/history')
       const data = await res.json()
       setPulses(data)
-    } catch (e) {
+    } catch (e: any) {
       console.error(e)
+      pushErrorFeedBack(e)
     }
   }
 
@@ -160,8 +168,9 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
       const res = await window.fetch(`${stepEventURL(selectedStep)}`)
       const data = await res.json()
       setEvents(data)
-    } catch(e) {
+    } catch(e: any) {
       console.error(e)
+      pushErrorFeedBack(e)
     }
   }
 
@@ -171,7 +180,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
       setConfig([])
       return
     }
-    const res = await window.fetch(`/pipeline/${url}`)
+    const res = await window.fetch(`/pipeline${url}`)
     const config = await res.json()
     setConfig(config)
   }
@@ -181,17 +190,60 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
       const res = await window.fetch('/current_pulse')
       const data = await res.json()
       setImageSrc(data.frame)
-    } catch (e) {
+    } catch (e: any) {
       console.error(e)
+      pushErrorFeedBack(e)
     }
   }
 
   React.useEffect(() => {
     if (selectedStep) {
       fetchPerceptorConfig(selectedStep)
-      .catch(err => console.error(err))
+      .catch(err => {
+        console.error(err)
+        pushErrorFeedBack(err)
+      })
     }
   }, [selectedStep])
+
+
+
+  const saveConfig = async () => {
+    if (selectedStep === undefined) return
+    try {
+      const url = stepConfigURL(selectedStep)
+      if (url === '') { 
+        return
+      }
+      const res = await window.fetch(`/pipeline${url}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(config),
+      })
+      if (!res.ok) {
+        throw new Error(`Failed to save config:\n ${res.statusText}`)
+      }
+    } catch (e: any) {
+      console.error(e)
+      pushErrorFeedBack(e)
+      fetchPerceptorConfig(selectedStep)
+    }
+  }
+
+  const updateConfig = (key: string, value: any) => {
+    const newConfig = config.map(item => {
+      if (item.name === key) {
+        return { ...item, value }
+      }
+      return item
+    })
+    setConfig(newConfig)
+    // saveConfig(newConfig)
+    //   ?.catch(err => console.error(err))
+  }
+
 
   return (
     <PipelineContext.Provider
@@ -209,7 +261,9 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
         pauseLiveStream: () => { pause() },
         fetchPulses: async () => fetchPulses(),
         fetchEvents: async () => fetchEvents(),
-        showFrame: (frame: string) => setImageSrc(frame)
+        showFrame: (frame: string) => setImageSrc(frame),
+        updateConfig,
+        saveConfig
       }}
     >
       {children}

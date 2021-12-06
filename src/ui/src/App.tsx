@@ -8,6 +8,7 @@ import Layout from './components/Layout'
 import Details from './components/Details'
 import Landing from './components/Landing'
 import { PipelineProvider } from './providers/Pipeline'
+import { FeedbackProvider } from './providers/Feedback'
 
 function App () {
   // Public API that will echo messages sent to it back to the client
@@ -17,12 +18,14 @@ function App () {
     <div className='App'>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <PipelineProvider setShowDetails={setShowDetails}>
-          <Layout>
-            <Landing inspect={() => setShowDetails(true)} showInspect={!showDetails} />
-            {showDetails && <Details close={() => setShowDetails(false)} />}
-          </Layout>
-        </PipelineProvider>
+        <FeedbackProvider>
+          <PipelineProvider setShowDetails={setShowDetails}>
+            <Layout>
+              <Landing inspect={() => setShowDetails(true)} showInspect={!showDetails} />
+              {showDetails && <Details close={() => setShowDetails(false)} />}
+            </Layout>
+          </PipelineProvider>
+        </FeedbackProvider>
       </ThemeProvider>
     </div>
   )

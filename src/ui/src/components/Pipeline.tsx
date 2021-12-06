@@ -39,11 +39,11 @@ const PipelineSVG: React.FC<PipelineSVGProps> = ({}) => {
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 953.688 119.999">
       <g id="node_graph" data-name="node graph" transform="translate(-23.074 -100.5)">
         <g id="node-IS" transform="translate(23.574 143)" {...stepProps(PipelineStep.INPUT)}>
-          <rect id="outline" width="120.77" height="33.999" rx="2" fill="transparent" stroke="#5ac8fa" stroke-width="1"/>
+          <rect id="outline" width="120.77" height="33.999" rx="2" fill="transparent" stroke="#5ac8fa" strokeWidth="1"/>
           <path id="blue_base" data-name="blue base" d="M2,0H34a0,0,0,0,1,0,0V34a0,0,0,0,1,0,0H2a2,2,0,0,1-2-2V2A2,2,0,0,1,2,0Z" fill="#5ac8fa"/>
           <text id="Input_Stream" data-name="Input
-    Stream" transform="translate(38.116 15)" fill="#5ac8fa" stroke="rgba(0,0,0,0)" stroke-width="1" font-size="12" font-family="Gilroy-Medium, Gilroy" font-weight="500" letter-spacing="-0.005em"><tspan x="0" y="0">INPUT</tspan><tspan x="0" y="12">STREAM</tspan></text>
-          <g id="ball_right" data-name="ball right" transform="translate(117.653 14)" fill="#5ac8fa" stroke="#0a415e" stroke-width="1">
+    Stream" transform="translate(38.116 15)" fill="#5ac8fa" stroke="rgba(0,0,0,0)" strokeWidth="1" fontSize="12" fontFamily="Gilroy-Medium, Gilroy" fontWeight="500" letterSpacing="-0.005em"><tspan x="0" y="0">INPUT</tspan><tspan x="0" y="12">STREAM</tspan></text>
+          <g id="ball_right" data-name="ball right" transform="translate(117.653 14)" fill="#5ac8fa" stroke="#0a415e" strokeWidth="1">
             <circle cx="3.5" cy="3.5" r="3.5" stroke="none"/>
             <circle cx="3.5" cy="3.5" r="3" fill="none"/>
           </g>
@@ -55,15 +55,15 @@ const PipelineSVG: React.FC<PipelineSVGProps> = ({}) => {
           </g>
         </g>
         <g id="node-MP" transform="translate(430.631 101)"  {...stepProps(PipelineStep.MASK)}>
-          <rect id="outline-2" data-name="outline" width="120.978" height="33.999" rx="2" transform="translate(3.884)" fill="transparent" stroke="#5ac8fa" stroke-width="1"/>
+          <rect id="outline-2" data-name="outline" width="120.978" height="33.999" rx="2" transform="translate(3.884)" fill="transparent" stroke="#5ac8fa" strokeWidth="1"/>
           <path id="blue_base" data-name="blue base" d="M2,0H34a0,0,0,0,1,0,0V34a0,0,0,0,1,0,0H2a2,2,0,0,1-2-2V2A2,2,0,0,1,2,0Z" transform="translate(3.884)" fill="#5ac8fa"/>
           <text id="Mask_Perceptor" data-name="Mask
-    Perceptor" transform="translate(42 15)" fill="#5ac8fa" stroke="rgba(0,0,0,0)" stroke-width="1" font-size="12" font-family="Gilroy-Medium, Gilroy" font-weight="500" letter-spacing="-0.005em"><tspan x="0" y="0">MASK</tspan><tspan x="0" y="12">PERCEPTOR</tspan></text>
-          <g id="ball_right-2" data-name="ball right" transform="translate(122 14)" fill="#5ac8fa" stroke="#0a415e" stroke-width="1">
+    Perceptor" transform="translate(42 15)" fill="#5ac8fa" stroke="rgba(0,0,0,0)" strokeWidth="1" fontSize="12" fontFamily="Gilroy-Medium, Gilroy" fontWeight="500" letterSpacing="-0.005em"><tspan x="0" y="0">MASK</tspan><tspan x="0" y="12">PERCEPTOR</tspan></text>
+          <g id="ball_right-2" data-name="ball right" transform="translate(122 14)" fill="#5ac8fa" stroke="#0a415e" strokeWidth="1">
             <circle cx="3.5" cy="3.5" r="3.5" stroke="none"/>
             <circle cx="3.5" cy="3.5" r="3" fill="none"/>
           </g>
-          <g id="ball_left" data-name="ball left" transform="translate(0 14)" fill="#5ac8fa" stroke="#0a415e" stroke-width="1">
+          <g id="ball_left" data-name="ball left" transform="translate(0 14)" fill="#5ac8fa" stroke="#0a415e" strokeWidth="1">
             <circle cx="3.5" cy="3.5" r="3.5" stroke="none"/>
             <circle cx="3.5" cy="3.5" r="3" fill="none"/>
           </g>
@@ -75,15 +75,15 @@ const PipelineSVG: React.FC<PipelineSVGProps> = ({}) => {
           </g>
         </g>
         <g id="node-QP" transform="translate(332.631 186)" {...stepProps(PipelineStep.QRCODE)}>
-          <rect id="outline-3" data-name="outline" width="121.331" height="33.999" rx="2" transform="translate(3.884)" fill="transparent" stroke="#5ac8fa" stroke-width="1"/>
+          <rect id="outline-3" data-name="outline" width="121.331" height="33.999" rx="2" transform="translate(3.884)" fill="transparent" stroke="#5ac8fa" strokeWidth="1"/>
           <path id="blue_base" data-name="blue base" d="M2,0H34a0,0,0,0,1,0,0V34a0,0,0,0,1,0,0H2a2,2,0,0,1-2-2V2A2,2,0,0,1,2,0Z" transform="translate(3.884)" fill="#5ac8fa"/>
           <text id="QR_CODE_Perceptor" data-name="QR CODE
-    Perceptor" transform="translate(42 15)" fill="#5ac8fa" stroke="rgba(0,0,0,0)" stroke-width="1" font-size="12" font-family="Gilroy-Medium, Gilroy" font-weight="500" letter-spacing="-0.005em"><tspan x="0" y="0">QR CODE</tspan><tspan x="0" y="12">PERCEPTOR</tspan></text>
-          <g id="ball_right-3" data-name="ball right" transform="translate(123 14)" fill="#5ac8fa" stroke="#0a415e" stroke-width="1">
+    Perceptor" transform="translate(42 15)" fill="#5ac8fa" stroke="rgba(0,0,0,0)" strokeWidth="1" fontSize="12" fontFamily="Gilroy-Medium, Gilroy" fontWeight="500" letterSpacing="-0.005em"><tspan x="0" y="0">QR CODE</tspan><tspan x="0" y="12">PERCEPTOR</tspan></text>
+          <g id="ball_right-3" data-name="ball right" transform="translate(123 14)" fill="#5ac8fa" stroke="#0a415e" strokeWidth="1">
             <circle cx="3.5" cy="3.5" r="3.5" stroke="none"/>
             <circle cx="3.5" cy="3.5" r="3" fill="none"/>
           </g>
-          <g id="ball_left-2" data-name="ball left" transform="translate(0 14)" fill="#5ac8fa" stroke="#0a415e" stroke-width="1">
+          <g id="ball_left-2" data-name="ball left" transform="translate(0 14)" fill="#5ac8fa" stroke="#0a415e" strokeWidth="1">
             <circle cx="3.5" cy="3.5" r="3.5" stroke="none"/>
             <circle cx="3.5" cy="3.5" r="3" fill="none"/>
           </g>
@@ -93,14 +93,14 @@ const PipelineSVG: React.FC<PipelineSVGProps> = ({}) => {
           </g>
         </g>
         <g id="node-CB" transform="translate(645.631 143)"  {...stepProps(PipelineStep.CALLBACK)}>
-          <rect id="outline-4" data-name="outline" width="120.978" height="33.999" rx="2" transform="translate(3.884)" fill="transparent" stroke="#5ac8fa" stroke-width="1"/>
+          <rect id="outline-4" data-name="outline" width="120.978" height="33.999" rx="2" transform="translate(3.884)" fill="transparent" stroke="#5ac8fa" strokeWidth="1"/>
           <path id="blue_base" data-name="blue base" d="M2,0H34a0,0,0,0,1,0,0V34a0,0,0,0,1,0,0H2a2,2,0,0,1-2-2V2A2,2,0,0,1,2,0Z" transform="translate(3.884)" fill="#5ac8fa"/>
-          <text id="CALLBACK" transform="translate(42 21)" fill="#5ac8fa" stroke="rgba(0,0,0,0)" stroke-width="1" font-size="12" font-family="Gilroy-Medium, Gilroy" font-weight="500" letter-spacing="-0.005em"><tspan x="0" y="0">CALLBACK</tspan></text>
-          <g id="ball_right-4" data-name="ball right" transform="translate(122 14)" fill="#5ac8fa" stroke="#0a415e" stroke-width="1">
+          <text id="CALLBACK" transform="translate(42 21)" fill="#5ac8fa" stroke="rgba(0,0,0,0)" strokeWidth="1" fontSize="12" fontFamily="Gilroy-Medium, Gilroy" fontWeight="500" letterSpacing="-0.005em"><tspan x="0" y="0">CALLBACK</tspan></text>
+          <g id="ball_right-4" data-name="ball right" transform="translate(122 14)" fill="#5ac8fa" stroke="#0a415e" strokeWidth="1">
             <circle cx="3.5" cy="3.5" r="3.5" stroke="none"/>
             <circle cx="3.5" cy="3.5" r="3" fill="none"/>
           </g>
-          <g id="ball_left-3" data-name="ball left" transform="translate(0 14)" fill="#5ac8fa" stroke="#0a415e" stroke-width="1">
+          <g id="ball_left-3" data-name="ball left" transform="translate(0 14)" fill="#5ac8fa" stroke="#0a415e" strokeWidth="1">
             <circle cx="3.5" cy="3.5" r="3.5" stroke="none"/>
             <circle cx="3.5" cy="3.5" r="3" fill="none"/>
           </g>
@@ -110,11 +110,11 @@ const PipelineSVG: React.FC<PipelineSVGProps> = ({}) => {
           </g>
         </g>
         <g id="node-OS" transform="translate(851.608 143)"  {...stepProps(PipelineStep.OUTPUT)}>
-          <rect id="outline-5" data-name="outline" width="120.77" height="33.999" rx="2" transform="translate(3.884)" fill="transparent" stroke="#5ac8fa" stroke-width="1"/>
+          <rect id="outline-5" data-name="outline" width="120.77" height="33.999" rx="2" transform="translate(3.884)" fill="transparent" stroke="#5ac8fa" strokeWidth="1"/>
           <path id="blue_base" data-name="blue base" d="M2,0H34a0,0,0,0,1,0,0V34a0,0,0,0,1,0,0H2a2,2,0,0,1-2-2V2A2,2,0,0,1,2,0Z" transform="translate(3.884)" fill="#5ac8fa"/>
           <text id="Output_Stream" data-name="Output
-    Stream" transform="translate(43.023 15)" fill="#5ac8fa" stroke="rgba(0,0,0,0)" stroke-width="1" font-size="12" font-family="Gilroy-Medium, Gilroy" font-weight="500" letter-spacing="-0.005em"><tspan x="0" y="0">OUTPUT</tspan><tspan x="0" y="12">STREAM</tspan></text>
-          <g id="ball_left-4" data-name="ball left" transform="translate(1.024 14)" fill="#5ac8fa" stroke="#0a415e" stroke-width="1">
+    Stream" transform="translate(43.023 15)" fill="#5ac8fa" stroke="rgba(0,0,0,0)" strokeWidth="1" fontSize="12" fontFamily="Gilroy-Medium, Gilroy" fontWeight="500" letterSpacing="-0.005em"><tspan x="0" y="0">OUTPUT</tspan><tspan x="0" y="12">STREAM</tspan></text>
+          <g id="ball_left-4" data-name="ball left" transform="translate(1.024 14)" fill="#5ac8fa" stroke="#0a415e" strokeWidth="1">
             <circle cx="3.5" cy="3.5" r="3.5" stroke="none"/>
             <circle cx="3.5" cy="3.5" r="3" fill="none"/>
           </g>
@@ -124,23 +124,23 @@ const PipelineSVG: React.FC<PipelineSVGProps> = ({}) => {
           </g>
         </g>
         <g id="connectors" transform="translate(141.889 118.5)">
-          <path id="Path_693" data-name="Path 693" d="M-17933.049,7805.512c-52.57,0-43.414-41.845-86.623-41.66" transform="translate(18440.016 -7763.172)" fill="none" stroke="#5ac8fa" stroke-width="1" stroke-dasharray="1 2"/>
-          <path id="Path_696" data-name="Path 696" d="M-18019.676,7805.512c52.578,0,43.416-41.845,86.627-41.66" transform="translate(18019.676 -7763.172)" fill="none" stroke="#5ac8fa" stroke-width="1" stroke-dasharray="1 2"/>
-          <path id="Path_694" data-name="Path 694" d="M0,.01C113.419-.222,93.571,41.665,186.789,41.288" transform="matrix(1, 0.017, -0.017, 1, 7.591, 40.882)" fill="none" stroke="#5ac8fa" stroke-width="1" stroke-dasharray="1 2"/>
-          <path id="Path_695" data-name="Path 695" d="M-.14,38.046c113.42.232,93.577-39.271,186.794-38.9" transform="matrix(-1, 0.017, -0.017, -1, 506.714, 80.383)" fill="none" stroke="#5ac8fa" stroke-width="1" stroke-dasharray="1 2"/>
-          <line id="Line_128" data-name="Line 128" x2="78.177" transform="translate(212.438)" fill="none" stroke="#5ac8fa" stroke-width="1" stroke-dasharray="1 2"/>
-          <line id="Line_129" data-name="Line 129" x2="78.177" transform="translate(631.838 42.34)" fill="none" stroke="#5ac8fa" stroke-width="1" stroke-dasharray="1 2"/>
+          <path id="Path_693" data-name="Path 693" d="M-17933.049,7805.512c-52.57,0-43.414-41.845-86.623-41.66" transform="translate(18440.016 -7763.172)" fill="none" stroke="#5ac8fa" strokeWidth="1" strokeDasharray="1 2"/>
+          <path id="Path_696" data-name="Path 696" d="M-18019.676,7805.512c52.578,0,43.416-41.845,86.627-41.66" transform="translate(18019.676 -7763.172)" fill="none" stroke="#5ac8fa" strokeWidth="1" strokeDasharray="1 2"/>
+          <path id="Path_694" data-name="Path 694" d="M0,.01C113.419-.222,93.571,41.665,186.789,41.288" transform="matrix(1, 0.017, -0.017, 1, 7.591, 40.882)" fill="none" stroke="#5ac8fa" strokeWidth="1" strokeDasharray="1 2"/>
+          <path id="Path_695" data-name="Path 695" d="M-.14,38.046c113.42.232,93.577-39.271,186.794-38.9" transform="matrix(-1, 0.017, -0.017, -1, 506.714, 80.383)" fill="none" stroke="#5ac8fa" strokeWidth="1" strokeDasharray="1 2"/>
+          <line id="Line_128" data-name="Line 128" x2="78.177" transform="translate(212.438)" fill="none" stroke="#5ac8fa" strokeWidth="1" strokeDasharray="1 2"/>
+          <line id="Line_129" data-name="Line 129" x2="78.177" transform="translate(631.838 42.34)" fill="none" stroke="#5ac8fa" strokeWidth="1" strokeDasharray="1 2"/>
         </g>
         <g id="node-PP" transform="translate(223.631 101)"  {...stepProps(PipelineStep.PEOPLE)}>
-          <rect id="outline-6" data-name="outline" width="121.578" height="33.999" rx="2" transform="translate(3.883)" fill="transparent" stroke="#5ac8fa" stroke-width="1"/>
+          <rect id="outline-6" data-name="outline" width="121.578" height="33.999" rx="2" transform="translate(3.883)" fill="transparent" stroke="#5ac8fa" strokeWidth="1"/>
           <path id="blue_base" data-name="blue base" d="M2,0H34a0,0,0,0,1,0,0V34a0,0,0,0,1,0,0H2a2,2,0,0,1-2-2V2A2,2,0,0,1,2,0Z" transform="translate(3.883)" fill="#5ac8fa"/>
           <text id="People_Perceptor" data-name="People
-    Perceptor" transform="translate(42 15)" fill="#5ac8fa" stroke="rgba(0,0,0,0)" stroke-width="1" font-size="12" font-family="Gilroy-Medium, Gilroy" font-weight="500" letter-spacing="-0.005em"><tspan x="0" y="0">PEOPLE</tspan><tspan x="0" y="12">PERCEPTOR</tspan></text>
-          <g id="ball_right-5" data-name="ball right" transform="translate(123 14)" fill="#5ac8fa" stroke="#0a415e" stroke-width="1">
+    Perceptor" transform="translate(42 15)" fill="#5ac8fa" stroke="rgba(0,0,0,0)" strokeWidth="1" fontSize="12" fontFamily="Gilroy-Medium, Gilroy" fontWeight="500" letterSpacing="-0.005em"><tspan x="0" y="0">PEOPLE</tspan><tspan x="0" y="12">PERCEPTOR</tspan></text>
+          <g id="ball_right-5" data-name="ball right" transform="translate(123 14)" fill="#5ac8fa" stroke="#0a415e" strokeWidth="1">
             <circle cx="3.5" cy="3.5" r="3.5" stroke="none"/>
             <circle cx="3.5" cy="3.5" r="3" fill="none"/>
           </g>
-          <g id="ball_left-5" data-name="ball left" transform="translate(0 14)" fill="#5ac8fa" stroke="#0a415e" stroke-width="1">
+          <g id="ball_left-5" data-name="ball left" transform="translate(0 14)" fill="#5ac8fa" stroke="#0a415e" strokeWidth="1">
             <circle cx="3.5" cy="3.5" r="3.5" stroke="none"/>
             <circle cx="3.5" cy="3.5" r="3" fill="none"/>
           </g>

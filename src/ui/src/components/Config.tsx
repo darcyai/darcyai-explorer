@@ -1,8 +1,10 @@
-import React from 'react'
-import { usePipeline } from '../providers/Pipeline'
+import React, { ReactElement } from 'react'
+import { ConfigItem, usePipeline } from '../providers/Pipeline'
 
 import { makeStyles } from '@mui/styles'
-import { Theme } from '@mui/material'
+import { OutlinedInput, Theme } from '@mui/material'
+
+import clsx from 'clsx'
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -35,12 +37,90 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'center',
     height: '100%',
     width: '100%'
+  },
+  input: {
+    '&.MuiInputBase-sizeSmall': {
+      height: 24
+    },
+    '& input': {
+      font: 'normal normal 500 13px/16px Gilroy',
+      letterSpacing: 0,
+      color: theme.palette.neutral[2],
+    },
+    '& fieldset': {
+      borderColor: theme.palette.neutral[2],
+      '&:hover': {
+        borderColor: theme.palette.primary.main,
+      }
+    }
   }
 }))
 
+const useToggleStyles = makeStyles((theme: Theme) => ({
+  root: {
+    display: 'flex',
+    alignItems: 'center',
+    border: '1px solid',
+    borderColor: theme.palette.primary.main,
+    color: theme.palette.primary.main,
+    padding: 1,
+    cursor: 'pointer',
+    gap: 1,
+    borderRadius: theme.spacing(0.25)
+  },
+  item: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 20,
+    height: 20,
+    '&.filled': {
+      backgroundColor: theme.palette.primary.main,
+    }
+  }
+}))
+
+const Toggle: React.FC<{value: boolean, onChange: (newValue: boolean) => void, onBlur: any}> = ({value, onChange, onBlur}) => {
+  const classes = useToggleStyles()
+  const [dirty, setDirty] = React.useState(false)
+
+  const _onBlur = () => {
+    if (dirty) {
+      onBlur()
+      setDirty(false)
+    }
+  }
+  
+  const _onChange = () => {
+    onChange(!value)
+    setDirty(true)
+  }
+
+  return (<div className={classes.root} onClick={_onChange} onBlur={_onBlur} onMouseLeave={_onBlur} >
+    <div>{value ? <div className={clsx(classes.item, 'filled')} /> : <div className={classes.item}>X</div> }</div>
+    <div>{value ? <div className={classes.item}>V</div> : <div className={clsx(classes.item, 'filled')} />}</div>
+  </div>)
+}
+
 const Config: React.FC = () => {
   const classes = useStyles()
-  const { selectedStep, config } = usePipeline()
+  const { selectedStep, config, updateConfig, saveConfig } = usePipeline()
+
+  const configInputByType = (configItem: ConfigItem): ReactElement => {
+    switch (configItem.type) {
+      case 'int':
+      case 'float':
+        return <OutlinedInput size='small' className={classes.input} type="number"  value={configItem.value} onChange={(e) => { updateConfig(configItem.name, e.target.value)}} onBlur={() => { saveConfig() }} />
+      case 'str':
+        return <OutlinedInput size='small' className={classes.input} type="text" value={configItem.value} onChange={(e) => { updateConfig(configItem.name, e.target.value)}} onBlur={() => { saveConfig() }} />
+      case 'bool':
+        return (
+          <Toggle value={configItem.value} onChange={(value) => { updateConfig(configItem.name, value)}} onBlur={() => { saveConfig() }} />
+        )
+      default:
+        return <span>{JSON.stringify(configItem.value)}</span>
+    }
+  }
 
   return (
     <div className={classes.root}>
@@ -52,7 +132,7 @@ const Config: React.FC = () => {
       {config.map(item => (
         <div key={item.name} className={classes.item}>
           <div>{item.description}</div>
-          <div>{item.value.toString()}</div>
+          <div>{configInputByType(item)}</div>
         </div>
       ))}
     </div>
