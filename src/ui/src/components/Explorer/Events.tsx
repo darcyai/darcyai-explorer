@@ -63,12 +63,6 @@ const Events: React.FC = () => {
     timeoutRef.current = window.setTimeout(pollEvents, 1.5 * 1000)
   }
 
-  // React.useEffect(() => {
-  //   if (selectedEvent === '' && events.length > 0) {
-  //     setSelectedEvent(events[0].id)
-  //   }
-  // }, [events])
-
   React.useEffect(() => {
     return () => {
       if (timeoutRef.current != null) {
@@ -78,14 +72,17 @@ const Events: React.FC = () => {
   }, [])
 
   React.useEffect(() => {
-    if (isPlaying) {
-      pollEvents()
-    } else {
-      if (timeoutRef.current != null) {
-        window.clearTimeout(timeoutRef.current)
-      }
+    if (timeoutRef.current != null) {
+      window.clearTimeout(timeoutRef.current)
     }
-  }, [isPlaying])
+    if (isPlaying) {
+      if (selectedStep != null) {
+        pollEvents()
+      }
+    } else {
+      fetchEvents()
+    }
+  }, [isPlaying, selectedStep])
 
   const selectEvent = (event: EventItem) => {
     setSelectedEvent(event.id)

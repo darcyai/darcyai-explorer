@@ -39,7 +39,7 @@ declare interface Pipeline {
   selectStep: (step?: PipelineStep) => void
   hoverStep: (step?: PipelineStep) => void
   playLiveStream: () => void
-  pauseLiveStream: () => void
+  pauseLiveStream: () => Promise<void>
   showFrame: (frame: string) => void
   fetchPulses: () => Promise<void>
   fetchEvents: () => Promise<void>
@@ -58,7 +58,7 @@ const defaultValue: Pipeline = {
   selectStep: (step?: PipelineStep) => {},
   hoverStep: (step?: PipelineStep) => {},
   playLiveStream: () => {},
-  pauseLiveStream: () => {},
+  pauseLiveStream: async () => {},
   fetchPulses: async () => {},
   fetchEvents: async () => {},
   showFrame: (frame: string) => {},
@@ -155,7 +155,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
     }
   }
 
-  async function fetchEvents () {
+  const fetchEvents = async () => {
     if (selectedStep === undefined || stepEventURL(selectedStep) === '' ) {
       setEvents([])
       return
@@ -202,6 +202,12 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
         console.error(err)
         pushErrorFeedBack(err)
         setConfig([])
+      })
+      fetchEvents()
+      .catch(err => {
+        console.error(err)
+        pushErrorFeedBack(err)
+        setEvents([])
       })
     }
   }, [selectedStep])
@@ -261,7 +267,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
         selectStep: (step?: PipelineStep) => { setSelectedStep(step); setShowDetails(true) },
         hoverStep: (step?: PipelineStep) => setHoveredStep(step),
         playLiveStream: () => { setImageSrc(liveFeedSrc) },
-        pauseLiveStream: () => { pause() },
+        pauseLiveStream: pause,
         fetchPulses: async () => fetchPulses(),
         fetchEvents: async () => fetchEvents(),
         showFrame: (frame: string) => setImageSrc(frame),

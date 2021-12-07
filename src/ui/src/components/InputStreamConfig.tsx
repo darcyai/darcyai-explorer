@@ -98,7 +98,7 @@ const InputStreamConfig: React.FC = () => {
 
   async function updateInput(inputId: number) {
     try {
-      pauseLiveStream()
+      await pauseLiveStream()
       const res = await fetch(`/inputs/${inputId}`, { method: 'PUT' })
       if (!res.ok) { throw new Error(res.statusText) }
       const data = await res.json()

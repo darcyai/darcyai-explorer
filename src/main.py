@@ -140,6 +140,9 @@ def get_inputs():
 @app.route('/inputs/<int:input_id>', methods=['PUT'])
 def set_input(input_id):
   global current_pipeline_input_id
+  if input_id == current_pipeline_input_id:
+    return jsonify({ "inputs": pipeline_inputs, "current": current_pipeline_input_id })
+  eventStore.clear()
   current_pipeline_input_id = input_id
   pipeline_instance.change_input(get_current_pipeline_input(current_pipeline_input_id))
   return jsonify({ "inputs": pipeline_inputs, "current": current_pipeline_input_id })

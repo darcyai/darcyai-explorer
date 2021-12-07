@@ -4,19 +4,26 @@ from darcyai_engine.input.camera_stream import CameraStream
 from darcyai_engine.output.live_feed_stream import LiveFeedStream
 from .basic_perceptor import BasicPerceptor
 import os
+import time
+import platform
+
 
 absolutepath = os.path.dirname(os.path.abspath(__file__))
+
+def is_mac_osx():
+    return platform.system() == "Darwin"
 
 def get_input_stream(input):
     if input["type"] == "video_file":
         return VideoFileStream(os.path.join(absolutepath, input["file"]))
     elif input["type"] == "live_feed":
-        return CameraStream()
+        return CameraStream(video_device=0 if is_mac_osx() else "/dev/video0")
     else:
-        return CameraStream()
+        return CameraStream(video_device=0 if is_mac_osx() else "/dev/video0")
 
 class ExplorerPipeline():    
     def __init__(self, app, input, event_cb):
+        self.__stopped = False
         self.__pipeline = Pipeline(input_stream=get_input_stream(input),
                                    universal_rest_api=True,
                                    rest_api_flask_app=app,
@@ -34,15 +41,25 @@ class ExplorerPipeline():
         basic_perceptor.on("event_1", event_cb("basic", "event_1"))
 
     def run(self):
-        self.__pipeline.run()
+        while True:
+            if self.__stopped:
+                time.sleep(0.01)
+            else:
+                try:
+                    self.__pipeline.run()
+                except Exception as e:
+                    time.sleep(1)
+                    print(e)
+                    pass
 
     def __output_stream_callback(self, pom, input_data):
         return input_data.data.copy()
 
     def change_input(self, input):
+        self.__stopped = True
         self.__pipeline.stop()
         self.__pipeline.add_input_stream(get_input_stream(input))
-        self.__pipeline.run()
+        self.__stopped = False
 
     def __perceptor_input_callback(self, input_data, pom, config):
         return input_data
