@@ -171,7 +171,7 @@ def catch_all_css(path):
     return send_from_directory(ui_build_path, 'index.html')
 
 @app.route('/static/media/<path:path>', defaults={'path': ''})
-def catch_all_css(path):
+def catch_all_media(path):
   try:
     return send_from_directory(ui_build_path + "/static/media", path)
   except BaseException:
