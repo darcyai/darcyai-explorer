@@ -1,5 +1,15 @@
-all: build run
+all: build
 
+.PHONY: deps
+deps:
+	sudo apt-get update -y
+	sudo apt-get install -y libhdf5-dev libhdf5-serial-dev libatlas-base-dev libjasper-dev  libqtgui4  libqt4-test
+	python3 -m pip install -U numpy
+	python3 -m pip install -U imutils==0.5.4
+	python3 -m pip install -U opencv-python==4.5.3.56
+	python3 -m pip install -U darcyai-engine
+	python3 -m pip install -U darcyai-coral
+	python3 -m pip install -U flask_cors
 
 .PHONY: build
 build:
