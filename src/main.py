@@ -146,11 +146,34 @@ def set_input(input_id):
   pipeline_instance.change_input(get_current_pipeline_input(current_pipeline_input_id))
   return jsonify({ "inputs": pipeline_inputs, "current": current_pipeline_input_id })
 
+# Serve static folder (and nested folders)
+# We should be using nginx for this
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
   try:
     return send_from_directory(ui_build_path, path)
+  except BaseException:
+    return send_from_directory(ui_build_path, 'index.html')
+
+@app.route('/static/js/<path:path>')
+def catch_all_js(path):
+  try:
+    return send_from_directory(ui_build_path + "/static/js", path)
+  except BaseException:
+    return send_from_directory(ui_build_path, 'index.html')
+
+@app.route('/static/css/<path:path>', defaults={'path': ''})
+def catch_all_css(path):
+  try:
+    return send_from_directory(ui_build_path + "/static/css", path)
+  except BaseException:
+    return send_from_directory(ui_build_path, 'index.html')
+
+@app.route('/static/media/<path:path>', defaults={'path': ''})
+def catch_all_css(path):
+  try:
+    return send_from_directory(ui_build_path + "/static/media", path)
   except BaseException:
     return send_from_directory(ui_build_path, 'index.html')
 

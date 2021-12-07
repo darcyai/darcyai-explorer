@@ -3,10 +3,10 @@ all: build
 .PHONY: deps
 deps:
 	sudo apt-get update -y
-	sudo apt-get install -y libhdf5-dev libhdf5-serial-dev libatlas-base-dev libjasper-dev  libqtgui4  libqt4-test
+	sudo apt-get install -y libhdf5-dev libhdf5-serial-dev libatlas-base-dev libjasper-dev  libqtgui4  libqt4-test libilmbase-dev libopenexr-dev libavcodec-dev libswscale-dev
 	python3 -m pip install -U numpy
-	python3 -m pip install -U imutils==0.5.4
-	python3 -m pip install -U opencv-python==4.5.3.56
+	python3 -m pip install imutils==0.5.4
+	python3 -m pip install opencv-python==4.5.3.56
 	python3 -m pip install -U darcyai-engine
 	python3 -m pip install -U darcyai-coral
 	python3 -m pip install -U flask_cors
@@ -17,7 +17,7 @@ build:
 
 .PHONY: build-ui
 build-ui:
-	cd src/ui && npm run build
+	cd src/ui && npm i && npm run build
 
 .PHONY: build-bundled
 build-bundled:
