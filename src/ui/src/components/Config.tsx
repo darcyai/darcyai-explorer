@@ -1,10 +1,11 @@
 import React, { ReactElement } from 'react'
-import { ConfigItem, usePipeline } from '../providers/Pipeline'
+import { ConfigItem, PipelineStep, usePipeline } from '../providers/Pipeline'
 
 import { makeStyles } from '@mui/styles'
 import { OutlinedInput, Theme } from '@mui/material'
 
 import clsx from 'clsx'
+import InputStreamConfig from './InputStreamConfig'
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -121,6 +122,9 @@ const Config: React.FC = () => {
         return <span>{JSON.stringify(configItem.value)}</span>
     }
   }
+
+  // This is dirty
+  if (selectedStep === PipelineStep.INPUT) { return <div className={classes.root}><InputStreamConfig /></div> }
 
   return (
     <div className={classes.root}>

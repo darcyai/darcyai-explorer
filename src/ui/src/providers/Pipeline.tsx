@@ -1,5 +1,4 @@
 import React from 'react'
-import { debounce } from 'lodash'
 import { useFeedback } from './Feedback'
 
 const liveFeedSrc = '/live_feed'
@@ -91,7 +90,7 @@ export const perceptorNameByStep: (step: PipelineStep) => string = (step: Pipeli
     case PipelineStep.CALLBACK:
       return 'basic'
     case PipelineStep.OUTPUT:
-      return 'basic'
+      return 'live_feed'
     default:
       return ''
   }
@@ -118,8 +117,6 @@ const stepConfigURL: (step: PipelineStep) => string = (step: PipelineStep) => {
 
 const stepEventURL: (step: PipelineStep) => string = (step: PipelineStep) => {
   switch (step) {
-    case PipelineStep.INPUT:
-      return `/events/${perceptorNameByStep(step)}`
     case PipelineStep.PEOPLE:
       return `/events/${perceptorNameByStep(step)}`
     case PipelineStep.MASK:
@@ -127,8 +124,6 @@ const stepEventURL: (step: PipelineStep) => string = (step: PipelineStep) => {
     case PipelineStep.QRCODE:
       return `/events/${perceptorNameByStep(step)}`
     case PipelineStep.CALLBACK:
-      return `/events/${perceptorNameByStep(step)}`
-    case PipelineStep.OUTPUT:
       return `/events/${perceptorNameByStep(step)}`
     default:
       return ''
@@ -151,6 +146,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   async function fetchPulses () {
     try {
       const res = await window.fetch('/pulses/history')
+      if (!res.ok) { throw new Error(res.statusText) }
       const data = await res.json()
       setPulses(data)
     } catch (e: any) {
@@ -160,12 +156,13 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   }
 
   async function fetchEvents () {
-    if (selectedStep === undefined) {
+    if (selectedStep === undefined || stepEventURL(selectedStep) === '' ) {
       setEvents([])
       return
     }
     try {
       const res = await window.fetch(`${stepEventURL(selectedStep)}`)
+      if (!res.ok) { throw new Error(res.statusText) }
       const data = await res.json()
       setEvents(data)
     } catch(e: any) {
@@ -176,11 +173,12 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
 
   async function fetchPerceptorConfig(step: PipelineStep) {
     const url = stepConfigURL(step)
-    if (url === '') { 
+    if (url === '') {
       setConfig([])
       return
     }
     const res = await window.fetch(`/pipeline${url}`)
+    if (!res.ok) { throw new Error(res.statusText) }
     const config = await res.json()
     setConfig(config)
   }
@@ -188,6 +186,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   async function pause() {
     try {
       const res = await window.fetch('/current_pulse')
+      if (!res.ok) { throw new Error(res.statusText) }
       const data = await res.json()
       setImageSrc(data.frame)
     } catch (e: any) {
@@ -202,6 +201,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
       .catch(err => {
         console.error(err)
         pushErrorFeedBack(err)
+        setConfig([])
       })
     }
   }, [selectedStep])

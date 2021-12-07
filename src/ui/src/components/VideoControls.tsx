@@ -3,7 +3,8 @@ import { makeStyles } from '@mui/styles'
 import { Button, Theme } from '@mui/material'
 import { usePipeline } from '../providers/Pipeline'
 
-import { ReactComponent as PlayIcon } from '../assets/next.svg'
+import { ReactComponent as PlayIcon } from '../assets/play.svg'
+import { ReactComponent as PauseIcon } from '../assets/pause.svg'
 
 const useStyles = makeStyles<Theme>(theme => ({
   root: {
@@ -15,7 +16,7 @@ const useStyles = makeStyles<Theme>(theme => ({
 
 const VideoControls: React.FC = () => {
   const classes = useStyles()
-  const { imageSrc, isPlaying, pauseLiveStream, playLiveStream } = usePipeline()
+  const { isPlaying, pauseLiveStream, playLiveStream } = usePipeline()
 
   const toggleVideo = () => {
     if (isPlaying) {
@@ -27,7 +28,7 @@ const VideoControls: React.FC = () => {
 
   return (
     <div className={classes.root}>
-      <Button size='small' variant='contained' color='primary' style={{ minWidth: 0 }} onClick={toggleVideo}>{isPlaying ? '||' : <PlayIcon />}</Button>
+      <Button size='small' variant='contained' color='primary' style={{ minWidth: 0 }} onClick={toggleVideo}>{isPlaying ? <PauseIcon /> : <PlayIcon />}</Button>
     </div>
   )
 }

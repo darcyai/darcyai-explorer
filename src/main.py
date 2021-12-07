@@ -47,8 +47,49 @@ def store_latest_event(perceptor_name, event_name):
     return None
   return event_handler
 
-pipeline_instance = ExplorerPipeline(app, store_latest_event)
+pipeline_inputs = [
+  {
+    "id": 1,
+    "title": 'Demo video',
+    "file": 'video.mp4',
+    "thumbnail": 'video.jpg',
+    "type": 'video_file',
+    "description": 'People checking in at a school',
+  },
+  {
+    "id": 2,
+    "title": 'Demo video',
+    "file": 'video_2.mp4',
+    "thumbnail": 'video_2.jpg',
+    "type": 'video_file',
+    "description": 'Spinning earth',
+  },
+  {
+    "id": 3,
+    "title": 'Live video',
+    "description": 'Live feed from your source video',
+    "type": 'live_feed',
+    "thumbnail": 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKQAAABuCAQAAAADz3AYAAAAnUlEQVR42u3QMQEAAAwCoNm/9Er4CRHIUREFIkWKRKRIkSIRKVIkIkWKFIlIkSJFIlKkSESKFCkSkSJFikSkSJGIFClSJCJFikSkSJEiESlSpEhEihSJSJEiRSJSpEiRiBQpEpEiRYpEpEiRIhEpUiQiRYoUiUiRIhEpUqRIRIoUKRKRIkUiUqRIkYgUKVIkIkWKRKRIkSIRKVLkugc1EABvYNjcFAAAAABJRU5ErkJggg==',
+  }
+]
 
+current_pipeline_input_id = 1
+
+def get_current_pipeline_input(id):
+  for input in pipeline_inputs:
+    if input['id'] == id:
+      return input
+  return None
+
+def get_events_summary():
+  return {
+    "inScene": 2,
+    "uniqueVisitors": 16,
+    "faceMasks": 13,
+    "qrCodes": 9
+  }
+
+pipeline_instance = ExplorerPipeline(app, get_current_pipeline_input(current_pipeline_input_id), store_latest_event)
 
 @app.route('/events')
 def get_all_events():
@@ -62,6 +103,8 @@ def get_all_pom():
 def get_events(perceptor_name):
   if perceptor_name in eventStore:
     return jsonify(eventStore[perceptor_name])
+  elif perceptor_name == 'summary':
+    return jsonify(get_events_summary())
   else:
     return jsonify({})
 
@@ -89,6 +132,17 @@ def get_historical_pulse():
   for pulse_number, pom in poms.items():
     pulses.append(format_pulse(pom, pulse_number))
   return jsonify(pulses)
+
+@app.route('/inputs')
+def get_inputs():
+  return jsonify({ "inputs": pipeline_inputs, "current": current_pipeline_input_id })
+
+@app.route('/inputs/<int:input_id>', methods=['PUT'])
+def set_input(input_id):
+  global current_pipeline_input_id
+  current_pipeline_input_id = input_id
+  pipeline_instance.change_input(get_current_pipeline_input(current_pipeline_input_id))
+  return jsonify({ "inputs": pipeline_inputs, "current": current_pipeline_input_id })
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

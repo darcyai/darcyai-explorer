@@ -1,16 +1,23 @@
 from darcyai_engine.pipeline import Pipeline
 from darcyai_engine.input.video_file_stream import VideoFileStream
+from darcyai_engine.input.camera_stream import CameraStream
 from darcyai_engine.output.live_feed_stream import LiveFeedStream
 from .basic_perceptor import BasicPerceptor
 import os
 
 absolutepath = os.path.dirname(os.path.abspath(__file__))
-video_path = os.path.join(absolutepath, 'video.mp4')
+
+def get_input_stream(input):
+    if input["type"] == "video_file":
+        return VideoFileStream(os.path.join(absolutepath, input["file"]))
+    elif input["type"] == "live_feed":
+        return CameraStream()
+    else:
+        return CameraStream()
 
 class ExplorerPipeline():    
-    def __init__(self, app, event_cb):
-        video_file = VideoFileStream(file_name=video_path)
-        self.__pipeline = Pipeline(input_stream=video_file,
+    def __init__(self, app, input, event_cb):
+        self.__pipeline = Pipeline(input_stream=get_input_stream(input),
                                    universal_rest_api=True,
                                    rest_api_flask_app=app,
                                    rest_api_base_path="/pipeline")
@@ -31,6 +38,11 @@ class ExplorerPipeline():
 
     def __output_stream_callback(self, pom, input_data):
         return input_data.data.copy()
+
+    def change_input(self, input):
+        self.__pipeline.stop()
+        self.__pipeline.add_input_stream(get_input_stream(input))
+        self.__pipeline.run()
 
     def __perceptor_input_callback(self, input_data, pom, config):
         return input_data

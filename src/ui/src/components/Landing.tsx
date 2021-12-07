@@ -6,6 +6,7 @@ import Pipeline from './Pipeline'
 import { ReactComponent as InspectIcon } from '../assets/inspect.svg'
 import { usePipeline, PipelineStep } from '../providers/Pipeline'
 import VideoControls from './VideoControls'
+import Summary from './Summary'
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -79,6 +80,7 @@ const useStyles = makeStyles((theme: Theme) => {
     videoSection: {
       position: 'relative',
       width: '100%',
+      minHeight: theme.spacing(40),
       lineHeight: 0,
       '& img': {
         width: '100%',
@@ -87,6 +89,14 @@ const useStyles = makeStyles((theme: Theme) => {
     pipelineContainer: {
       width: '100%',
       maxWidth: 954
+    },
+    summarySection: {
+      minHeight: theme.spacing(11),
+      backgroundColor: theme.palette.primary.main,
+      borderTop: `1px solid ${theme.palette.neutral[5] ?? ''}`,
+      [theme.breakpoints.up('md')]: {
+        flex: 1
+      }
     }
   }
 })
@@ -141,6 +151,9 @@ const Landing: React.FC<LandingProps> = ({ inspect, showInspect }) => {
       <div className={classes.videoSection}>
         <img src={imageSrc} alt='live_feed' />
         <VideoControls />
+      </div>
+      <div className={classes.summarySection}>
+        <Summary />
       </div>
     </div>
   )
