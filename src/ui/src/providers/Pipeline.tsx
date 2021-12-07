@@ -136,7 +136,7 @@ export const usePipeline: () => Pipeline = () => React.useContext(PipelineContex
 export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, children }) => {
   const [imageSrc, setImageSrc] = React.useState < string > (liveFeedSrc)
   const [selectedStep, setSelectedStep] = React.useState<PipelineStep | undefined>(undefined)
-  const [hoveredStep, setHoveredStep] = React.useState<PipelineStep | undefined>(PipelineStep.INPUT)
+  const [hoveredStep, setHoveredStep] = React.useState<PipelineStep | undefined>(undefined)
   const [pulses, setPulses] = React.useState<Pulse[]>([])
   const [events, setEvents] = React.useState<EventItem[]>([])
   const [config, setConfig] = React.useState<ConfigItem[]>([])
