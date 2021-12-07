@@ -9,15 +9,7 @@ COPY ./src/ui/ ./
 RUN npm run build
 
 # Stage 2 - Build the pipeline
-FROM python:3.7-slim
-
-RUN apt-get update && apt-get install -y --no-install-recommends libsm6 libxext6 libxrender1 libglib2.0-bin \
-    && apt-get clean \
-    && apt-get install ffmpeg libsm6 libxext6  -y \
-    && rm -rf /var/lib/apt/lists/* 
-    
-RUN python -m pip install --upgrade --no-cache-dir \
-    opencv-python
+FROM edgeworx/darcy-ai-base-armv7l:dev
 
 RUN python3 -m pip install --upgrade darcyai-engine
 RUN python3 -m pip install --upgrade darcyai-coral

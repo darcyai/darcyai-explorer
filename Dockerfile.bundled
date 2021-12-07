@@ -1,4 +1,4 @@
-FROM edgeworx/darcy-ai-coral-armv7l:dev
+FROM edgeworx/darcy-ai-base-armv7l:dev
 
 RUN python3 -m pip install --upgrade darcyai-engine
 RUN python3 -m pip install --upgrade darcyai-coral
