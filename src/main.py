@@ -151,6 +151,8 @@ def set_input(input_id):
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
+  print("root path")
+  print(path)
   try:
     return send_from_directory(ui_build_path, path)
   except BaseException:
@@ -158,20 +160,26 @@ def catch_all(path):
 
 @app.route('/static/js/<path:path>')
 def catch_all_js(path):
+  print("js path")
+  print(path)
   try:
     return send_from_directory(ui_build_path + "/static/js", path)
   except BaseException:
     return send_from_directory(ui_build_path, 'index.html')
 
-@app.route('/static/css/<path:path>', defaults={'path': ''})
+@app.route('/static/css/<path:path>')
 def catch_all_css(path):
+  print("css path")
+  print(path)
   try:
     return send_from_directory(ui_build_path + "/static/css", path)
   except BaseException:
     return send_from_directory(ui_build_path, 'index.html')
 
-@app.route('/static/media/<path:path>', defaults={'path': ''})
+@app.route('/static/media/<path:path>')
 def catch_all_media(path):
+  print("media path")
+  print(path)
   try:
     return send_from_directory(ui_build_path + "/static/media", path)
   except BaseException:
