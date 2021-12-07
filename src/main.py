@@ -109,28 +109,28 @@ def get_events(perceptor_name):
     return jsonify({})
 
 
-def format_pulse(pom: PerceptionObjectModel, pulse_number):
+def format_pulse(pom: PerceptionObjectModel):
   # Convert input to base64 image
   input = pom.get_input_data()
   serialized_pom = pom.serialize()
-  serialized_pom.pop('_PerceptionObjectModel__input_data') # Remove input data from serialized pom
+  serialized_pom['input_data'] = "Pixel array that contains the input frame"
   return {
     'frame': 'data:image/jpeg;base64,' + input.serialize()['frame'].decode('utf-8'),
     'pom': serialized_pom,
-    'id': pulse_number
+    'id': serialized_pom['pulse_number']
   }
 
 @app.route('/current_pulse')
 def get_current_pulse():
   pom = pipeline_instance.get_pom()
-  return jsonify(format_pulse(pom, pipeline_instance.get_current_pulse_number()))
+  return jsonify(format_pulse(pom))
 
 @app.route('/pulses/history')
 def get_historical_pulse():
   poms = pipeline_instance.get_pom_history()
   pulses = []
   for pulse_number, pom in poms.items():
-    pulses.append(format_pulse(pom, pulse_number))
+    pulses.append(format_pulse(pom))
   return jsonify(pulses)
 
 @app.route('/inputs')

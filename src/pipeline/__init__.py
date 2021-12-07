@@ -33,9 +33,9 @@ class ExplorerPipeline():
         #                            rest_api_host="0.0.0.0",
         #                            rest_api_port=8080,
         #                            rest_api_base_path="/")
-        live_feed = LiveFeedStream(flask_app=app, path="/live_feed")
+        self.__output_stream = LiveFeedStream(flask_app=app, path="/live_feed")
         # live_feed = LiveFeedStream(host="0.0.0.0", port=3456, path="/")
-        self.__pipeline.add_output_stream("live_feed", self.__output_stream_callback, live_feed)
+        self.__pipeline.add_output_stream("live_feed", self.__output_stream_callback, self.__output_stream)
         basic_perceptor = BasicPerceptor()
         self.__pipeline.add_perceptor("basic", basic_perceptor, accelerator_idx=0, input_callback=self.__perceptor_input_callback)
         basic_perceptor.on("event_1", event_cb("basic", "event_1"))
@@ -81,6 +81,9 @@ class ExplorerPipeline():
 
     def get_historical_pom(self, pulse_number):
         return self.__pipeline.get_historical_pom(pulse_number)
+
+    def get_latest_output_frame(self):
+        return self.__output_stream.get_latest_frame()
 
 if __name__ == "__main__":
     explorer = ExplorerPipeline()
