@@ -80,10 +80,13 @@ const useStyles = makeStyles((theme: Theme) => {
     videoSection: {
       position: 'relative',
       width: '100%',
-      minHeight: theme.spacing(40),
+      minHeight: theme.spacing(20),
       lineHeight: 0,
       '& img': {
         width: '100%',
+      },
+      [theme.breakpoints.up('md')]: {
+        minHeight: theme.spacing(40),
       }
     },
     pipelineContainer: {

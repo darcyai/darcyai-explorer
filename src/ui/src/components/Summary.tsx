@@ -22,23 +22,36 @@ const useStyles = makeStyles((theme: Theme) => ({
   item: {
     flex: 1,
     gap: theme.spacing(1),
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
+    flexDirection: 'column',
     backgroundColor: theme.palette.primary.main,
     minHeight: theme.spacing(11),
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
     display: 'flex',
+    [theme.breakpoints.up('md')]: {
+      padding: theme.spacing(2),
+      alignItems: 'flex-start',
+      justifyContent: 'flex-start',
+      flexDirection: 'row',
+    }
   },
   number: {
-    font: 'normal normal normal 36px/36px Gilroy',
+    font: 'normal normal normal 1.5rem/1.5rem Gilroy',
     letterSpacing: 0,
-    color: theme.palette.neutral[3]
+    color: theme.palette.neutral[3],
+    [theme.breakpoints.up('md')]: {
+      fontSize: '2.25rem',
+      lineHeight: '2.25rem',
+    }
   },
   label: {
-    font: 'normal normal 500 13px/20px Gilroy',
+    font: 'normal normal 500 0.68rem/1rem Gilroy',
     letterSpacing: 0.26,
     color: theme.palette.neutral[3],
     textTransform: 'uppercase',
+    [theme.breakpoints.up('md')]: {
+      fontSize: '0.8125rem',
+      lineHeight: '1.25rem',
+    }
   }
 }))
 
@@ -106,19 +119,19 @@ const Summary: React.FC = () => {
     <div className={classes.root}>
       <div className={classes.container}>
         <div className={classes.item}>
-          <span className={classes.number}>2</span>
+          <span className={classes.number}>{summary.inScene}</span>
           <span className={classes.label}>People in scene</span>
         </div>
         <div className={classes.item}>
-          <span className={classes.number}>16</span>
+          <span className={classes.number}>{summary.uniqueVisitors}</span>
           <span className={classes.label}>Unique visitors</span>
         </div>
         <div className={classes.item}>
-          <span className={classes.number}>13</span>
+          <span className={classes.number}>{summary.faceMasks}</span>
           <span className={classes.label}>Face mask detected</span>
         </div>
         <div className={classes.item}>
-          <span className={classes.number}>9</span>
+          <span className={classes.number}>{summary.qrCodes}</span>
           <span className={classes.label}>QR Codes detected</span>
         </div>
       </div>
