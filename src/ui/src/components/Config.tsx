@@ -84,20 +84,14 @@ const useToggleStyles = makeStyles((theme: Theme) => ({
 const Toggle: React.FC<{value: boolean, onChange: (newValue: boolean) => void, onBlur: any}> = ({value, onChange, onBlur}) => {
   const classes = useToggleStyles()
   const [dirty, setDirty] = React.useState(false)
-
-  const _onBlur = () => {
-    if (dirty) {
-      onBlur()
-      setDirty(false)
-    }
-  }
   
   const _onChange = () => {
     onChange(!value)
     setDirty(true)
+    onBlur()
   }
 
-  return (<div className={classes.root} onClick={_onChange} onBlur={_onBlur} onMouseLeave={_onBlur} >
+  return (<div className={classes.root} onClick={_onChange}>
     <div>{value ? <div className={clsx(classes.item, 'filled')} /> : <div className={classes.item}>X</div> }</div>
     <div>{value ? <div className={classes.item}>V</div> : <div className={clsx(classes.item, 'filled')} />}</div>
   </div>)
@@ -111,12 +105,12 @@ const Config: React.FC = () => {
     switch (configItem.type) {
       case 'int':
       case 'float':
-        return <OutlinedInput size='small' className={classes.input} type="number"  value={configItem.value} onChange={(e) => { updateConfig(configItem.name, e.target.value)}} onBlur={() => { saveConfig() }} />
+        return <OutlinedInput size='small' className={classes.input} type="number"  value={configItem.value} onChange={(e) => { updateConfig(configItem, e.target.value)}} onBlur={() => { saveConfig() }} />
       case 'str':
-        return <OutlinedInput size='small' className={classes.input} type="text" value={configItem.value} onChange={(e) => { updateConfig(configItem.name, e.target.value)}} onBlur={() => { saveConfig() }} />
+        return <OutlinedInput size='small' className={classes.input} type="text" value={configItem.value} onChange={(e) => { updateConfig(configItem, e.target.value)}} onBlur={() => { saveConfig() }} />
       case 'bool':
         return (
-          <Toggle value={configItem.value} onChange={(value) => { updateConfig(configItem.name, value)}} onBlur={() => { saveConfig() }} />
+          <Toggle value={configItem.value} onChange={(value) => { updateConfig(configItem, value)}} onBlur={() => { saveConfig() }} />
         )
       default:
         return <span>{JSON.stringify(configItem.value)}</span>

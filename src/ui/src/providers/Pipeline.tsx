@@ -43,7 +43,7 @@ declare interface Pipeline {
   showFrame: (frame: string) => void
   fetchPulses: () => Promise<void>
   fetchEvents: () => Promise<void>
-  updateConfig: (key: string, value: any) => void
+  updateConfig: (key: ConfigItem, value: any) => void
   saveConfig: () => Promise<void>
 }
 
@@ -62,7 +62,7 @@ const defaultValue: Pipeline = {
   fetchPulses: async () => {},
   fetchEvents: async () => {},
   showFrame: (frame: string) => {},
-  updateConfig: (key: string, value: any) => {},
+  updateConfig: (key: ConfigItem, value: any) => {},
   saveConfig: async () => {},
 }
 
@@ -139,7 +139,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   const [hoveredStep, setHoveredStep] = React.useState<PipelineStep | undefined>(undefined)
   const [pulses, setPulses] = React.useState<Pulse[]>([])
   const [events, setEvents] = React.useState<EventItem[]>([])
-  const [config, setConfig] = React.useState<ConfigItem[]>([])
+  let [config, setConfig] = React.useState<ConfigItem[]>([])
   const isPlaying = React.useMemo(() => !imageSrc.includes('base64'), [imageSrc])
   const { pushErrorFeedBack } = useFeedback()
 
@@ -241,14 +241,16 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
     }
   }
 
-  const updateConfig = (key: string, value: any) => {
-    const newConfig = config.map(item => {
-      if (item.name === key) {
-        return { ...item, value }
+  const updateConfig = (item: ConfigItem, newValue: any) => {
+    const newConfig = config.map(i => {
+      if (i.name === item.name) {
+        const value = item.type === 'int' || item.type === 'float' ? Number(newValue) : newValue
+        return { ...i, value }
       }
-      return item
+      return i
     })
     setConfig(newConfig)
+    config = newConfig // This will update the value on config in case saveConfig is called before the state update happens
     // saveConfig(newConfig)
     //   ?.catch(err => console.error(err))
   }
