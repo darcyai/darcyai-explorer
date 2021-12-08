@@ -58,7 +58,7 @@ class ExplorerPipeline():
     def change_input(self, input):
         self.__stopped = True
         self.__pipeline.stop()
-        self.__pipeline.add_input_stream(get_input_stream(input))
+        self.__pipeline.update_input_stream(get_input_stream(input))
         self.__stopped = False
 
     def __perceptor_input_callback(self, input_data, pom, config):
