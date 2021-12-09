@@ -57,14 +57,14 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 declare interface SummaryState {
   inScene: number
-  uniqueVisitors: number
+  visitors: number
   faceMasks: number
   qrCodes: number
 }
 
 const defaultSummaryState: SummaryState = {
   inScene: 0,
-  uniqueVisitors: 0,
+  visitors: 0,
   faceMasks: 0,
   qrCodes: 0,
 }
@@ -123,8 +123,8 @@ const Summary: React.FC = () => {
           <span className={classes.label}>People in scene</span>
         </div>
         <div className={classes.item}>
-          <span className={classes.number}>{summary.uniqueVisitors}</span>
-          <span className={classes.label}>Unique visitors</span>
+          <span className={classes.number}>{summary.visitors}</span>
+          <span className={classes.label}>Visitors</span>
         </div>
         <div className={classes.item}>
           <span className={classes.number}>{summary.faceMasks}</span>

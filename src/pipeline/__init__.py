@@ -48,9 +48,9 @@ class ExplorerPipeline():
         people_perceptor.on("new_person_entered_scene", self.__on_new_person_entered_scene)
         ## Update configuration
         self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "show_body_rectangle", True)
-        self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "body_rectangle_color", "255,255,255")
+        # self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "body_rectangle_color", "255,255,255")
         self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "show_face_rectangle", True)
-        self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "face_rectangle_color", "255,255,255")
+        # self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "face_rectangle_color", "255,255,255")
         self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "show_person_id", True)
 
         # Basic Perceptor
