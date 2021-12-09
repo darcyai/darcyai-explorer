@@ -2,13 +2,17 @@ all: build
 
 .PHONY: deps
 deps:
+	echo "deb https://packages.cloud.google.com/apt coral-edgetpu-stable main" | sudo tee /etc/apt/sources.list.d/coral-edgetpu.list
+	echo "deb https://packages.cloud.google.com/apt coral-cloud-stable main" | sudo tee /etc/apt/sources.list.d/coral-cloud.list
+	curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 	sudo apt-get update -y
-	sudo apt-get install -y libhdf5-dev libhdf5-serial-dev libatlas-base-dev libjasper-dev  libqtgui4  libqt4-test libilmbase-dev libopenexr-dev libavcodec-dev libswscale-dev
+	sudo apt-get install -y libedgetpu1-max python3-pycoral libhdf5-dev libhdf5-serial-dev libatlas-base-dev libjasper-dev  libqtgui4  libqt4-test libilmbase-dev libopenexr-dev libavcodec-dev libswscale-dev
 	python3 -m pip install -U numpy
 	python3 -m pip install imutils==0.5.4
 	python3 -m pip install opencv-python==4.5.3.56
 	python3 -m pip install -U darcyai-engine
 	python3 -m pip install -U darcyai-coral
+	python3 -m pip install -U pycoral
 	python3 -m pip install -U flask_cors
 
 .PHONY: build

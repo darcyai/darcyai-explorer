@@ -43,7 +43,7 @@ class ExplorerPipeline():
         # People Perceptor
         self.__people_perceptor_name = "people"
         people_perceptor = PeoplePerceptor()
-        self.__pipeline.add_perceptor(self.__people_perceptor_name, people_perceptor, accelerator_idx=0)
+        self.__pipeline.add_perceptor(self.__people_perceptor_name, people_perceptor, accelerator_idx=0, input_callback=self.__perceptor_input_callback)
         ## Event callbacks
         people_perceptor.on("new_person_entered_scene", self.__on_new_person_entered_scene)
         ## Update configuration
@@ -95,8 +95,9 @@ class ExplorerPipeline():
         self.__reset_summary()
         self.__stopped = False
 
+    # Passthrough callback
     def __perceptor_input_callback(self, input_data, pom, config):
-        return input_data
+        return input_data.data.copy()
 
     def get_pom(self):
         return self.__pipeline.get_pom()
