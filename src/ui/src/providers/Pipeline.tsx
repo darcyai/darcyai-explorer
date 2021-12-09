@@ -82,7 +82,7 @@ export const perceptorNameByStep: (step: PipelineStep) => string = (step: Pipeli
     case PipelineStep.INPUT:
       return 'basic'
     case PipelineStep.PEOPLE:
-      return 'basic'
+      return 'people'
     case PipelineStep.MASK:
       return 'basic'
     case PipelineStep.QRCODE:

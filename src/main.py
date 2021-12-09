@@ -38,6 +38,7 @@ def store_latest_event(perceptor_name, event_name):
         'id': event_name + '_' + str(timestamp),
         'timestamp': timestamp
       }
+    print(perceptor_name, event_name, event_data)
     if perceptor_name not in eventStore:
       eventStore[perceptor_name] = [format_event(event_data)]
     else:
@@ -97,7 +98,8 @@ def get_events(perceptor_name):
   elif perceptor_name == 'summary':
     return jsonify(pipeline_instance.get_summary())
   else:
-    return jsonify({})
+    print('No events for', perceptor_name)
+    return jsonify([])
 
 
 def format_pulse(pom: PerceptionObjectModel):
