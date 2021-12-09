@@ -80,14 +80,6 @@ def get_current_pipeline_input(id):
       return input
   return None
 
-def get_events_summary():
-  return {
-    "inScene": 2,
-    "uniqueVisitors": 16,
-    "faceMasks": 13,
-    "qrCodes": 9
-  }
-
 pipeline_instance = ExplorerPipeline(app, get_current_pipeline_input(current_pipeline_input_id), store_latest_event)
 
 @app.route('/events')
@@ -103,7 +95,7 @@ def get_events(perceptor_name):
   if perceptor_name in eventStore:
     return jsonify(eventStore[perceptor_name])
   elif perceptor_name == 'summary':
-    return jsonify(get_events_summary())
+    return jsonify(pipeline_instance.get_summary())
   else:
     return jsonify({})
 

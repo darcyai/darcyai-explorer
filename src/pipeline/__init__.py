@@ -3,6 +3,7 @@ from darcyai_engine.input.video_file_stream import VideoFileStream
 from darcyai_engine.input.camera_stream import CameraStream
 from darcyai_engine.output.live_feed_stream import LiveFeedStream
 from .basic_perceptor import BasicPerceptor
+from darcyai_coral.people_perceptor import PeoplePerceptor
 import os
 import time
 import platform
@@ -28,17 +29,47 @@ class ExplorerPipeline():
                                    universal_rest_api=True,
                                    rest_api_flask_app=app,
                                    rest_api_base_path="/pipeline")
-        # self.__pipeline = Pipeline(input_stream=video_file,
-        #                            universal_rest_api=True,
-        #                            rest_api_host="0.0.0.0",
-        #                            rest_api_port=8080,
-        #                            rest_api_base_path="/")
         self.__output_stream = LiveFeedStream(flask_app=app, path="/live_feed")
-        # live_feed = LiveFeedStream(host="0.0.0.0", port=3456, path="/")
         self.__pipeline.add_output_stream("live_feed", self.__output_stream_callback, self.__output_stream)
+
+        self.__summary = {
+            "inScene": 0,
+            "visitors": 0,
+            "faceMasks": 0,
+            "qrCodes": 0
+        }
+        self.__event_cb = event_cb
+
+        # People Perceptor
+        self.__people_perceptor_name = "people"
+        people_perceptor = PeoplePerceptor()
+        self.__pipeline.add_perceptor(self.__people_perceptor_name, people_perceptor, accelerator_idx=0)
+        ## Event callbacks
+        people_perceptor.on("new_person_entered_scene", self.__on_new_person_entered_scene)
+        ## Update configuration
+        self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "show_body_rectangle", True)
+        self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "body_rectangle_color", "255, 255, 255")
+        self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "show_face_rectangle", True)
+        self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "face_rectangle_color", "255, 255, 255")
+        self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "show_person_id", True)
+
+        # Basic Perceptor
         basic_perceptor = BasicPerceptor()
-        self.__pipeline.add_perceptor("basic", basic_perceptor, accelerator_idx=0, input_callback=self.__perceptor_input_callback)
+        self.__pipeline.add_perceptor("basic", basic_perceptor, parent=self.__people_perceptor_name, accelerator_idx=0, input_callback=self.__perceptor_input_callback)
+        ## Event callbacks
         basic_perceptor.on("event_1", event_cb("basic", "event_1"))
+
+    def __reset_summary(self):
+        self.__summary = {
+            "inScene": 0,
+            "visitors": 0,
+            "faceMasks": 0,
+            "qrCodes": 0
+        }
+
+    def __on_new_person_entered_scene(self, event_data):
+        self.__summary["visitors"] += 1
+        self.__event_cb(self.__people_perceptor_name, "new_person_entered_scene")(event_data)
 
     def run(self):
         while True:
@@ -53,12 +84,15 @@ class ExplorerPipeline():
                     pass
 
     def __output_stream_callback(self, pom, input_data):
+        # TODO: Move this logic to pulse_completion_callback
+        self.__summary["inScene"] = pom[self.__people_perceptor_name].peopleCount()
         return input_data.data.copy()
 
     def change_input(self, input):
         self.__stopped = True
         self.__pipeline.stop()
         self.__pipeline.update_input_stream(get_input_stream(input))
+        self.__reset_summary()
         self.__stopped = False
 
     def __perceptor_input_callback(self, input_data, pom, config):
@@ -84,6 +118,9 @@ class ExplorerPipeline():
 
     def get_latest_output_frame(self):
         return self.__output_stream.get_latest_frame()
+    
+    def get_summary(self):
+        return self.__summary
 
 if __name__ == "__main__":
     explorer = ExplorerPipeline()
