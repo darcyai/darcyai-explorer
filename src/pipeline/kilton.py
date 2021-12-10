@@ -16,7 +16,7 @@ class ExplorerPipeline():
                                    rest_api_host="0.0.0.0",
                                    rest_api_port=8080,
                                    rest_api_base_path="/")
-        self.__output_stream = LiveFeedStream(host="0.0.0.0", port="3456", path="/live_feed")
+        self.__output_stream = LiveFeedStream(host="0.0.0.0", port=3456, path="/live_feed")
         self.__pipeline.add_output_stream("live_feed", self.__output_stream_callback, self.__output_stream)
 
         self.__summary = {
