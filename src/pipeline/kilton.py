@@ -2,7 +2,6 @@ from darcyai_engine.pipeline import Pipeline
 from darcyai_engine.input.video_file_stream import VideoFileStream
 from darcyai_engine.input.camera_stream import CameraStream
 from darcyai_engine.output.live_feed_stream import LiveFeedStream
-from .basic_perceptor import BasicPerceptor
 from darcyai_coral.people_perceptor import PeoplePerceptor
 import os
 import time
@@ -14,8 +13,8 @@ class ExplorerPipeline():
         self.__stopped = False
         self.__pipeline = Pipeline(input_stream=VideoFileStream(os.path.join(absolutepath, "video.mp4")),
                                    universal_rest_api=True,
-                                   host="0.0.0.0",
-                                   port=8080,
+                                   rest_api_host="0.0.0.0",
+                                   rest_api_port=8080,
                                    rest_api_base_path="/")
         self.__output_stream = LiveFeedStream(host="0.0.0.0", port="3456", path="/live_feed")
         self.__pipeline.add_output_stream("live_feed", self.__output_stream_callback, self.__output_stream)
