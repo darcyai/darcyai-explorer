@@ -73,7 +73,7 @@ pipeline_inputs = [
   }
 ]
 
-current_pipeline_input_id = 1
+current_pipeline_input_id = 3
 
 def get_current_pipeline_input(id):
   for input in pipeline_inputs:
