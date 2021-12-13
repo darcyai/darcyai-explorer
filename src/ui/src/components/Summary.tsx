@@ -91,8 +91,13 @@ const Summary: React.FC = () => {
     
   }
 
-  function pollSummary() {
-    fetchSummary()
+  async function pollSummary() {
+    try {
+      await fetchSummary()
+    }
+    catch(e) {
+      
+    }
     timeoutRef.current = window.setTimeout(pollSummary, 1.5 * 1000)
   }
 

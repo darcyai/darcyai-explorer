@@ -36,8 +36,13 @@ const POM: React.FC = () => {
   const [selectedPulse, setSelectedPulse] = React.useState<number | null>(null)
   const timeoutRef = React.useRef<number | null>(null)
 
-  function pollPulses() {
-    fetchPulses()
+  async function pollPulses() {
+    try {
+      await fetchPulses()
+    }
+    catch(e) {
+      
+    }
     timeoutRef.current = window.setTimeout(pollPulses, 1000)
   }
 
