@@ -9,11 +9,12 @@ COPY ./src/ui/ ./
 RUN npm run build
 
 # Stage 2 - Build the pipeline
-FROM edgeworx/darcy-ai-base-armv7l:dev
+FROM edgeworx/darcy-ai-coral-armv7l:dev
 
 RUN python3 -m pip install --upgrade darcyai-engine
 RUN python3 -m pip install --upgrade darcyai-coral
 RUN python3 -m pip install --upgrade flask_cors
+RUN python3 -m pip install --upgrade pyzbar==0.1.8
 
 WORKDIR /src
 
