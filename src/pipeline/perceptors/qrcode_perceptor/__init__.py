@@ -1,0 +1,1 @@
+from .qrcode_perceptor import QRCodePerceptor

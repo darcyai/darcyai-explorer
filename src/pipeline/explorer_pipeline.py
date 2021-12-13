@@ -2,8 +2,9 @@ from darcyai_engine.pipeline import Pipeline
 from darcyai_engine.input.video_file_stream import VideoFileStream
 from darcyai_engine.input.camera_stream import CameraStream
 from darcyai_engine.output.live_feed_stream import LiveFeedStream
-from .basic_perceptor import BasicPerceptor
 from darcyai_coral.people_perceptor import PeoplePerceptor
+from .perceptors.qrcode_perceptor import QRCodePerceptor
+from .perceptors.face_mask_perceptor import FaceMaskPerceptor
 import os
 import time
 import platform
@@ -51,11 +52,16 @@ class ExplorerPipeline():
         self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "face_rectangle_color", "255,255,255")
         self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "show_person_id", True)
 
-        # Basic Perceptor
-        basic_perceptor = BasicPerceptor()
-        self.__pipeline.add_perceptor("basic", basic_perceptor, parent=self.__people_perceptor_name, accelerator_idx=0, input_callback=self.__perceptor_input_callback)
-        ## Event callbacks
-        basic_perceptor.on("event_1", event_cb("basic", "event_1"))
+        # QRCode Perceptor
+        self.__qrcode_perceptor_name = "qrcode"
+        qrcode_perceptor = QRCodePerceptor()
+        self.__pipeline.add_perceptor(self.__qrcode_perceptor_name, qrcode_perceptor, accelerator_idx=0, input_callback=self.__perceptor_input_callback)
+
+        # Face mask Perceptor
+        self.__face_mask_perceptor_name = "facemask"
+        face_mask_perceptor = FaceMaskPerceptor()
+        self.__pipeline.add_perceptor(self.__face_mask_perceptor_name, face_mask_perceptor, accelerator_idx=0, parent=self.__people_perceptor_name, input_callback=self.__face_mask_input_callback, multi=True)
+
 
     def __reset_summary(self):
         self.__summary = {
@@ -96,6 +102,10 @@ class ExplorerPipeline():
     # Passthrough callback
     def __perceptor_input_callback(self, input_data, pom, config):
         return input_data.data.copy()
+
+    def __face_mask_input_callback(self, input_data, pom, config):
+        data = [pom.get_perceptor(self.__people_perceptor_name).faceImage(person_id) for person_id in pom.get_perceptor(self.__people_perceptor_name).people()]
+        return data
 
     def get_pom(self):
         return self.__pipeline.get_pom()

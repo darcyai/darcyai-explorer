@@ -1,0 +1,1 @@
+from .face_mask_perceptor import FaceMaskPerceptor
