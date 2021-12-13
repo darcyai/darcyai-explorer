@@ -1,5 +1,5 @@
 from darcyai_engine.perception_object_model import PerceptionObjectModel
-from pipeline import ExplorerPipeline
+from pipeline.explorer_pipeline import ExplorerPipeline
 from flask import Flask, send_from_directory, jsonify, stream_with_context, Response
 from flask_cors import CORS
 import os
