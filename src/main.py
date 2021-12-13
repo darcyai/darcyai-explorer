@@ -7,6 +7,7 @@ import threading
 
 from datetime import timezone
 import datetime
+import base64
 
 #----------------------------------------------------------------------------#
 # Configure and run SPA API
@@ -73,7 +74,7 @@ pipeline_inputs = [
   }
 ]
 
-current_pipeline_input_id = 3
+current_pipeline_input_id = 1
 
 def get_current_pipeline_input(id):
   for input in pipeline_inputs:
@@ -107,8 +108,11 @@ def format_pulse(pom: PerceptionObjectModel):
   input = pom.get_input_data()
   serialized_pom = pom.serialize()
   serialized_pom['input_data'] = "Pixel array that contains the input frame"
+  frame = ''
+  if input is not None:
+    frame = input.serialize()['frame'].decode('utf-8')
   return {
-    'frame': 'data:image/jpeg;base64,' + input.serialize()['frame'].decode('utf-8'),
+    'frame': 'data:image/jpeg;base64,' + frame,
     'pom': serialized_pom,
     'id': serialized_pom['pulse_number']
   }
@@ -116,7 +120,12 @@ def format_pulse(pom: PerceptionObjectModel):
 @app.route('/current_pulse')
 def get_current_pulse():
   pom = pipeline_instance.get_pom()
-  return jsonify(format_pulse(pom))
+  formatted_pulse = format_pulse(pom)
+  latest_frame = pipeline_instance.get_latest_output_frame()
+  latest_frame_b64 = base64.encodebytes(latest_frame)
+  latest_frame_b64_str = latest_frame_b64.decode('utf-8')
+  formatted_pulse['frame'] = 'data:image/jpeg;base64,' + latest_frame_b64_str
+  return jsonify(formatted_pulse)
 
 @app.route('/pulses/history')
 def get_historical_pulse():

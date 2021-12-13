@@ -86,7 +86,7 @@ class ExplorerPipeline():
     def __output_stream_callback(self, pom, input_data):
         # TODO: Move this logic to pulse_completion_callback
         self.__summary["inScene"] = pom.get_perceptor(self.__people_perceptor_name).peopleCount()
-        return input_data.data.copy()
+        return pom.get_perceptor(self.__people_perceptor_name).annotatedFrame()
 
     def change_input(self, input):
         self.__stopped = True
