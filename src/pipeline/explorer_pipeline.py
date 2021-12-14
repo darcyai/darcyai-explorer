@@ -113,7 +113,16 @@ class ExplorerPipeline():
         return input_data.data.copy()
 
     def __face_mask_input_callback(self, input_data, pom, config):
-        data = [pom.get_perceptor(self.__people_perceptor_name).faceImage(person_id) for person_id in pom.get_perceptor(self.__people_perceptor_name).people()]
+        data = []
+        people = pom.get_perceptor(self.__people_perceptor_name).people()
+        for person_id in people:
+            person = people[person_id]
+            if not person["has_face"]:
+                continue
+
+            face = pom.get_perceptor(self.__people_perceptor_name).faceImage(person_id)
+            data.append({"input": face, "person_id": person_id})
+
         return data
 
     def get_pom(self):

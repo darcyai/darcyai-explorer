@@ -44,15 +44,17 @@ class FaceMaskPerceptor(ImageClassificationPerceptor):
         Returns:
             FaceMaskDetectionModel: The face mask detection model.
         """
-        perception_result = super().run(input_data=input_data, config=config)
+        input = input_data['input']
+        person_id = input_data['person_id']
+        perception_result = super().run(input_data=input, config=config)
 
         if len(perception_result[1]) == 0:
             has_mask = False
         else:
             try:
                 idx = perception_result[1].index("Mask")
-                has_mask = perception_result[0][idx][1] >= self.get_config_value("threshold")
+                has_mask = bool(perception_result[0][idx][1] >= self.get_config_value("threshold"))
             except:
                 has_mask = False
 
-        return FaceMaskDetectionModel(has_mask)
+        return FaceMaskDetectionModel(has_mask, person_id)
