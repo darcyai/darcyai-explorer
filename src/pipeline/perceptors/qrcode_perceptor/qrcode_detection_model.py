@@ -14,5 +14,5 @@ class QRCodeDetectionModel(Serializable):
         return self.__qrcodes
     
     def serialize(self):
-        return { "qrcodes": self.__qrcodes }
+        return { "qrcodes": [qrcode.serialize() for qrcode in self.__qrcodes] }
 
