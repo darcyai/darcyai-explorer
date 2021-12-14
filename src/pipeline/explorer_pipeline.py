@@ -27,7 +27,9 @@ class ExplorerPipeline():
         self.__pipeline = Pipeline(input_stream=get_input_stream(input),
                                    universal_rest_api=True,
                                    rest_api_flask_app=app,
-                                   rest_api_base_path="/pipeline")
+                                   rest_api_base_path="/pipeline",
+                                   perception_completion_callback=self.__on_perception_complete,
+                                   pulse_completion_callback=self.__on_pulse_completion)
         self.__output_stream = LiveFeedStream(flask_app=app, path="/live_feed")
         self.__pipeline.add_output_stream("live_feed", self.__output_stream_callback, self.__output_stream)
 
@@ -38,6 +40,8 @@ class ExplorerPipeline():
             "qrCodes": 0
         }
         self.__event_cb = event_cb
+
+        self.__latest_pom = None
 
         # People Perceptor
         self.__people_perceptor_name = "people"
@@ -57,11 +61,18 @@ class ExplorerPipeline():
         qrcode_perceptor = QRCodePerceptor()
         self.__pipeline.add_perceptor(self.__qrcode_perceptor_name, qrcode_perceptor, accelerator_idx=0, input_callback=self.__perceptor_input_callback)
 
-        # # Face mask Perceptor
-        # self.__face_mask_perceptor_name = "facemask"
-        # face_mask_perceptor = FaceMaskPerceptor()
-        # self.__pipeline.add_perceptor(self.__face_mask_perceptor_name, face_mask_perceptor, accelerator_idx=0, parent=self.__people_perceptor_name, input_callback=self.__face_mask_input_callback, multi=True)
+        # Face mask Perceptor
+        self.__face_mask_perceptor_name = "facemask"
+        face_mask_perceptor = FaceMaskPerceptor()
+        self.__pipeline.add_perceptor(self.__face_mask_perceptor_name, face_mask_perceptor, accelerator_idx=0, parent=self.__people_perceptor_name, input_callback=self.__face_mask_input_callback, multi=True)
 
+    def __on_perception_complete(self, pom):
+        # All perceptors are done running
+        self.__summary["inScene"] = pom.get_perceptor(self.__people_perceptor_name).peopleCount()
+    
+    def __on_pulse_completion(self, pom):
+        # Pipeline has completed
+        self.__latest_pom = pom
 
     def __reset_summary(self):
         self.__summary = {
@@ -88,8 +99,6 @@ class ExplorerPipeline():
                     pass
 
     def __output_stream_callback(self, pom, input_data):
-        # TODO: Move this logic to pulse_completion_callback
-        self.__summary["inScene"] = pom.get_perceptor(self.__people_perceptor_name).peopleCount()
         return pom.get_perceptor(self.__people_perceptor_name).annotatedFrame()
 
     def change_input(self, input):
@@ -125,8 +134,8 @@ class ExplorerPipeline():
     def get_historical_pom(self, pulse_number):
         return self.__pipeline.get_historical_pom(pulse_number)
 
-    def get_latest_output_frame(self):
-        return self.__output_stream.get_latest_frame()
+    def get_latest_pom(self):
+        return self.__latest_pom
     
     def get_summary(self):
         return self.__summary

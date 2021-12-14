@@ -108,8 +108,14 @@ def format_pulse(pom: PerceptionObjectModel):
   input = pom.get_input_data()
   serialized_pom = pom.serialize()
   serialized_pom['input_data'] = "Pixel array that contains the input frame"
+  serialized_pom['live_feed'] = "binary jpeg of the latest output frame"
   frame = ''
-  if input is not None:
+  if pom.live_feed is not None:
+    # We've got a completed pom, use the output as frame
+    latest_frame_b64 = base64.encodebytes(pom.live_feed) # This is hard coded to be the name of the output stream
+    frame = latest_frame_b64.decode('utf-8')
+  elif input is not None:
+    # We've got an input data, use the output as frame
     frame = input.serialize()['frame'].decode('utf-8')
   return {
     'frame': 'data:image/jpeg;base64,' + frame,
@@ -119,12 +125,8 @@ def format_pulse(pom: PerceptionObjectModel):
 
 @app.route('/current_pulse')
 def get_current_pulse():
-  pom = pipeline_instance.get_pom()
+  pom = pipeline_instance.get_latest_pom()
   formatted_pulse = format_pulse(pom)
-  latest_frame = pipeline_instance.get_latest_output_frame()
-  latest_frame_b64 = base64.encodebytes(latest_frame)
-  latest_frame_b64_str = latest_frame_b64.decode('utf-8')
-  formatted_pulse['frame'] = 'data:image/jpeg;base64,' + latest_frame_b64_str
   return jsonify(formatted_pulse)
 
 @app.route('/pulses/history')
