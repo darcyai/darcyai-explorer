@@ -55,43 +55,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }))
 
-declare interface SummaryState {
-  inScene: number
-  visitors: number
-  faceMasks: number
-  qrCodes: number
-}
-
-const defaultSummaryState: SummaryState = {
-  inScene: 0,
-  visitors: 0,
-  faceMasks: 0,
-  qrCodes: 0,
-}
-
 const Summary: React.FC = () => {
   const classes = useStyles()
   const timeoutRef = React.useRef<number | null>(null)
-  const [summary, setSummary] = React.useState<SummaryState>(defaultSummaryState)
-  const { pushErrorFeedBack } = useFeedback()
-  const { isPlaying } = usePipeline()
-
-  async function fetchSummary() {
-    try {
-      const res = await fetch('/events/summary')
-      if (!res.ok) {
-        throw new Error(res.statusText)
-      }
-      setSummary(await res.json())
-    }
-    catch (err: any) {
-      pushErrorFeedBack(err)
-      setSummary(defaultSummaryState)
-    }
-    
-  }
+  const { isPlaying, summary, fetchSummary } = usePipeline()
 
   async function pollSummary() {
+    if (!isPlaying) { return }
     try {
       await fetchSummary()
     }

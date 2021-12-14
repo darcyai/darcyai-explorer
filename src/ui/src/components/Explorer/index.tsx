@@ -49,7 +49,7 @@ const enum Tabs {
 const Explorer: React.FC = () => {
   const classes = useStyles()
   const [tab, setTab] = React.useState<Tabs>(Tabs.EVENTS)
-  const { playLiveStream, fetchPulses, selectedStep, selectStep } = usePipeline()
+  const { playLiveStream, selectedStep, selectStep } = usePipeline()
 
   const selectEvents = () => {
     setTab(Tabs.EVENTS)
@@ -58,7 +58,6 @@ const Explorer: React.FC = () => {
 
   const selectPOM = async () => {
     try {
-      await fetchPulses()
       setTab(Tabs.POM)
     } catch (e) {
       console.error(e)

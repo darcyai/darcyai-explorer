@@ -24,6 +24,20 @@ export declare interface Pulse {
   frame: string
 }
 
+export declare interface SummaryState {
+  inScene: number
+  visitors: number
+  faceMasks: number
+  qrCodes: number
+}
+
+const defaultSummaryState: SummaryState = {
+  inScene: 0,
+  visitors: 0,
+  faceMasks: 0,
+  qrCodes: 0,
+}
+
 declare interface PipelineProps {
   setShowDetails: (v: boolean) => void
 }
@@ -31,7 +45,8 @@ declare interface PipelineProps {
 declare interface Pipeline {
   imageSrc: string
   isPlaying: boolean
-  pulses: Pulse[]
+  summary: SummaryState
+  latestPulse?: Pulse
   events: EventItem[]
   config: ConfigItem[]
   selectedStep: PipelineStep | undefined
@@ -41,16 +56,17 @@ declare interface Pipeline {
   playLiveStream: () => void
   pauseLiveStream: () => Promise<void>
   showFrame: (frame: string) => void
-  fetchPulses: () => Promise<void>
   fetchEvents: () => Promise<void>
   updateConfig: (key: ConfigItem, value: any) => void
   saveConfig: () => Promise<void>
+  fetchSummary: () => Promise<void>
 }
 
 const defaultValue: Pipeline = {
   imageSrc: liveFeedSrc,
   isPlaying: true,
-  pulses: [],
+  latestPulse: undefined,
+  summary: defaultSummaryState,
   config: [],
   events: [],
   selectedStep: undefined,
@@ -59,11 +75,11 @@ const defaultValue: Pipeline = {
   hoverStep: (step?: PipelineStep) => {},
   playLiveStream: () => {},
   pauseLiveStream: async () => {},
-  fetchPulses: async () => {},
   fetchEvents: async () => {},
   showFrame: (frame: string) => {},
   updateConfig: (key: ConfigItem, value: any) => {},
   saveConfig: async () => {},
+  fetchSummary: async () => {}
 }
 
 
@@ -137,23 +153,12 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   const [imageSrc, setImageSrc] = React.useState < string > (liveFeedSrc)
   const [selectedStep, setSelectedStep] = React.useState<PipelineStep | undefined>(undefined)
   const [hoveredStep, setHoveredStep] = React.useState<PipelineStep | undefined>(undefined)
-  const [pulses, setPulses] = React.useState<Pulse[]>([])
+  const [summary, setSummary] = React.useState<SummaryState>(defaultSummaryState)
+  const [latestPulse, setLatestPulse] = React.useState<Pulse | undefined>(undefined)
   const [events, setEvents] = React.useState<EventItem[]>([])
   let [config, setConfig] = React.useState<ConfigItem[]>([])
   const isPlaying = React.useMemo(() => !imageSrc.includes('base64'), [imageSrc])
   const { pushErrorFeedBack } = useFeedback()
-
-  async function fetchPulses () {
-    try {
-      const res = await window.fetch('/pulses/history')
-      if (!res.ok) { throw new Error(res.statusText) }
-      const data = await res.json()
-      setPulses(data)
-    } catch (e: any) {
-      console.error(e)
-      pushErrorFeedBack(e)
-    }
-  }
 
   const fetchEvents = async () => {
     if (selectedStep === undefined || stepEventURL(selectedStep) === '' ) {
@@ -188,6 +193,10 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
       const res = await window.fetch('/current_pulse')
       if (!res.ok) { throw new Error(res.statusText) }
       const data = await res.json()
+      setLatestPulse(data)
+      if (data?.pom?.[perceptorNameByStep(PipelineStep.PEOPLE)]?.people_count != null) {
+        setSummary(summary => ({ ...summary, inScene: data.pom[perceptorNameByStep(PipelineStep.PEOPLE)].people_count }))
+      }
       setImageSrc(data.frame)
     } catch (e: any) {
       console.error(e)
@@ -255,22 +264,36 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
     //   ?.catch(err => console.error(err))
   }
 
+  async function fetchSummary() {
+    try {
+      const res = await fetch('/events/summary')
+      if (!res.ok) {
+        throw new Error(res.statusText)
+      }
+      setSummary(await res.json())
+    }
+    catch (err: any) {
+      pushErrorFeedBack(err)
+      setSummary(defaultSummaryState)
+    }
+  }
 
   return (
     <PipelineContext.Provider
       value={{
         events,
         isPlaying,
-        pulses,
+        latestPulse,
         config,
         imageSrc,
         selectedStep,
         hoveredStep,
+        summary,
+        fetchSummary,
         selectStep: (step?: PipelineStep) => { setSelectedStep(step); setShowDetails(true) },
         hoverStep: (step?: PipelineStep) => setHoveredStep(step),
         playLiveStream: () => { setImageSrc(liveFeedSrc) },
         pauseLiveStream: pause,
-        fetchPulses: async () => fetchPulses(),
         fetchEvents: async () => fetchEvents(),
         showFrame: (frame: string) => setImageSrc(frame),
         updateConfig,

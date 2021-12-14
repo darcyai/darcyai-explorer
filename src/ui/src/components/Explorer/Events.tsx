@@ -59,8 +59,11 @@ const Events: React.FC = () => {
   const { events, fetchEvents, selectedStep, isPlaying } = usePipeline()
   const timeoutRef = React.useRef<number | null>(null)
 
-  function pollEvents() {
-    fetchEvents()
+  async function pollEvents() {
+    try {
+      await fetchEvents()
+    }
+    catch (e) { }
     timeoutRef.current = window.setTimeout(pollEvents, 1.5 * 1000)
   }
 
