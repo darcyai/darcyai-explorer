@@ -57,10 +57,10 @@ class ExplorerPipeline():
         qrcode_perceptor = QRCodePerceptor()
         self.__pipeline.add_perceptor(self.__qrcode_perceptor_name, qrcode_perceptor, accelerator_idx=0, input_callback=self.__perceptor_input_callback)
 
-        # Face mask Perceptor
-        self.__face_mask_perceptor_name = "facemask"
-        face_mask_perceptor = FaceMaskPerceptor()
-        self.__pipeline.add_perceptor(self.__face_mask_perceptor_name, face_mask_perceptor, accelerator_idx=0, parent=self.__people_perceptor_name, input_callback=self.__face_mask_input_callback, multi=True)
+        # # Face mask Perceptor
+        # self.__face_mask_perceptor_name = "facemask"
+        # face_mask_perceptor = FaceMaskPerceptor()
+        # self.__pipeline.add_perceptor(self.__face_mask_perceptor_name, face_mask_perceptor, accelerator_idx=0, parent=self.__people_perceptor_name, input_callback=self.__face_mask_input_callback, multi=True)
 
 
     def __reset_summary(self):

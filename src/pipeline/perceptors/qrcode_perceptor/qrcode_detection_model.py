@@ -1,8 +1,9 @@
 from typing import List
 
+from darcyai_engine.serializable import Serializable
 from .qrcode import QRCode
 
-class QRCodeDetectionModel:
+class QRCodeDetectionModel(Serializable):
     def __init__(self, qrcodes:List[QRCode]):
         self.__qrcodes = qrcodes
 
@@ -11,3 +12,7 @@ class QRCodeDetectionModel:
         Returns the list of detected qrcodes
         """
         return self.__qrcodes
+    
+    def serialize(self):
+        return { "qrcodes": self.__qrcodes }
+
