@@ -140,7 +140,7 @@ def get_current_pulse():
 def get_historical_pulse():
   poms = pipeline_instance.get_pom_history()
   pulses = []
-  for pulse_number, pom in poms.items():
+  for _, pom in poms.items():
     pulses.append(format_pulse(pom))
   return jsonify(pulses)
 

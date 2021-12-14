@@ -8,6 +8,7 @@ from .perceptors.face_mask_perceptor import FaceMaskPerceptor
 import os
 import time
 import platform
+import cv2
 
 
 absolutepath = os.path.dirname(os.path.abspath(__file__))
@@ -39,6 +40,9 @@ class ExplorerPipeline():
             "faceMasks": 0,
             "qrCodes": 0
         }
+        self.__previous_mask_results = []
+        self.__previous_qr_codes = []
+
         self.__event_cb = event_cb
 
         self.__latest_pom = None
@@ -55,6 +59,7 @@ class ExplorerPipeline():
         self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "show_face_rectangle", True)
         self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "face_rectangle_color", "255,255,255")
         self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "show_person_id", True)
+        self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "person_data_identity_text_font_size", 0.5)
 
         # QRCode Perceptor
         self.__qrcode_perceptor_name = "qrcode"
@@ -66,9 +71,39 @@ class ExplorerPipeline():
         face_mask_perceptor = FaceMaskPerceptor()
         self.__pipeline.add_perceptor(self.__face_mask_perceptor_name, face_mask_perceptor, accelerator_idx=0, parent=self.__people_perceptor_name, input_callback=self.__face_mask_input_callback, multi=True)
 
+    def __update_masks_count(self, pom):
+        mask_results = pom.get_perceptor(self.__face_mask_perceptor_name)
+        # Find if we detected new facemasks
+        for mask_result in mask_results:
+            has_mask = mask_result.has_mask()
+            # Compare with previous results
+            # Comparing with the previous frame prevent us from counting the same mask multiple times,
+            # but allow for someone putting and removing his mask
+            # This needs to be improved for production use, a single frame without conclusive mask detection will trigger a double count
+            prev_has_mask = False
+            for prev_mask_result in self.__previous_mask_results:
+                if mask_result.get_person_id() == prev_mask_result.get_person_id():
+                    prev_has_mask = prev_mask_result.has_mask()
+            if has_mask and not prev_has_mask:
+                self.__summary["faceMasks"] += 1
+        self.__previous_mask_results = mask_results
+
+    def __update_qr_code_count(self, pom):
+        qr_code_results = pom.get_perceptor(self.__qrcode_perceptor_name).get_qrcodes()
+        for qr_code in qr_code_results:
+            # Compare with previous results
+            # Comparing with the previous frame prevent us from counting the same qr code multiple times,
+            # This needs to be improved for production use, a single frame without conclusive qr code detection will trigger a double count
+            if qr_code.get_qrcode_data() not in self.__previous_qr_codes:
+                self.__summary["qrCodes"] += 1
+            
+        self.__previous_qr_codes = [qr_code.get_qrcode_data() for qr_code in qr_code_results]
+
     def __on_perception_complete(self, pom):
         # All perceptors are done running
         self.__summary["inScene"] = pom.get_perceptor(self.__people_perceptor_name).peopleCount()
+        self.__update_masks_count(pom)
+        self.__update_qr_code_count(pom)
     
     def __on_pulse_completion(self, pom):
         # Pipeline has completed
@@ -81,6 +116,8 @@ class ExplorerPipeline():
             "faceMasks": 0,
             "qrCodes": 0
         }
+        self.__previous_mask_results = []
+        self.__previous_qr_codes = []
 
     def __on_new_person_entered_scene(self, event_data):
         self.__summary["visitors"] += 1
@@ -121,7 +158,8 @@ class ExplorerPipeline():
                 continue
 
             face = pom.get_perceptor(self.__people_perceptor_name).faceImage(person_id)
-            data.append({"input": face, "person_id": person_id})
+            rgb_face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
+            data.append({"input": rgb_face, "person_id": person_id})
 
         return data
 
