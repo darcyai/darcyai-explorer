@@ -126,6 +126,13 @@ def format_pulse(pom: PerceptionObjectModel):
 @app.route('/current_pulse')
 def get_current_pulse():
   pom = pipeline_instance.get_latest_pom()
+  if pom is None:
+    # Return empty
+    return jsonify({
+      'frame': pipeline_inputs[2].thumbnail, # Transparent image
+      'pom': {},
+      'id': 0,
+    })
   formatted_pulse = format_pulse(pom)
   return jsonify(formatted_pulse)
 
