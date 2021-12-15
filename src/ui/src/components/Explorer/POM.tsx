@@ -47,7 +47,15 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const POM: React.FC = () => {
   const classes = useStyles()
-  const { latestPulse, selectedStep, isPlaying } = usePipeline()
+  const { latestPulse, selectedStep, isPlaying, pauseLiveStream, playLiveStream } = usePipeline()
+
+  // React.useEffect(() => {
+  //   const wasPlaying = isPlaying
+  //   pauseLiveStream()
+  //   return () => {
+  //      if (wasPlaying) { playLiveStream() }
+  //   }
+  // }, [])
 
   const _shouldCollapse = React.useMemo(() => (field: CollapsedFieldProps) => {
     if (field.name === 'root') {

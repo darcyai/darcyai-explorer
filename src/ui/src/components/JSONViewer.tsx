@@ -5,7 +5,7 @@ import edgeColors from '../Theme/colors'
 
 export function useAceEditorSolarizedTheme (theme: Theme): ThemeObject {
   return {
-    base00: theme.palette.neutral[5] ?? '', // Default Background
+    base00: theme.palette.neutral[4] ?? '', // Default Background
     base01: '#586E75', // Lighter Background (Used for status bars, line number and folding marks)
     base02: '#073642', // Selection Background
     base03: '#002B36', // Comments, Invisibles, Line Highlighting

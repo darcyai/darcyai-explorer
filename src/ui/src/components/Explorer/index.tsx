@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     gap: theme.spacing(2),
-    backgroundColor: theme.palette.neutral[5],
+    backgroundColor: theme.palette.neutral[5] + '80',
     borderBottom: `1px solid ${theme.palette.border ?? ''}`,
     color: theme.palette.primary.main,
     cursor: 'pointer',
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
   },
   contentSection: {
-    backgroundColor: theme.palette.neutral[5],
+    backgroundColor: theme.palette.neutral[4],
     flex: 1,
     overflowY: 'auto',
     minHeight: 0,

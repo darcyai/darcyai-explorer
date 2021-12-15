@@ -14,7 +14,9 @@ const useStyles = makeStyles((theme: Theme) => {
       display: 'flex',
       flexDirection: 'column',
       [theme.breakpoints.up('md')]: {
-        flex: 1
+        flex: 1,
+        zIndex: 5,
+        boxShadow: `0px 3px 80px 0 rgba(0, 0, 0, 0.5)`,
       }
     }, 
     header: {
@@ -65,7 +67,6 @@ const useStyles = makeStyles((theme: Theme) => {
       flexDirection: 'column',
       gap: theme.spacing(1),
       height: '100%',
-      justifyContent: 'space-between',
       flex: 1,
     },
     infoTextTitle: {

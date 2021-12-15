@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
+    backgroundColor: theme.palette.neutral[4],
     [theme.breakpoints.up('md')]: {
       height: 'calc(100vh - 40px)',
     }
@@ -44,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: theme.palette.neutral[5],
+    backgroundColor: theme.palette.neutral[5] + '80',
     borderBottom: `1px solid ${theme.palette.border ?? ''}`,
   },
   configContainer: {

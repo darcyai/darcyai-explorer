@@ -80,6 +80,34 @@ let darkTheme = createTheme({
           }
         },
       }
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          borderRadius: spacing / 4,
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: edgeColors.neutral[0],
+            borderWidth: 1
+          },
+          '&.Mui-focused .MuiOutlinedInput-input': {
+            color: edgeColors.neutral[0]
+          },
+        },
+        notchedOutline: {
+          borderColor: edgeColors.blue
+        },
+        sizeSmall: { 
+          height: 24,
+        },
+        input: {
+          font: 'normal normal 500 13px/16px Gilroy',
+          letterSpacing: 0,
+          color: edgeColors.blue,
+          '&:hover': {
+            color: edgeColors.neutral[0]
+          }
+        }
+      }
     }
   }
 })

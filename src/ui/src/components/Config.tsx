@@ -40,20 +40,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%'
   },
   input: {
-    '&.MuiInputBase-sizeSmall': {
-      height: 24
-    },
-    '& input': {
-      font: 'normal normal 500 13px/16px Gilroy',
-      letterSpacing: 0,
-      color: theme.palette.neutral[2],
-    },
-    '& fieldset': {
-      borderColor: theme.palette.neutral[2],
-      '&:hover': {
-        borderColor: theme.palette.primary.main,
-      }
-    }
   }
 }))
 
@@ -67,7 +53,14 @@ const useToggleStyles = makeStyles((theme: Theme) => ({
     padding: 1,
     cursor: 'pointer',
     gap: 1,
-    borderRadius: theme.spacing(0.25)
+    borderRadius: theme.spacing(0.25),
+    '&:hover': {
+      borderColor: theme.palette.neutral[0],
+      color: theme.palette.neutral[0],
+      '& .filled': {
+        backgroundColor: theme.palette.neutral[0]
+      }
+    }
   },
   item: {
     display: 'flex',
@@ -92,8 +85,8 @@ const Toggle: React.FC<{value: boolean, onChange: (newValue: boolean) => void, o
   }
 
   return (<div className={classes.root} onClick={_onChange}>
-    <div>{value ? <div className={clsx(classes.item, 'filled')} /> : <div className={classes.item}>X</div> }</div>
     <div>{value ? <div className={classes.item}>V</div> : <div className={clsx(classes.item, 'filled')} />}</div>
+    <div>{value ? <div className={clsx(classes.item, 'filled')} /> : <div className={classes.item}>X</div> }</div>
   </div>)
 }
 
@@ -105,7 +98,7 @@ const Config: React.FC = () => {
     switch (configItem.type) {
       case 'int':
       case 'float':
-        return <OutlinedInput size='small' className={classes.input} type="number"  value={configItem.value} onChange={(e) => { updateConfig(configItem, e.target.value)}} onBlur={() => { saveConfig() }} />
+        return <OutlinedInput size='small' className={classes.input} type="number" value={configItem.value} onChange={(e) => { updateConfig(configItem, e.target.value)}} onBlur={() => { saveConfig() }} />
       case 'str':
         return <OutlinedInput size='small' className={classes.input} type="text" value={configItem.value} onChange={(e) => { updateConfig(configItem, e.target.value)}} onBlur={() => { saveConfig() }} />
       case 'bool':
