@@ -45,7 +45,9 @@ class ExplorerPipeline():
         }
         ## Store the last 10 pulses for facemask and qr codes
         self.__previous_mask_results = []
+        self.__detected_face_masks = {}
         self.__previous_qr_codes_results = []
+        self.__detected_qr_codes = {}
         ## Store the latest completed pom,
         ## allows for "pausing" and inspecting the latest POM in UI 
         self.__latest_pom = None
@@ -77,10 +79,10 @@ class ExplorerPipeline():
     def __update_masks_count(self, pom):
         mask_results = pom.get_perceptor(self.__face_mask_perceptor_name)
         self.__previous_mask_results.append(mask_results)
-        self.__previous_mask_results = self.__previous_mask_results[10:]
         if len(self.__previous_mask_results) < 10:
             # Less than 10 pulses, the data is not reliable enough
             return
+        self.__previous_mask_results.pop(0)
         # For the last 10 pulses, check to see which person had a mask in >= 6 pulses
         mask_count_per_person_id = {}
         for frame in self.__previous_mask_results:
@@ -93,19 +95,59 @@ class ExplorerPipeline():
                         mask_count_per_person_id[person_id] = 1
         for person_id, mask_count in mask_count_per_person_id.items():
             if mask_count >= 6:
-                self.__summary["faceMasks"] += 1
+                if person_id not in self.__detected_face_masks:
+                    self.__summary["faceMasks"] += 1
+                    self.__detected_face_masks[person_id] = True
+        # Remove persons we haven't seen for 10 frames
+        to_remove = []
+        for person_id in self.__detected_face_masks:
+            found = False
+            for frame in self.__previous_mask_results:
+                for mask_result in frame:
+                    if mask_result.get_person_id() == person_id:
+                        found = True
+                        break
+                if found:
+                    break
+            if not found:
+                to_remove.append(person_id)
+        for person_id in to_remove:
+            self.__detected_face_masks.pop(person_id)
 
 
     def __update_qr_code_count(self, pom):
         qr_code_results = pom.get_perceptor(self.__qrcode_perceptor_name).get_qrcodes()
-        for qr_code in qr_code_results:
-            # Compare with previous results
-            # Comparing with the previous frame prevent us from counting the same qr code multiple times,
-            # This needs to be improved for production use, a single frame without conclusive qr code detection will trigger a double count
-            if qr_code.get_qrcode_data() not in self.__previous_qr_codes_results:
-                self.__summary["qrCodes"] += 1
-            
-        self.__previous_qr_codes_results = [qr_code.get_qrcode_data() for qr_code in qr_code_results]
+        self.__previous_qr_codes_results.append(qr_code_results)
+        if len(self.__previous_qr_codes_results) < 10:
+            # Less than 10 pulses, the data is not reliable enough
+            return
+        self.__previous_qr_codes_results.pop(0)
+        # For the last 10 pulses, check to see which qr code was read for >= 6 pulses
+        qr_code_count_per_data = {}
+        for frame in self.__previous_qr_codes_results:
+            for qr_code in frame:
+                qr_code_data = qr_code.get_qrcode_data()
+                if qr_code_data in qr_code_count_per_data:
+                    qr_code_count_per_data[qr_code_data] += 1
+                else:
+                    qr_code_count_per_data[qr_code_data] = 1
+        for qr_code_data, qr_code_cound in qr_code_count_per_data.items():
+            if qr_code_cound >= 6:
+                if qr_code_data not in self.__detected_qr_codes:
+                    self.__summary["qrCodes"] += 1
+                    self.__detected_qr_codes[qr_code_data] = True
+        # Remove persons we haven't seen for 10 frames
+        to_remove = []
+        for qr_code_data in self.__detected_qr_codes:
+            found = False
+            for frame in self.__previous_qr_codes_results:
+                if qr_code_data in [qr_code.get_qrcode_data() for qr_code in frame]:
+                    found = True
+                    break
+            if not found:
+                to_remove.append(qr_code_data)
+        for qr_code in to_remove:
+            self.__detected_qr_codes.pop(qr_code_data)
 
     def __on_perception_complete(self, pom):
         # All perceptors are done running
@@ -126,6 +168,8 @@ class ExplorerPipeline():
         }
         self.__previous_mask_results = []
         self.__previous_qr_codes_results = []
+        self.__detected_face_masks = {}
+        self.__detected_qr_codes = {}
 
     def __on_new_person_entered_scene(self, event_data):
         self.__summary["visitors"] += 1
