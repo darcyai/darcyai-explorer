@@ -108,7 +108,7 @@ def format_pulse(pom: PerceptionObjectModel):
   input = pom.get_input_data()
   serialized_pom = pom.serialize()
   serialized_pom['input_data'] = "Pixel array that contains the input frame"
-  serialized_pom['live_feed'] = "binary jpeg of the latest output frame"
+  serialized_pom['live_feed'] = "Bytes containing the JPEG encoded latest output frame"
   frame = ''
   if pom.live_feed is not None:
     # We've got a completed pom, use the output as frame

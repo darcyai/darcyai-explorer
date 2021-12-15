@@ -33,18 +33,21 @@ class ExplorerPipeline():
                                    pulse_completion_callback=self.__on_pulse_completion)
         self.__output_stream = LiveFeedStream(flask_app=app, path="/live_feed")
         self.__pipeline.add_output_stream("live_feed", self.__output_stream_callback, self.__output_stream)
+ 
+        self.__event_cb = event_cb
 
+        # Business logic storage
         self.__summary = {
             "inScene": 0,
             "visitors": 0,
             "faceMasks": 0,
             "qrCodes": 0
         }
+        ## Store the last 10 pulses for facemask and qr codes
         self.__previous_mask_results = []
-        self.__previous_qr_codes = []
-
-        self.__event_cb = event_cb
-
+        self.__previous_qr_codes_results = []
+        ## Store the latest completed pom,
+        ## allows for "pausing" and inspecting the latest POM in UI 
         self.__latest_pom = None
 
         # People Perceptor
@@ -73,20 +76,25 @@ class ExplorerPipeline():
 
     def __update_masks_count(self, pom):
         mask_results = pom.get_perceptor(self.__face_mask_perceptor_name)
-        # Find if we detected new facemasks
-        for mask_result in mask_results:
-            has_mask = mask_result.has_mask()
-            # Compare with previous results
-            # Comparing with the previous frame prevent us from counting the same mask multiple times,
-            # but allow for someone putting and removing his mask
-            # This needs to be improved for production use, a single frame without conclusive mask detection will trigger a double count
-            prev_has_mask = False
-            for prev_mask_result in self.__previous_mask_results:
-                if mask_result.get_person_id() == prev_mask_result.get_person_id():
-                    prev_has_mask = prev_mask_result.has_mask()
-            if has_mask and not prev_has_mask:
+        self.__previous_mask_results.append(mask_results)
+        self.__previous_mask_results = self.__previous_mask_results[10:]
+        if len(self.__previous_mask_results) < 10:
+            # Less than 10 pulses, the data is not reliable enough
+            return
+        # For the last 10 pulses, check to see which person had a mask in >= 6 pulses
+        mask_count_per_person_id = {}
+        for frame in self.__previous_mask_results:
+            for mask_result in frame:
+                if mask_result.has_mask():
+                    person_id = mask_result.get_person_id()
+                    if person_id in mask_count_per_person_id:
+                        mask_count_per_person_id[person_id] += 1
+                    else:
+                        mask_count_per_person_id[person_id] = 1
+        for person_id, mask_count in mask_count_per_person_id.items():
+            if mask_count >= 6:
                 self.__summary["faceMasks"] += 1
-        self.__previous_mask_results = mask_results
+
 
     def __update_qr_code_count(self, pom):
         qr_code_results = pom.get_perceptor(self.__qrcode_perceptor_name).get_qrcodes()
@@ -94,10 +102,10 @@ class ExplorerPipeline():
             # Compare with previous results
             # Comparing with the previous frame prevent us from counting the same qr code multiple times,
             # This needs to be improved for production use, a single frame without conclusive qr code detection will trigger a double count
-            if qr_code.get_qrcode_data() not in self.__previous_qr_codes:
+            if qr_code.get_qrcode_data() not in self.__previous_qr_codes_results:
                 self.__summary["qrCodes"] += 1
             
-        self.__previous_qr_codes = [qr_code.get_qrcode_data() for qr_code in qr_code_results]
+        self.__previous_qr_codes_results = [qr_code.get_qrcode_data() for qr_code in qr_code_results]
 
     def __on_perception_complete(self, pom):
         # All perceptors are done running
@@ -117,7 +125,7 @@ class ExplorerPipeline():
             "qrCodes": 0
         }
         self.__previous_mask_results = []
-        self.__previous_qr_codes = []
+        self.__previous_qr_codes_results = []
 
     def __on_new_person_entered_scene(self, event_data):
         self.__summary["visitors"] += 1
