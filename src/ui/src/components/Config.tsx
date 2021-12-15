@@ -7,6 +7,9 @@ import { OutlinedInput, Theme } from '@mui/material'
 import clsx from 'clsx'
 import InputStreamConfig from './InputStreamConfig'
 
+import { ReactComponent as CheckIcon } from '../assets/check.svg'
+import sharedStyles from '../Theme/sharesdStyles'
+
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     display: 'flex',
@@ -44,6 +47,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }))
 
 const useToggleStyles = makeStyles((theme: Theme) => ({
+  ...sharedStyles(theme),
   root: {
     display: 'flex',
     alignItems: 'center',
@@ -54,8 +58,10 @@ const useToggleStyles = makeStyles((theme: Theme) => ({
     cursor: 'pointer',
     gap: 1,
     borderRadius: theme.spacing(0.25),
+    '--svg-color': theme.palette.primary.main,
     '&:hover': {
       borderColor: theme.palette.neutral[0],
+      '--svg-color': theme.palette.neutral[0],
       color: theme.palette.neutral[0],
       '& .filled': {
         backgroundColor: theme.palette.neutral[0]
@@ -75,7 +81,7 @@ const useToggleStyles = makeStyles((theme: Theme) => ({
 }))
 
 const Toggle: React.FC<{value: boolean, onChange: (newValue: boolean) => void, onBlur: any}> = ({value, onChange, onBlur}) => {
-  const classes = useToggleStyles()
+  const classes: any = useToggleStyles()
   const [dirty, setDirty] = React.useState(false)
   
   const _onChange = () => {
@@ -85,8 +91,8 @@ const Toggle: React.FC<{value: boolean, onChange: (newValue: boolean) => void, o
   }
 
   return (<div className={classes.root} onClick={_onChange}>
-    <div>{value ? <div className={classes.item}>V</div> : <div className={clsx(classes.item, 'filled')} />}</div>
-    <div>{value ? <div className={clsx(classes.item, 'filled')} /> : <div className={classes.item}>X</div> }</div>
+    <div>{value ? <div className={classes.item}><CheckIcon className={(clsx(classes.iconColor))}/></div> : <div className={clsx(classes.item, 'filled')} style={{ opacity: 0.5 }} />}</div>
+    <div>{value ? <div className={clsx(classes.item, 'filled')} /> : <div className={classes.item} /> }</div>
   </div>)
 }
 

@@ -58,6 +58,8 @@ class ExplorerPipeline():
         self.__pipeline.add_perceptor(self.__people_perceptor_name, people_perceptor, accelerator_idx=0, input_callback=self.__perceptor_input_callback)
         ## Event callbacks
         people_perceptor.on("new_person_entered_scene", self.__on_new_person_entered_scene)
+        people_perceptor.on("person_left_scene", self.__event_cb(self.__people_perceptor_name, "person_left_scene"))
+        people_perceptor.on("person_occluded", self.__event_cb(self.__people_perceptor_name, "person_occluded"))
         ## Update configuration
         self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "show_body_rectangle", True)
         self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "body_rectangle_color", "255,255,255")
