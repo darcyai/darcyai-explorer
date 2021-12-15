@@ -21,8 +21,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     minHeight: theme.spacing(10)
   },
   details: {
-    padding: theme.spacing(2),
-    paddingLeft: theme.spacing(6),
+    padding: theme.spacing(0),
+    paddingLeft: theme.spacing(4),
+    paddingBottom: theme.spacing(1),
+    [theme.breakpoints.up('md')]: {
+      paddingLeft: theme.spacing(6),
+    },
     flex: 1,
   },
   noEventItem: {
@@ -42,6 +46,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'center',
     font: 'normal normal 500 13px/16px Gilroy',
     letterSpacing: 0,
+    gap: theme.spacing(1),
     color: theme.palette.neutral[2],
     cursor: 'pointer',
     borderBottom: `1px solid ${theme.palette.border ?? ''}`,
@@ -50,27 +55,56 @@ const useStyles = makeStyles((theme: Theme) => ({
     '--svg-color': theme.palette.primary.main
   },
   iconColumn: {
-    width: theme.spacing(6),
+    width: theme.spacing(3),
+    [theme.breakpoints.up('md')]: {
+      width: theme.spacing(5),
+    },
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
   },
   dateColumn: {
-    width: theme.spacing(25),
+    width: theme.spacing(15),
+    [theme.breakpoints.up('md')]: {
+      width: theme.spacing(25),
+    },
     display: 'flex',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
     alignItems: 'center',
   },
   eventColumn: {
     flex: 1,
     display: 'flex',
     alignItems: 'center',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    maxWidth: theme.spacing(40),
     color: theme.palette.neutral[0],
+  },
+  payloadColumn: {
+    flex: 1,
+    alignItems: 'center',
+    color: theme.palette.neutral[0],
+    display: 'none',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    maxWidth: theme.spacing(40),
+    [theme.breakpoints.up('md')]: {
+      display: 'flex',
+    },
   },
   title: {
     font: 'normal normal 500 13px/16px Gilroy',
     color: theme.palette.neutral[2],
     letterSpacing: 0.26,
     textTransform: 'uppercase',
+  },
+  icon: {
+    marginLeft: theme.spacing(1)
   }
 }))
 
@@ -128,6 +162,7 @@ const Events: React.FC = () => {
         <div className={classes.iconColumn}/>
         <div className={clsx(classes.dateColumn, classes.title)}>Date</div>
         <div className={clsx(classes.eventColumn, classes.title)}>Event</div>
+        <div className={clsx(classes.payloadColumn, classes.title)}>Payload</div>
       </div>
       {events.length === 0 && (
         <div className={classes.noEventItem}>
@@ -140,17 +175,17 @@ const Events: React.FC = () => {
         const selected = selectedEvent === event.id
         return (
           <div key={event.id} onClick={() => selectEvent(event)} className={classes.row}>
-            <div className={classes.iconColumn}>{selected ? <OpenedIcon className={classes.iconColor} /> : <CollapsedIcon className={classes.iconColor} />}</div>
+            <div className={classes.iconColumn}>{selected ? <OpenedIcon className={clsx(classes.icon, classes.iconColor)} /> : <CollapsedIcon className={clsx(classes.icon, classes.iconColor)} />}</div>
             <div className={classes.dateColumn}>{formatedTimestamp}</div>
             <div className={classes.eventColumn}>{event.event_type}</div>
-            {selected && (
+            {selected ? (
               <>
                 <div style={{ flexBasis: '100%', height: 0 }} />
                 <div key={event.id} className={classes.details} onClick={(e) => { e.stopPropagation(); e.preventDefault() }}>
                   <ReactJSONView src={formatEvent(event, formatedTimestamp)} />
                 </div>
               </>
-            )}
+            ) : <div className={classes.payloadColumn}>{JSON.stringify(event.payload)}</div>}
           </div>
         )
       })}
