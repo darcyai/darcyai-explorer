@@ -11,6 +11,7 @@ RUN npm run build
 # Stage 2 - Build the pipeline
 FROM edgeworx/darcy-ai-coral-armv7l:dev
 
+RUN apt-get update -y
 RUN apt-get install -y libzbar0
 
 RUN python3 -m pip install --upgrade darcyai-engine

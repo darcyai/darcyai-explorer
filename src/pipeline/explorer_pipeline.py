@@ -138,7 +138,7 @@ class ExplorerPipeline():
                 if qr_code_data not in self.__detected_qr_codes:
                     self.__summary["qrCodes"] += 1
                     self.__detected_qr_codes[qr_code_data] = True
-        # Remove persons we haven't seen for 10 frames
+        # Remove qr codes we haven't seen for 10 frames
         to_remove = []
         for qr_code_data in self.__detected_qr_codes:
             found = False
