@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
     height: theme.spacing(31),
     overflowY: 'auto',
-    borderBottom: `1px solid ${theme.palette.border ?? ''}`,
+    borderBottom: `1px solid ${theme.palette.border ?? ''}`
   },
   item: {
     display: 'flex',
@@ -75,25 +75,25 @@ const useToggleStyles = makeStyles((theme: Theme) => ({
     width: 20,
     height: 20,
     '&.filled': {
-      backgroundColor: theme.palette.primary.main,
+      backgroundColor: theme.palette.primary.main
     }
   }
 }))
 
-const Toggle: React.FC<{value: boolean, onChange: (newValue: boolean) => void, onBlur: any}> = ({value, onChange, onBlur}) => {
+const Toggle: React.FC<{value: boolean, onChange: (newValue: boolean) => void, onBlur: any}> = ({ value, onChange, onBlur }) => {
   const classes: any = useToggleStyles()
-  const [dirty, setDirty] = React.useState(false)
-  
-  const _onChange = () => {
+
+  const _onChange = (): void => {
     onChange(!value)
-    setDirty(true)
     onBlur()
   }
 
-  return (<div className={classes.root} onClick={_onChange}>
-    <div>{value ? <div className={classes.item}><CheckIcon className={(clsx(classes.iconColor))}/></div> : <div className={clsx(classes.item, 'filled')} style={{ opacity: 0.5 }} />}</div>
-    <div>{value ? <div className={clsx(classes.item, 'filled')} /> : <div className={classes.item} /> }</div>
-  </div>)
+  return (
+    <div className={classes.root} onClick={_onChange}>
+      <div>{value ? <div className={classes.item}><CheckIcon className={(clsx(classes.iconColor))} /></div> : <div className={clsx(classes.item, 'filled')} style={{ opacity: 0.5 }} />}</div>
+      <div>{value ? <div className={clsx(classes.item, 'filled')} /> : <div className={classes.item} />}</div>
+    </div>
+  )
 }
 
 const Config: React.FC = () => {
@@ -104,12 +104,12 @@ const Config: React.FC = () => {
     switch (configItem.type) {
       case 'int':
       case 'float':
-        return <OutlinedInput size='small' className={classes.input} type="number" value={configItem.value} onChange={(e) => { updateConfig(configItem, e.target.value)}} onBlur={() => { saveConfig() }} />
+        return <OutlinedInput size='small' className={classes.input} type='number' value={configItem.value} onChange={(e) => { updateConfig(configItem, e.target.value) }} onBlur={() => { saveConfig().catch(() => {}) }} />
       case 'str':
-        return <OutlinedInput size='small' className={classes.input} type="text" value={configItem.value} onChange={(e) => { updateConfig(configItem, e.target.value)}} onBlur={() => { saveConfig() }} />
+        return <OutlinedInput size='small' className={classes.input} type='text' value={configItem.value} onChange={(e) => { updateConfig(configItem, e.target.value) }} onBlur={() => { saveConfig().catch(() => {}) }} />
       case 'bool':
         return (
-          <Toggle value={configItem.value} onChange={(value) => { updateConfig(configItem, value)}} onBlur={() => { saveConfig() }} />
+          <Toggle value={configItem.value} onChange={(value) => { updateConfig(configItem, value) }} onBlur={() => { saveConfig().catch(() => {}) }} />
         )
       default:
         return <span>{JSON.stringify(configItem.value)}</span>

@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
     backgroundColor: theme.palette.neutral[4],
     [theme.breakpoints.up('md')]: {
-      height: 'calc(100vh - 40px)',
+      height: 'calc(100vh - 40px)'
     }
   },
   title: {
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderBottom: `1px solid ${theme.palette.border ?? ''}`,
+    borderBottom: `1px solid ${theme.palette.border ?? ''}`
   },
   sectionTitle: {
     font: 'normal normal 500 13px/24px Gilroy',
@@ -45,12 +45,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: theme.palette.neutral[5] + '80',
-    borderBottom: `1px solid ${theme.palette.border ?? ''}`,
+    backgroundColor: theme.palette.neutral[5] ?? '' + '80',
+    borderBottom: `1px solid ${theme.palette.border ?? ''}`
   },
   configContainer: {
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'column'
   }
 }))
 
@@ -68,10 +68,9 @@ const Details: React.FC<DetailsProps> = ({ close }) => {
       <div className={classes.configContainer}>
         <div className={classes.sectionTitle}>
           <span>Config</span>
-          {showConfig ?
-            <ArrowIcon onClick={() => setShowConfig(false)} className={clsx(classes.iconColor, classes.actionIcon)} style={{ transform: 'rotate(90deg)' }} /> :
-            <ArrowIcon onClick={() => setShowConfig(true)} className={clsx(classes.iconColor, classes.actionIcon)} />
-          }
+          {showConfig
+            ? <ArrowIcon onClick={() => setShowConfig(false)} className={clsx(classes.iconColor, classes.actionIcon)} style={{ transform: 'rotate(90deg)' }} />
+            : <ArrowIcon onClick={() => setShowConfig(true)} className={clsx(classes.iconColor, classes.actionIcon)} />}
         </div>
         {showConfig && <Config />}
       </div>

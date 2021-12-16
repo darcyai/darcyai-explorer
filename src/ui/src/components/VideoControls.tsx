@@ -10,7 +10,7 @@ const useStyles = makeStyles<Theme>(theme => ({
   root: {
     position: 'absolute',
     bottom: theme.spacing(4),
-    right: theme.spacing(4),
+    right: theme.spacing(4)
   }
 }))
 
@@ -18,9 +18,9 @@ const VideoControls: React.FC = () => {
   const classes = useStyles()
   const { isPlaying, pauseLiveStream, playLiveStream } = usePipeline()
 
-  const toggleVideo = () => {
+  const toggleVideo = (): void => {
     if (isPlaying) {
-      pauseLiveStream()
+      void pauseLiveStream()
     } else {
       playLiveStream()
     }

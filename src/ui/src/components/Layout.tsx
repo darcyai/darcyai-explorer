@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme: Theme) => {
   return {
     container: {
       width: '100%',
-      minHeight: '100vh',
+      minHeight: '100vh'
     },
     contentContainer: {
       display: 'flex',
@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) => {
       flexDirection: 'column',
       minHeight: 'calc(100vh - 40px)',
       [theme.breakpoints.up('md')]: {
-        flexDirection: 'row',
+        flexDirection: 'row'
       }
     }
   }

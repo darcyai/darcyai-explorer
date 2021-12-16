@@ -83,9 +83,11 @@ const reducer = (state: FeedbackState, action: FeedbackAction): FeedbackState =>
         feedbacks: [...state.feedbacks,
           {
             ...action.data,
-            timeout: action.data.type === FeedbackType.ERROR ? undefined : setTimeout(() => {
-              action.dispatch({ type: Actions.REMOVE, data: { id: state.nextId } })
-            }, (window as any).Cypress != null ? 10000 : action.data.timeout ?? AUTO_HIDE), // Set timeout to 10s in Cypress
+            timeout: action.data.type === FeedbackType.ERROR
+              ? undefined
+              : setTimeout(() => {
+                action.dispatch({ type: Actions.REMOVE, data: { id: state.nextId } })
+              }, (window as any).Cypress != null ? 10000 : action.data.timeout ?? AUTO_HIDE), // Set timeout to 10s in Cypress
             id: state.nextId
           }],
         nextId: state.nextId + 1

@@ -2,14 +2,13 @@ import React from 'react'
 
 import { makeStyles } from '@mui/styles'
 import { Theme } from '@mui/material'
-import { useFeedback } from '../providers/Feedback'
 import { usePipeline } from '../providers/Pipeline'
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     width: '100%',
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   container: {
     maxWidth: 990,
@@ -17,7 +16,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     gap: 1,
-    backgroundColor: theme.palette.neutral[5],
+    backgroundColor: theme.palette.neutral[5]
   },
   item: {
     flex: 1,
@@ -31,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       padding: theme.spacing(2),
       alignItems: 'flex-start',
       justifyContent: 'flex-start',
-      flexDirection: 'row',
+      flexDirection: 'row'
     }
   },
   number: {
@@ -40,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.neutral[3],
     [theme.breakpoints.up('md')]: {
       fontSize: '2.25rem',
-      lineHeight: '2.25rem',
+      lineHeight: '2.25rem'
     }
   },
   label: {
@@ -50,7 +49,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     textTransform: 'uppercase',
     [theme.breakpoints.up('md')]: {
       fontSize: '0.8125rem',
-      lineHeight: '1.25rem',
+      lineHeight: '1.25rem'
     }
   }
 }))
@@ -60,15 +59,14 @@ const Summary: React.FC = () => {
   const timeoutRef = React.useRef<number | null>(null)
   const { isPlaying, summary, fetchSummary } = usePipeline()
 
-  async function pollSummary() {
+  async function pollSummary (): Promise<void> {
     if (!isPlaying) { return }
     try {
       await fetchSummary()
+    } catch (e) {
+
     }
-    catch(e) {
-      
-    }
-    timeoutRef.current = window.setTimeout(pollSummary, 1.5 * 1000)
+    timeoutRef.current = window.setTimeout(() => { void pollSummary() }, 1.5 * 1000)
   }
 
   React.useEffect(() => {
@@ -79,10 +77,9 @@ const Summary: React.FC = () => {
     }
   }, [])
 
-
   React.useEffect(() => {
     if (isPlaying) {
-      pollSummary()
+      void pollSummary()
     } else {
       if (timeoutRef.current != null) {
         window.clearTimeout(timeoutRef.current)

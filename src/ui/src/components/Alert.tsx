@@ -79,32 +79,34 @@ export const Alert: React.FC<{ open: boolean, alerts: FeedbackAlert[] }> = (prop
   const classes: any = useStyles()
   const { open, alerts } = props
 
-  return open ? (
-    <div className={classes.container}>
-      {alerts.map((a, idx) => {
-        const handleClick = a.onClose
-        const variantKey = a.type ?? 'info'
-        const Icon = variantIcon[variantKey]
-        return (
-          <SnackbarContent
-            key={a.key ?? a.id ?? idx}
-            className={clsx(classes[variantKey], classes.alert, a.className)}
-            aria-describedby='client-snackbar'
-            message={
-              <span id='client-snackbar' data-cy='Alert' className={classes.message}>
-                <Icon className={clsx(classes.icon, classes.iconVariant, classes.iconColor)} />
-                <span style={{ width: '100%', userSelect: 'all' }}>{a.message}</span>
-              </span>
+  return open
+    ? (
+      <div className={classes.container}>
+        {alerts.map((a, idx) => {
+          const handleClick = a.onClose
+          const variantKey = a.type ?? 'info'
+          const Icon = variantIcon[variantKey]
+          return (
+            <SnackbarContent
+              key={a.key ?? a.id ?? idx}
+              className={clsx(classes[variantKey], classes.alert, a.className)}
+              aria-describedby='client-snackbar'
+              message={
+                <span id='client-snackbar' data-cy='Alert' className={classes.message}>
+                  <Icon className={clsx(classes.icon, classes.iconVariant, classes.iconColor)} />
+                  <span style={{ width: '100%', userSelect: 'all' }}>{a.message}</span>
+                </span>
             }
-            classes={{ message: classes.snackMessage }}
-            action={[
-              <CloseIcon key={1} onClick={handleClick} data-cy='AlertClose' className={clsx(classes.closeIcon, classes.iconColor)} />
-            ]}
-          />
-        )
-      })}
-    </div>
-  ) : null
+              classes={{ message: classes.snackMessage }}
+              action={[
+                <CloseIcon key={1} onClick={handleClick} data-cy='AlertClose' className={clsx(classes.closeIcon, classes.iconColor)} />
+              ]}
+            />
+          )
+        })}
+      </div>
+      )
+    : null
 }
 
 export default Alert
