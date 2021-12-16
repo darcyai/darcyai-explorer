@@ -1,5 +1,5 @@
 import React from 'react'
-import { usePipeline, Pulse, perceptorNameByStep } from '../../providers/Pipeline'
+import { usePipeline, perceptorNameByStep } from '../../providers/Pipeline'
 import { CollapsedFieldProps } from 'react-json-view'
 
 import { makeStyles } from '@mui/styles'
@@ -11,11 +11,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     height: '100%',
     minHeight: theme.spacing(10),
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   details: {
     padding: theme.spacing(2),
-    borderBottom: `1px solid ${theme.palette.border ?? ''}`,
+    borderBottom: `1px solid ${theme.palette.border ?? ''}`
   },
   item: {
     display: 'flex',
@@ -47,15 +47,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const POM: React.FC = () => {
   const classes = useStyles()
-  const { latestPulse, selectedStep, isPlaying, pauseLiveStream, playLiveStream } = usePipeline()
-
-  // React.useEffect(() => {
-  //   const wasPlaying = isPlaying
-  //   pauseLiveStream()
-  //   return () => {
-  //      if (wasPlaying) { playLiveStream() }
-  //   }
-  // }, [])
+  const { latestPulse, selectedStep, isPlaying } = usePipeline()
 
   const _shouldCollapse = React.useMemo(() => (field: CollapsedFieldProps) => {
     if (field.name === 'root') {
@@ -69,12 +61,13 @@ const POM: React.FC = () => {
 
   return (
     <div className={classes.root}>
-      { isPlaying ? 
-        <div className={classes.playingText}><span>Pause the video to see the POM details</span></div> : 
-        <div className={classes.details}>
-          <ReactJSONView src={latestPulse?.pom ?? {}} shouldCollapse={_shouldCollapse}/>
-        </div>
-      }
+      {isPlaying
+        ? <div className={classes.playingText}><span>Pause the video to see the POM details</span></div>
+        : (
+          <div className={classes.details}>
+            <ReactJSONView src={latestPulse?.pom ?? {}} shouldCollapse={_shouldCollapse} />
+          </div>
+          )}
     </div>
   )
 }

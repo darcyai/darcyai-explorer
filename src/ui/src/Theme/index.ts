@@ -59,7 +59,7 @@ let darkTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: spacing / 4,
+          borderRadius: spacing / 4
         },
         sizeSmall: {
           padding: spacing,
@@ -78,7 +78,7 @@ let darkTheme = createTheme({
           '&:hover': {
             backgroundColor: edgeColors.neutral[0]
           }
-        },
+        }
       }
     },
     MuiOutlinedInput: {
@@ -91,13 +91,13 @@ let darkTheme = createTheme({
           },
           '&.Mui-focused .MuiOutlinedInput-input': {
             color: edgeColors.neutral[0]
-          },
+          }
         },
         notchedOutline: {
           borderColor: edgeColors.blue
         },
-        sizeSmall: { 
-          height: 24,
+        sizeSmall: {
+          height: 24
         },
         input: {
           font: 'normal normal 500 13px/16px Gilroy',
@@ -115,4 +115,3 @@ let darkTheme = createTheme({
 darkTheme = responsiveFontSizes(darkTheme)
 
 export default darkTheme
-

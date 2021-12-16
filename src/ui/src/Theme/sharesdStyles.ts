@@ -15,7 +15,7 @@ const sharedStyles: (theme: Theme) => any = (theme: Theme) => ({
       '--svg-color': theme.palette.neutral[0],
       cursor: 'pointer'
     }
-  },
+  }
 })
 
 export default sharedStyles

@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) => {
       width: '100%',
       height: theme.spacing(5),
       font: 'Gilroy',
-      textTransform: 'uppercase',
+      textTransform: 'uppercase'
     },
     logo: {
       display: 'flex',
@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme: Theme) => {
     links: {
       display: 'flex',
       alignItems: 'center',
-      gap: theme.spacing(4),
+      gap: theme.spacing(4)
     },
     link: {
       display: 'flex',
@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) => {
 const Navbar: React.FC = () => {
   const classes = useStyles()
   return (
-    <div  className={classes.root}>
+    <div className={classes.root}>
       <div className={classes.logo}>
         <Logo />
         <span>Darcy AI Explorer</span>

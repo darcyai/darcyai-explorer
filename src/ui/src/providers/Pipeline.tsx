@@ -35,7 +35,7 @@ const defaultSummaryState: SummaryState = {
   inScene: 0,
   visitors: 0,
   faceMasks: 0,
-  qrCodes: 0,
+  qrCodes: 0
 }
 
 declare interface PipelineProps {
@@ -82,7 +82,6 @@ const defaultValue: Pipeline = {
   fetchSummary: async () => {}
 }
 
-
 export enum PipelineStep {
   INPUT = 'Input stream',
   PEOPLE = 'People perceptor',
@@ -91,7 +90,6 @@ export enum PipelineStep {
   CALLBACK = 'Callback',
   OUTPUT = 'Output stream'
 }
-
 
 export const perceptorNameByStep: (step: PipelineStep) => string = (step: PipelineStep) => {
   switch (step) {
@@ -150,7 +148,7 @@ export const PipelineContext = React.createContext(defaultValue)
 export const usePipeline: () => Pipeline = () => React.useContext(PipelineContext)
 
 export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, children }) => {
-  const [imageSrc, setImageSrc] = React.useState < string > (liveFeedSrc)
+  const [imageSrc, setImageSrc] = React.useState < string >(liveFeedSrc)
   const [selectedStep, setSelectedStep] = React.useState<PipelineStep | undefined>(undefined)
   const [hoveredStep, setHoveredStep] = React.useState<PipelineStep | undefined>(undefined)
   const [summary, setSummary] = React.useState<SummaryState>(defaultSummaryState)
@@ -160,8 +158,8 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   const isPlaying = React.useMemo(() => !imageSrc.includes('base64'), [imageSrc])
   const { pushErrorFeedBack } = useFeedback()
 
-  const fetchEvents = async () => {
-    if (selectedStep === undefined || stepEventURL(selectedStep) === '' ) {
+  const fetchEvents = async (): Promise<void> => {
+    if (selectedStep === undefined || stepEventURL(selectedStep) === '') {
       setEvents([])
       return
     }
@@ -170,13 +168,13 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
       if (!res.ok) { throw new Error(res.statusText) }
       const data = await res.json()
       setEvents(data)
-    } catch(e: any) {
+    } catch (e: any) {
       console.error(e)
       pushErrorFeedBack(e)
     }
   }
 
-  async function fetchPerceptorConfig(step: PipelineStep) {
+  async function fetchPerceptorConfig (step: PipelineStep): Promise<void> {
     const url = stepConfigURL(step)
     if (url === '') {
       setConfig([])
@@ -188,7 +186,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
     setConfig(config)
   }
 
-  async function pause() {
+  async function pause (): Promise<void> {
     try {
       const res = await window.fetch('/current_pulse')
       if (!res.ok) { throw new Error(res.statusText) }
@@ -205,29 +203,27 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   }
 
   React.useEffect(() => {
-    if (selectedStep) {
+    if (selectedStep !== undefined) {
       fetchPerceptorConfig(selectedStep)
-      .catch(err => {
-        console.error(err)
-        pushErrorFeedBack(err)
-        setConfig([])
-      })
+        .catch(err => {
+          console.error(err)
+          pushErrorFeedBack(err)
+          setConfig([])
+        })
       fetchEvents()
-      .catch(err => {
-        console.error(err)
-        pushErrorFeedBack(err)
-        setEvents([])
-      })
+        .catch(err => {
+          console.error(err)
+          pushErrorFeedBack(err)
+          setEvents([])
+        })
     }
   }, [selectedStep])
 
-
-
-  const saveConfig = async () => {
+  const saveConfig = async (): Promise<void> => {
     if (selectedStep === undefined) return
     try {
       const url = stepConfigURL(selectedStep)
-      if (url === '') { 
+      if (url === '') {
         return
       }
       const res = await window.fetch(`/pipeline${url}`, {
@@ -238,7 +234,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
         body: JSON.stringify(config.reduce((acc: any, item: ConfigItem) => {
           acc[item.name] = item.value
           return acc
-        }, {})),
+        }, {}))
       })
       if (!res.ok) {
         throw new Error(`Failed to save config:\n ${res.statusText}`)
@@ -246,11 +242,11 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
     } catch (e: any) {
       console.error(e)
       pushErrorFeedBack(e)
-      fetchPerceptorConfig(selectedStep)
+      void fetchPerceptorConfig(selectedStep)
     }
   }
 
-  const updateConfig = (item: ConfigItem, newValue: any) => {
+  const updateConfig = (item: ConfigItem, newValue: any): void => {
     const newConfig = config.map(i => {
       if (i.name === item.name) {
         const value = item.type === 'int' || item.type === 'float' ? Number(newValue) : newValue
@@ -264,15 +260,14 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
     //   ?.catch(err => console.error(err))
   }
 
-  async function fetchSummary() {
+  async function fetchSummary (): Promise<void> {
     try {
       const res = await fetch('/events/summary')
       if (!res.ok) {
         throw new Error(res.statusText)
       }
       setSummary(await res.json())
-    }
-    catch (err: any) {
+    } catch (err: any) {
       pushErrorFeedBack(err)
       setSummary(defaultSummaryState)
     }
@@ -294,7 +289,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
         hoverStep: (step?: PipelineStep) => setHoveredStep(step),
         playLiveStream: () => { setImageSrc(liveFeedSrc) },
         pauseLiveStream: pause,
-        fetchEvents: async () => fetchEvents(),
+        fetchEvents: async () => await fetchEvents(),
         showFrame: (frame: string) => setImageSrc(frame),
         updateConfig,
         saveConfig

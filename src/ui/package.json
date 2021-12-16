@@ -39,7 +39,10 @@
     ]
   },
   "ts-standard": {
-    "project": "./tsconfig.json"
+    "project": "./tsconfig.json",
+    "ignore": [
+      "./src/react-app-env.d.ts"
+    ]
   },
   "browserslist": {
     "production": [

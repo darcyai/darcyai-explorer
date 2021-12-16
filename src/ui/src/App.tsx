@@ -10,9 +10,9 @@ import Landing from './components/Landing'
 import { PipelineProvider } from './providers/Pipeline'
 import { FeedbackProvider } from './providers/Feedback'
 
-function App () {
+function App (): JSX.Element {
   // Public API that will echo messages sent to it back to the client
-  const [showDetails, setShowDetails] = React.useState < boolean > (false)
+  const [showDetails, setShowDetails] = React.useState < boolean >(false)
 
   return (
     <div className='App'>

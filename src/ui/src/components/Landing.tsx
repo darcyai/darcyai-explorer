@@ -16,9 +16,9 @@ const useStyles = makeStyles((theme: Theme) => {
       [theme.breakpoints.up('md')]: {
         flex: 1,
         zIndex: 5,
-        boxShadow: `0px 3px 80px 0 rgba(0, 0, 0, 0.5)`,
+        boxShadow: '0px 3px 80px 0 rgba(0, 0, 0, 0.5)'
       }
-    }, 
+    },
     header: {
       display: 'flex',
       flexDirection: 'column',
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) => {
       width: '100%',
       gap: theme.spacing(4),
       padding: theme.spacing(0, 2),
-      background: 'transparent linear-gradient(180deg, #0F2C42 0%, #1C405C 100%) 0% 0% no-repeat padding-box',
+      background: 'transparent linear-gradient(180deg, #0F2C42 0%, #1C405C 100%) 0% 0% no-repeat padding-box'
     },
     titles: {
       textAlign: 'center',
@@ -39,17 +39,17 @@ const useStyles = makeStyles((theme: Theme) => {
         letterSpacing: '0.28px',
         color: theme.palette.primary.main,
         textTransform: 'uppercase',
-        marginBottom: 0,
+        marginBottom: 0
       }
     },
-    pipelineTitle:{
+    pipelineTitle: {
       font: 'normal normal normal 17px/26px Gilroy',
       letterSpacing: '0.34px',
       textTransform: 'uppercase',
       alignSelf: 'flex-start',
       height: theme.spacing(8),
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'center'
     },
     headerBottomSection: {
       borderTop: `2px solid ${theme.palette.border ?? ''}`,
@@ -60,23 +60,23 @@ const useStyles = makeStyles((theme: Theme) => {
       position: 'relative',
       minHeight: theme.spacing(14),
       display: 'flex',
-      flexDirection: 'column',
+      flexDirection: 'column'
     },
     infoText: {
       display: 'flex',
       flexDirection: 'column',
       gap: theme.spacing(1),
       height: '100%',
-      flex: 1,
+      flex: 1
     },
     infoTextTitle: {
       font: 'normal normal medium 13px/24px Gilroy',
       letterSpacing: '0.26px',
-      textTransform: 'uppercase',
+      textTransform: 'uppercase'
     },
     infoTextContent: {
       font: 'normal normal normal 13px/21px Gilroy',
-      letterSpacing: '0.26px',
+      letterSpacing: '0.26px'
     },
     videoSection: {
       position: 'relative',
@@ -84,10 +84,10 @@ const useStyles = makeStyles((theme: Theme) => {
       minHeight: theme.spacing(20),
       lineHeight: 0,
       '& img': {
-        width: '100%',
+        width: '100%'
       },
       [theme.breakpoints.up('md')]: {
-        minHeight: theme.spacing(40),
+        minHeight: theme.spacing(40)
       }
     },
     pipelineContainer: {
@@ -116,7 +116,7 @@ const infoTextByStep: Record<PipelineStep, string> = {
   [PipelineStep.MASK]: 'Easily detect face masks. All right out of the box with Darcy AI.',
   [PipelineStep.QRCODE]: 'Read QRCodes. All right out of the box with Darcy AI.',
   [PipelineStep.CALLBACK]: 'Annotate your frames with custom data.',
-  [PipelineStep.OUTPUT]: 'Stream your video to your phone or computer.',
+  [PipelineStep.OUTPUT]: 'Stream your video to your phone or computer.'
 }
 
 const Landing: React.FC<LandingProps> = ({ inspect, showInspect }) => {
@@ -137,13 +137,14 @@ const Landing: React.FC<LandingProps> = ({ inspect, showInspect }) => {
   return (
     <div className={classes.root}>
       <div className={classes.header}>
-        {selectedStep ? 
-          <div className={classes.pipelineTitle}>Darcy AI pipeline</div> :
-          <div className={classes.titles}>
-            <h1>Easily build your own AI apps (like this one!) using the Darcy AI SDK</h1>
-            <h2>Click the Darcy AI pipeline below to see how this app was built</h2>
-          </div>
-        }
+        {selectedStep !== undefined
+          ? <div className={classes.pipelineTitle}>Darcy AI pipeline</div>
+          : (
+            <div className={classes.titles}>
+              <h1>Easily build your own AI apps (like this one!) using the Darcy AI SDK</h1>
+              <h2>Click the Darcy AI pipeline below to see how this app was built</h2>
+            </div>
+            )}
         <div className={classes.pipelineContainer}>
           <Pipeline />
         </div>

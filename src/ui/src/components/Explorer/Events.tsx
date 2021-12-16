@@ -25,9 +25,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingLeft: theme.spacing(4),
     paddingBottom: theme.spacing(1),
     [theme.breakpoints.up('md')]: {
-      paddingLeft: theme.spacing(6),
+      paddingLeft: theme.spacing(6)
     },
-    flex: 1,
+    flex: 1
   },
   noEventItem: {
     font: 'normal normal 500 13px/16px Gilroy',
@@ -57,22 +57,22 @@ const useStyles = makeStyles((theme: Theme) => ({
   iconColumn: {
     width: theme.spacing(3),
     [theme.breakpoints.up('md')]: {
-      width: theme.spacing(5),
+      width: theme.spacing(5)
     },
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   dateColumn: {
     width: theme.spacing(15),
     [theme.breakpoints.up('md')]: {
-      width: theme.spacing(25),
+      width: theme.spacing(25)
     },
     display: 'flex',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   eventColumn: {
     flex: 1,
@@ -82,7 +82,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
     maxWidth: theme.spacing(40),
-    color: theme.palette.neutral[0],
+    color: theme.palette.neutral[0]
   },
   payloadColumn: {
     flex: 1,
@@ -94,21 +94,21 @@ const useStyles = makeStyles((theme: Theme) => ({
     whiteSpace: 'nowrap',
     maxWidth: theme.spacing(40),
     [theme.breakpoints.up('md')]: {
-      display: 'flex',
-    },
+      display: 'flex'
+    }
   },
   title: {
     font: 'normal normal 500 13px/16px Gilroy',
     color: theme.palette.neutral[2],
     letterSpacing: 0.26,
-    textTransform: 'uppercase',
+    textTransform: 'uppercase'
   },
   icon: {
     marginLeft: theme.spacing(1)
   }
 }))
 
-function formatEvent(event: EventItem, formatedTimestamp: string) {
+function formatEvent (event: EventItem, formatedTimestamp: string): {} {
   return {
     type: event.event_type,
     timestamp: event.timestamp,
@@ -123,12 +123,11 @@ const Events: React.FC = () => {
   const { events, fetchEvents, selectedStep, isPlaying } = usePipeline()
   const timeoutRef = React.useRef<number | null>(null)
 
-  async function pollEvents() {
+  async function pollEvents (): Promise<void> {
     try {
       await fetchEvents()
-    }
-    catch (e) { }
-    timeoutRef.current = window.setTimeout(pollEvents, 1.5 * 1000)
+    } catch (e) { }
+    timeoutRef.current = window.setTimeout(() => { pollEvents().catch(() => {}) }, 1.5 * 1000)
   }
 
   React.useEffect(() => {
@@ -145,21 +144,21 @@ const Events: React.FC = () => {
     }
     if (isPlaying) {
       if (selectedStep != null) {
-        pollEvents()
+        pollEvents().catch(() => {})
       }
     } else {
-      fetchEvents()
+      fetchEvents().catch(() => {})
     }
   }, [isPlaying, selectedStep])
 
-  const selectEvent = (event: EventItem) => {
+  const selectEvent = (event: EventItem): void => {
     setSelectedEvent(currentID => currentID === event.id ? '' : event.id)
   }
 
   return (
     <div className={classes.root}>
       <div className={classes.row}>
-        <div className={classes.iconColumn}/>
+        <div className={classes.iconColumn} />
         <div className={clsx(classes.dateColumn, classes.title)}>Date</div>
         <div className={clsx(classes.eventColumn, classes.title)}>Event</div>
         <div className={clsx(classes.payloadColumn, classes.title)}>Payload</div>
@@ -178,14 +177,16 @@ const Events: React.FC = () => {
             <div className={classes.iconColumn}>{selected ? <OpenedIcon className={clsx(classes.icon, classes.iconColor)} /> : <CollapsedIcon className={clsx(classes.icon, classes.iconColor)} />}</div>
             <div className={classes.dateColumn}>{formatedTimestamp}</div>
             <div className={classes.eventColumn}>{event.event_type}</div>
-            {selected ? (
-              <>
-                <div style={{ flexBasis: '100%', height: 0 }} />
-                <div key={event.id} className={classes.details} onClick={(e) => { e.stopPropagation(); e.preventDefault() }}>
-                  <ReactJSONView src={formatEvent(event, formatedTimestamp)} />
-                </div>
-              </>
-            ) : <div className={classes.payloadColumn}>{JSON.stringify(event.payload)}</div>}
+            {selected
+              ? (
+                <>
+                  <div style={{ flexBasis: '100%', height: 0 }} />
+                  <div key={event.id} className={classes.details} onClick={(e) => { e.stopPropagation(); e.preventDefault() }}>
+                    <ReactJSONView src={formatEvent(event, formatedTimestamp)} />
+                  </div>
+                </>
+                )
+              : <div className={classes.payloadColumn}>{JSON.stringify(event.payload)}</div>}
           </div>
         )
       })}

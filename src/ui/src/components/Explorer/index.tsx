@@ -3,9 +3,8 @@ import React from 'react'
 import { makeStyles } from '@mui/styles'
 import { Theme } from '@mui/material'
 
-import clsx from 'clsx'
 import { PipelineStep, usePipeline } from '../../providers/Pipeline'
-import POM from './POM'
+import POMViewer from './POM'
 import Events from './Events'
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -13,7 +12,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
-    height: 0,
+    height: 0
   },
   title: {
     font: 'normal normal 500 13px/24px Gilroy',
@@ -24,19 +23,19 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     gap: theme.spacing(2),
-    backgroundColor: theme.palette.neutral[5] + '80',
+    backgroundColor: theme.palette.neutral[5] ?? '' + '80',
     borderBottom: `1px solid ${theme.palette.border ?? ''}`,
     color: theme.palette.primary.main,
     cursor: 'pointer',
     '& .selected': {
-      color: theme.palette.neutral[0],
+      color: theme.palette.neutral[0]
     }
   },
   contentSection: {
     backgroundColor: theme.palette.neutral[4],
     flex: 1,
     overflowY: 'auto',
-    minHeight: 0,
+    minHeight: 0
   }
 }))
 
@@ -49,14 +48,13 @@ const enum Tabs {
 const Explorer: React.FC = () => {
   const classes = useStyles()
   const [tab, setTab] = React.useState<Tabs>(Tabs.EVENTS)
-  const { playLiveStream, selectedStep, selectStep } = usePipeline()
+  const { selectedStep, selectStep } = usePipeline()
 
-  const selectEvents = () => {
+  const selectEvents = (): void => {
     setTab(Tabs.EVENTS)
-    playLiveStream()
   }
 
-  const selectPOM = async () => {
+  const selectPOM = async (): Promise<void> => {
     try {
       setTab(Tabs.POM)
     } catch (e) {
@@ -64,9 +62,8 @@ const Explorer: React.FC = () => {
     }
   }
 
-  const selectCode = () => {
+  const selectCode = (): void => {
     setTab(Tabs.CODE)
-    playLiveStream()
   }
 
   React.useEffect(() => {
@@ -84,7 +81,7 @@ const Explorer: React.FC = () => {
       </div>
       <div className={classes.contentSection}>
         {tab === Tabs.EVENTS && <Events />}
-        {tab === Tabs.POM && <POM />}
+        {tab === Tabs.POM && <POMViewer />}
         {tab === Tabs.CODE && <div>Code</div>}
       </div>
     </div>
