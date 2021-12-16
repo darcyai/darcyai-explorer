@@ -261,6 +261,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   }
 
   async function fetchSummary (): Promise<void> {
+    if (!isPlaying) { return }
     try {
       const res = await fetch('/events/summary')
       if (!res.ok) {

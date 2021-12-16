@@ -62,7 +62,7 @@ const POM: React.FC = () => {
   return (
     <div className={classes.root}>
       {isPlaying
-        ? <div className={classes.playingText}><span>Pause the video to see the POM details</span></div>
+        ? <div className={classes.playingText}><span>Pause the video to see the POM details.</span></div>
         : (
           <div className={classes.details}>
             <ReactJSONView src={latestPulse?.pom ?? {}} shouldCollapse={_shouldCollapse} />

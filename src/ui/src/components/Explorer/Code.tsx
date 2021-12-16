@@ -192,7 +192,7 @@ const Code: React.FC = () => {
   if (code === undefined) {
     return (
       <div className={classes.root}>
-        <div className={classes.noCode}>There is no code for {selectedStep}</div>
+        <div className={classes.noCode}>There is no code for {selectedStep}.</div>
       </div>
     )
   }
