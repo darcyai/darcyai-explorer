@@ -121,7 +121,7 @@ const stepConfigURL: (step: PipelineStep) => string = (step: PipelineStep) => {
     case PipelineStep.QRCODE:
       return `/perceptors/${perceptorNameByStep(step)}/config`
     case PipelineStep.CALLBACK:
-      return `/perceptors/${perceptorNameByStep(step)}/config`
+      return ''
     case PipelineStep.OUTPUT:
       return `/outputs/${perceptorNameByStep(step)}/config`
     default:

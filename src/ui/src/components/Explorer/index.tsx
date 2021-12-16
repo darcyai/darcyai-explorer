@@ -6,6 +6,7 @@ import { Theme } from '@mui/material'
 import { PipelineStep, usePipeline } from '../../providers/Pipeline'
 import POMViewer from './POM'
 import Events from './Events'
+import Code from './Code'
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -82,7 +83,7 @@ const Explorer: React.FC = () => {
       <div className={classes.contentSection}>
         {tab === Tabs.EVENTS && <Events />}
         {tab === Tabs.POM && <POMViewer />}
-        {tab === Tabs.CODE && <div>Code</div>}
+        {tab === Tabs.CODE && <Code />}
       </div>
     </div>
   )
