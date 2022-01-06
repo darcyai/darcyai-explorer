@@ -80,7 +80,7 @@ const useToggleStyles = makeStyles((theme: Theme) => ({
   }
 }))
 
-const Toggle: React.FC<{value: boolean, onChange: (newValue: boolean) => void, onBlur: any}> = ({ value, onChange, onBlur }) => {
+export const Toggle: React.FC<{value: boolean, onChange: (newValue: boolean) => void, onBlur: any}> = ({ value, onChange, onBlur }) => {
   const classes: any = useToggleStyles()
 
   const _onChange = (): void => {

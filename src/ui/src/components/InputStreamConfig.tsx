@@ -6,12 +6,12 @@ import { Theme } from '@mui/material'
 import { ReactComponent as PlayIcon } from '../assets/play.svg'
 import { useFeedback } from '../providers/Feedback'
 import { usePipeline } from '../providers/Pipeline'
+import { Toggle } from './Config'
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    padding: theme.spacing(2),
     display: 'flex',
-    gap: theme.spacing(2)
+    flexDirection: 'column',
   },
   item: {
     display: 'flex',
@@ -69,6 +69,28 @@ const useStyles = makeStyles((theme: Theme) => ({
   itemDescription: {
     font: 'normal normal 500 12px/16px Gilroy',
     letterSpacing: 0
+  },
+  inputRow: {
+    display: 'flex',
+    padding: theme.spacing(2),
+    borderBottom: `1px solid ${theme.palette.border ?? ''}`,
+    gap: theme.spacing(2)
+  },
+  configRow: {
+    display: 'flex',
+    padding: theme.spacing(0, 2),
+    gap: theme.spacing(2)
+  },
+  configItem: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    justifyContent: 'space-between',
+    font: 'normal normal 500 13px/16px Gilroy',
+    letterSpacing: 0,
+    color: theme.palette.neutral[2],
+    minHeight: theme.spacing(5)
   }
 }))
 
@@ -87,6 +109,10 @@ const InputStreamConfig: React.FC = () => {
   const [currentInputId, setCurrentInputId] = React.useState<number>(0)
   const { pushErrorFeedBack } = useFeedback()
   const { pauseLiveStream, playLiveStream } = usePipeline()
+  const [processAllFrames, setProcessAllFrames] = React.useState<boolean>(true)
+  const currentInput = React.useMemo(() => {
+    return inputs.find(input => input.id === currentInputId)
+  }, [currentInputId])
 
   async function fetchInputs (): Promise<void> {
     const res = await fetch('/inputs')
@@ -99,7 +125,11 @@ const InputStreamConfig: React.FC = () => {
   async function updateInput (inputId: number): Promise<void> {
     try {
       await pauseLiveStream()
-      const res = await fetch(`/inputs/${inputId}`, { method: 'PUT' })
+      const res = await fetch(`/inputs/${inputId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ process_all_frames: processAllFrames }),
+        headers: { 'Content-Type': 'application/json' }
+      })
       if (!res.ok) { throw new Error(res.statusText) }
       const data = await res.json()
       setInputs(data.inputs)
@@ -122,18 +152,30 @@ const InputStreamConfig: React.FC = () => {
 
   return (
     <div className={classes.root}>
-      {inputs.map((input) => (
-        <div key={input.id} className={classes.item}>
-          <div className={classes.itemImgContainer}>
-            <img className={classes.itemImg} src={input.thumbnail ?? ''} />
-            {currentInputId !== input.id && <div className={classes.itemImgOverlay} onClick={() => { void updateInput(input.id) }}><PlayIcon /></div>}
+      <div className={classes.inputRow}>
+        {inputs.map((input) => (
+          <div key={input.id} className={classes.item}>
+            <div className={classes.itemImgContainer}>
+              <img className={classes.itemImg} src={input.thumbnail ?? ''} />
+              {currentInputId !== input.id && <div className={classes.itemImgOverlay} onClick={() => { void updateInput(input.id) }}><PlayIcon /></div>}
+            </div>
+            <div className={classes.itemContent}>
+              <span className={classes.itemTitle}>{input.title}</span>
+              <span className={classes.itemDescription}>{input.description}</span>
+            </div>
           </div>
-          <div className={classes.itemContent}>
-            <span className={classes.itemTitle}>{input.title}</span>
-            <span className={classes.itemDescription}>{input.description}</span>
+        ))}
+      </div>
+      {currentInput?.type === 'video_file' && (
+        <div className={classes.configRow}>
+          <div className={classes.configItem}>
+            <div>Process all video frames</div>
+            <div>
+              <Toggle value={processAllFrames} onChange={(value) => { setProcessAllFrames(value) }} onBlur={() => { void updateInput(currentInputId) }} />
+            </div>
           </div>
         </div>
-      ))}
+      )}
     </div>
   )
 }
