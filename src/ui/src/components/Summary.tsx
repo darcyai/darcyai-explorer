@@ -58,9 +58,11 @@ const Summary: React.FC = () => {
   const classes = useStyles()
   const timeoutRef = React.useRef<number | null>(null)
   const { isPlaying, summary, fetchSummary } = usePipeline()
+  // Using a ref to avoid memoization of the isPlaying value.
+  const isPlayingRef = React.useRef<boolean>(isPlaying)
 
   async function pollSummary (): Promise<void> {
-    if (!isPlaying) { return }
+    if (!isPlayingRef.current) { return } // Using a ref to avoid memoization of the isPlaying value.
     try {
       await fetchSummary()
     } catch (e) {
@@ -78,6 +80,7 @@ const Summary: React.FC = () => {
   }, [])
 
   React.useEffect(() => {
+    isPlayingRef.current = isPlaying
     if (isPlaying) {
       void pollSummary()
     } else {
