@@ -16,9 +16,9 @@ absolutepath = os.path.dirname(os.path.abspath(__file__))
 def is_mac_osx():
     return platform.system() == "Darwin"
 
-def get_input_stream(input):
+def get_input_stream(input, process_all_frames: bool = True):
     if input["type"] == "video_file":
-        return VideoFileStream(os.path.join(absolutepath, input["file"]))
+        return VideoFileStream(os.path.join(absolutepath, input["file"]), process_all_frames=process_all_frames)
     else:
         return CameraStream(video_device=0 if is_mac_osx() else "/dev/video0")
 
@@ -77,6 +77,8 @@ class ExplorerPipeline():
         self.__face_mask_perceptor_name = "facemask"
         face_mask_perceptor = FaceMaskPerceptor()
         self.__pipeline.add_perceptor(self.__face_mask_perceptor_name, face_mask_perceptor, accelerator_idx=0, parent=self.__people_perceptor_name, input_callback=self.__face_mask_input_callback, multi=True)
+        # Update configuration
+        self.__pipeline.set_perceptor_config(self.__face_mask_perceptor_name, "threshold", 0.95)
 
     def __update_masks_count(self, pom):
         mask_results = pom.get_perceptor(self.__face_mask_perceptor_name)
@@ -192,10 +194,10 @@ class ExplorerPipeline():
     def __output_stream_callback(self, pom, input_data):
         return pom.get_perceptor(self.__people_perceptor_name).annotatedFrame()
 
-    def change_input(self, input):
+    def change_input(self, input, process_all_frames: bool = True):
         self.__stopped = True
         self.__pipeline.stop()
-        self.__pipeline.update_input_stream(get_input_stream(input))
+        self.__pipeline.update_input_stream(get_input_stream(input, process_all_frames))
         self.__reset_summary()
         self.__stopped = False
 

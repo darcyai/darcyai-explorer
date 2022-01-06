@@ -1,6 +1,6 @@
 from darcyai_engine.perception_object_model import PerceptionObjectModel
 from pipeline.explorer_pipeline import ExplorerPipeline
-from flask import Flask, send_from_directory, jsonify, stream_with_context, Response
+from flask import Flask, send_from_directory, jsonify, stream_with_context, Response, request
 from flask_cors import CORS
 import os
 import threading
@@ -153,9 +153,13 @@ def set_input(input_id):
   global current_pipeline_input_id
   if input_id == current_pipeline_input_id:
     return jsonify({ "inputs": pipeline_inputs, "current": current_pipeline_input_id })
+  body = request.json
+  process_all_frames = True
+  if body is not None:
+    process_all_frames = body["process_all_frames"]
   eventStore.clear()
   current_pipeline_input_id = input_id
-  pipeline_instance.change_input(get_current_pipeline_input(current_pipeline_input_id))
+  pipeline_instance.change_input(get_current_pipeline_input(current_pipeline_input_id), process_all_frames)
   return jsonify({ "inputs": pipeline_inputs, "current": current_pipeline_input_id })
 
 # Serve static folder (and nested folders)
