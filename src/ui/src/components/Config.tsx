@@ -85,7 +85,7 @@ export const Toggle: React.FC<{value: boolean, onChange: (newValue: boolean) => 
 
   const _onChange = (): void => {
     onChange(!value)
-    onBlur()
+    onBlur(!value)
   }
 
   return (

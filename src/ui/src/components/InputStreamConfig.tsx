@@ -122,12 +122,12 @@ const InputStreamConfig: React.FC = () => {
     setCurrentInputId(data.current)
   }
 
-  async function updateInput (inputId: number): Promise<void> {
+  async function updateInput (inputId: number, _processAllFrames?: boolean): Promise<void> {
     try {
       await pauseLiveStream()
       const res = await fetch(`/inputs/${inputId}`, {
         method: 'PUT',
-        body: JSON.stringify({ process_all_frames: processAllFrames }),
+        body: JSON.stringify({ process_all_frames: _processAllFrames ?? processAllFrames }),
         headers: { 'Content-Type': 'application/json' }
       })
       if (!res.ok) { throw new Error(res.statusText) }
@@ -171,7 +171,7 @@ const InputStreamConfig: React.FC = () => {
           <div className={classes.configItem}>
             <div>Process all video frames</div>
             <div>
-              <Toggle value={processAllFrames} onChange={(value) => { setProcessAllFrames(value) }} onBlur={() => { void updateInput(currentInputId) }} />
+              <Toggle value={processAllFrames} onChange={(value) => { setProcessAllFrames(value) }} onBlur={(value: boolean) => { void updateInput(currentInputId, value) }} />
             </div>
           </div>
         </div>
