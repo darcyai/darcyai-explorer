@@ -2,7 +2,7 @@
 
 ## List of supported devices
 * Darcy camera
-* Raspberry pi with coral and camera
+* Raspberry pi with coral and optional camera
 * Tinker T
 * Coral dev board
 * Coral mini
