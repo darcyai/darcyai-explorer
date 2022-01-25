@@ -8,6 +8,8 @@ import threading
 from datetime import timezone
 import datetime
 import base64
+import logging
+import time
 
 #----------------------------------------------------------------------------#
 # Configure and run SPA API
@@ -75,6 +77,8 @@ pipeline_inputs = [
 ]
 
 current_pipeline_input_id = 1
+pipeline_instance = None
+pipeline_error = None
 
 def get_current_pipeline_input(id):
   for input in pipeline_inputs:
@@ -82,7 +86,11 @@ def get_current_pipeline_input(id):
       return input
   return None
 
-pipeline_instance = ExplorerPipeline(app, get_current_pipeline_input(current_pipeline_input_id), store_latest_event)
+try:
+  pipeline_instance = ExplorerPipeline(app, get_current_pipeline_input(current_pipeline_input_id), store_latest_event)
+except Exception as e:
+  pipeline_error = e
+  logging.error("Pipeline creation failed with: %s", str(e))
 
 @app.route('/events')
 def get_all_events():
@@ -90,6 +98,8 @@ def get_all_events():
 
 @app.route('/pom')
 def get_all_pom():
+  if pipeline_instance is None:
+    return jsonify({'message': 'Pipeline not initialized'}), 500
   return jsonify(pipeline_instance.get_pom().serialize())
 
 @app.route('/events/<string:perceptor_name>')
@@ -97,6 +107,8 @@ def get_events(perceptor_name):
   if perceptor_name in eventStore:
     return jsonify(eventStore[perceptor_name])
   elif perceptor_name == 'summary':
+    if pipeline_error is not None:
+      return jsonify({ "message": str(pipeline_error) }), 500
     return jsonify(pipeline_instance.get_summary())
   else:
     print('No events for', perceptor_name)
@@ -125,6 +137,8 @@ def format_pulse(pom: PerceptionObjectModel):
 
 @app.route('/current_pulse')
 def get_current_pulse():
+  if pipeline_instance is None:
+    return jsonify({'message': 'Pipeline not initialized'}), 500
   pom = pipeline_instance.get_latest_pom()
   if pom is None:
     # Return empty
@@ -138,6 +152,8 @@ def get_current_pulse():
 
 @app.route('/pulses/history')
 def get_historical_pulse():
+  if pipeline_instance is None:
+    return jsonify({'message': 'Pipeline not initialized'}), 500
   poms = pipeline_instance.get_pom_history()
   pulses = []
   for _, pom in poms.items():
@@ -150,6 +166,8 @@ def get_inputs():
 
 @app.route('/inputs/<int:input_id>', methods=['PUT'])
 def set_input(input_id):
+  if pipeline_instance is None:
+    return jsonify({'message': 'Pipeline not initialized'}), 500
   global current_pipeline_input_id
   body = request.json
   process_all_frames = True
@@ -205,7 +223,16 @@ def runAPI():
 
 def main():
   threading.Thread(target=runAPI, daemon=True).start()
-  pipeline_instance.run()
+  if pipeline_instance is not None:
+    try:
+        pipeline_instance.run()
+    except Exception as e:
+      logging.error("Pipeline run failed with: %s", str(e))
+      while True:
+        time.sleep(1)
+  else:
+    while True:
+      time.sleep(1)
 
 if __name__ == "__main__":
     main()

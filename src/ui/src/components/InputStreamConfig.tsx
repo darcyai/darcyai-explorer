@@ -11,7 +11,7 @@ import { Toggle } from './Config'
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   item: {
     display: 'flex',
@@ -130,7 +130,10 @@ const InputStreamConfig: React.FC = () => {
         body: JSON.stringify({ process_all_frames: _processAllFrames ?? processAllFrames }),
         headers: { 'Content-Type': 'application/json' }
       })
-      if (!res.ok) { throw new Error(res.statusText) }
+      if (!res.ok) {
+        pushErrorFeedBack(res as any)
+        return
+      }
       const data = await res.json()
       setInputs(data.inputs)
       setCurrentInputId(data.current)

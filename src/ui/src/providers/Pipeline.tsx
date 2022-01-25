@@ -3,6 +3,8 @@ import { useFeedback } from './Feedback'
 
 const liveFeedSrc = '/live_feed'
 
+const emptyImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKQAAABuCAQAAAADz3AYAAAAnUlEQVR42u3QMQEAAAwCoNm/9Er4CRHIUREFIkWKRKRIkSIRKVIkIkWKFIlIkSJFIlKkSESKFCkSkSJFikSkSJGIFClSJCJFikSkSJEiESlSpEhEihSJSJEiRSJSpEiRiBQpEpEiRYpEpEiRIhEpUiQiRYoUiUiRIhEpUqRIRIoUKRKRIkUiUqRIkYgUKVIkIkWKRKRIkSIRKVLkugc1EABvYNjcFAAAAABJRU5ErkJggg=='
+
 export declare interface ConfigItem {
   default_value: any
   description: string
@@ -155,7 +157,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   const [latestPulse, setLatestPulse] = React.useState<Pulse | undefined>(undefined)
   const [events, setEvents] = React.useState<EventItem[]>([])
   let [config, setConfig] = React.useState<ConfigItem[]>([])
-  const isPlaying = React.useMemo(() => !imageSrc.includes('base64'), [imageSrc])
+  const isPlaying = React.useMemo(() => !imageSrc?.includes('base64'), [imageSrc])
   const { pushErrorFeedBack } = useFeedback()
 
   const fetchEvents = async (): Promise<void> => {
@@ -165,7 +167,10 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
     }
     try {
       const res = await window.fetch(`${stepEventURL(selectedStep)}`)
-      if (!res.ok) { throw new Error(res.statusText) }
+      if (!res.ok) {
+        pushErrorFeedBack(res as any)
+        return
+      }
       const data = await res.json()
       setEvents(data)
     } catch (e: any) {
@@ -189,7 +194,10 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   async function pause (): Promise<void> {
     try {
       const res = await window.fetch('/current_pulse')
-      if (!res.ok) { throw new Error(res.statusText) }
+      if (!res.ok) {
+        pushErrorFeedBack(res as any)
+        return
+      }
       const data = await res.json()
       setLatestPulse(data)
       if (data?.pom?.[perceptorNameByStep(PipelineStep.PEOPLE)]?.people_count != null) {
@@ -265,7 +273,16 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
     try {
       const res = await fetch('/events/summary')
       if (!res.ok) {
-        throw new Error(res.statusText)
+        try {
+          if (res.status === 500) {
+            pushErrorFeedBack(res as any)
+            setImageSrc(emptyImage)
+            return
+          }
+          throw new Error(res.statusText)
+        } catch (e) {
+          throw new Error(res.statusText)
+        }
       }
       setSummary(await res.json())
     } catch (err: any) {
