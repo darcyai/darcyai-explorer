@@ -71,7 +71,7 @@ stages:
         downloadPath: $(System.DefaultWorkingDirectory)
       displayName: download ui_build artifacts
     - task: Docker@2
-      displayName: 'Publish ARM Docker Image'
+      displayName: 'Publish x86 Docker Image'
       inputs:
         containerRegistry: 'Edgeworx GCP'
         repository: '$(repository)'
