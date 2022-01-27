@@ -1,0 +1,83 @@
+trigger:
+  tags:
+    include:
+    - v*
+  branches:
+    include:
+    - master
+  paths:
+    exclude:
+    - README.md
+    - CHANGELOG.md
+
+variables:
+  version: ''
+  repository: 'focal-freedom-236620/darcy-ai-explorer'
+
+stages:
+- stage: Preflight
+  jobs:
+  - job: "Build_UI"
+    pool:
+      vmImage: 'Ubuntu 18.04'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '14.x'
+      displayName: 'Install Node.js'
+    - script: |
+        npm i -g npm
+        npm i
+        npm run build
+      displayName: 'Build ui bundle'
+      workingDirectory: ./src/ui
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/src/ui/build'
+        ArtifactName: ui_build
+      displayName: 'Publish ui build'
+
+- stage: Build
+  jobs:
+  - job: ARM
+    pool: build-farm-rpi4
+    steps:
+    - template: pipeline/setversion.yaml
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        artifactName: ui_build
+        downloadPath: $(System.DefaultWorkingDirectory)
+      displayName: download ui_build artifacts
+    - task: Docker@2
+      displayName: 'Publish ARM Docker Image'
+      inputs:
+        containerRegistry: 'Edgeworx GCP'
+        repository: '$(repository)'
+        command: 'buildAndPush'
+        Dockerfile: './Dockerfile'
+        buildContext: '.'
+        tags: |
+          $(version)
+          latest
+
+  - job: x86
+    pool:
+      vmImage: 'Ubuntu 18.04'
+    steps:
+    - template: pipeline/setversion.yaml
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        artifactName: ui_build
+        downloadPath: $(System.DefaultWorkingDirectory)
+      displayName: download ui_build artifacts
+    - task: Docker@2
+      displayName: 'Publish ARM Docker Image'
+      inputs:
+        containerRegistry: 'Edgeworx GCP'
+        repository: '$(repository)'
+        command: 'buildAndPush'
+        Dockerfile: './Dockerfile.x86'
+        buildContext: '.'
+        tags: |
+          $(version)
+          latest
