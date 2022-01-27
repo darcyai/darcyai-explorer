@@ -10,6 +10,7 @@ import datetime
 import base64
 import logging
 import time
+import platform
 
 #----------------------------------------------------------------------------#
 # Configure and run SPA API
@@ -50,6 +51,10 @@ def store_latest_event(perceptor_name, event_name):
     return None
   return event_handler
 
+def is_mac_osx():
+    return platform.system() == "Darwin"
+
+default_video_device = 0 if is_mac_osx() else "/dev/video0"
 pipeline_inputs = [
   {
     "id": 1,
@@ -72,6 +77,7 @@ pipeline_inputs = [
     "title": 'Live video',
     "description": 'Live feed from your source video',
     "type": 'live_feed',
+    "video_device": default_video_device,
     "thumbnail": 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKQAAABuCAQAAAADz3AYAAAAnUlEQVR42u3QMQEAAAwCoNm/9Er4CRHIUREFIkWKRKRIkSIRKVIkIkWKFIlIkSJFIlKkSESKFCkSkSJFikSkSJGIFClSJCJFikSkSJEiESlSpEhEihSJSJEiRSJSpEiRiBQpEpEiRYpEpEiRIhEpUiQiRYoUiUiRIhEpUqRIRIoUKRKRIkUiUqRIkYgUKVIkIkWKRKRIkSIRKVLkugc1EABvYNjcFAAAAABJRU5ErkJggg==',
   }
 ]
@@ -79,6 +85,12 @@ pipeline_inputs = [
 current_pipeline_input_id = 1
 pipeline_instance = None
 pipeline_error = None
+
+def set_video_path(id, video_device=default_video_device):
+  for input in pipeline_inputs:
+    if input['id'] == id:
+      if input['type'] == 'live_feed':
+        input["video_device"] = video_device
 
 def get_current_pipeline_input(id):
   for input in pipeline_inputs:
@@ -172,7 +184,10 @@ def set_input(input_id):
   body = request.json
   process_all_frames = True
   if body is not None:
-    process_all_frames = body["process_all_frames"]
+    if body["process_all_frames"] is not None:
+      process_all_frames = body["process_all_frames"]
+    if body["video_device"] is not None:
+      set_video_path(input_id, body["video_device"])
   eventStore.clear()
   current_pipeline_input_id = input_id
   pipeline_instance.change_input(get_current_pipeline_input(current_pipeline_input_id), process_all_frames)

@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { makeStyles } from '@mui/styles'
-import { Theme } from '@mui/material'
+import { Theme, OutlinedInput } from '@mui/material'
 
 import { ReactComponent as PlayIcon } from '../assets/play.svg'
 import { useFeedback } from '../providers/Feedback'
@@ -100,6 +100,7 @@ declare interface InputStreamInput {
   file?: string
   thumbnail?: string
   type: 'video_file' | 'live_feed'
+  video_device?: string
   description: string
 }
 
@@ -110,8 +111,13 @@ const InputStreamConfig: React.FC = () => {
   const { pushErrorFeedBack } = useFeedback()
   const { pauseLiveStream, playLiveStream } = usePipeline()
   const [processAllFrames, setProcessAllFrames] = React.useState<boolean>(true)
+  const [videoDevice, setVideoDevice] = React.useState<string>('')
   const currentInput = React.useMemo(() => {
-    return inputs.find(input => input.id === currentInputId)
+    const input = inputs.find(input => input.id === currentInputId)
+    if ((input != null) && input.type === 'live_feed') {
+      setVideoDevice(input.video_device ?? '')
+    }
+    return input
   }, [currentInputId])
 
   async function fetchInputs (): Promise<void> {
@@ -122,12 +128,12 @@ const InputStreamConfig: React.FC = () => {
     setCurrentInputId(data.current)
   }
 
-  async function updateInput (inputId: number, _processAllFrames?: boolean): Promise<void> {
+  async function updateInput (inputId: number, _processAllFrames?: boolean, _videoDevice?: string): Promise<void> {
     try {
       await pauseLiveStream()
       const res = await fetch(`/inputs/${inputId}`, {
         method: 'PUT',
-        body: JSON.stringify({ process_all_frames: _processAllFrames ?? processAllFrames }),
+        body: JSON.stringify({ process_all_frames: _processAllFrames ?? processAllFrames, video_device: _videoDevice ?? videoDevice }),
         headers: { 'Content-Type': 'application/json' }
       })
       if (!res.ok) {
@@ -176,6 +182,14 @@ const InputStreamConfig: React.FC = () => {
             <div>
               <Toggle value={processAllFrames} onChange={(value) => { setProcessAllFrames(value) }} onBlur={(value: boolean) => { void updateInput(currentInputId, value) }} />
             </div>
+          </div>
+        </div>
+      )}
+      {currentInput?.type === 'live_feed' && (
+        <div className={classes.configRow}>
+          <div className={classes.configItem}>
+            <div>Video device</div>
+            <OutlinedInput size='small' type='text' value={videoDevice} onChange={(e) => { setVideoDevice(e.target.value) }} onBlur={() => { void updateInput(currentInputId) }} />
           </div>
         </div>
       )}

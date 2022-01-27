@@ -7,20 +7,15 @@ from .perceptors.qrcode_perceptor import QRCodePerceptor
 from .perceptors.face_mask_perceptor import FaceMaskPerceptor
 import os
 import time
-import platform
 import cv2
 
-
 absolutepath = os.path.dirname(os.path.abspath(__file__))
-
-def is_mac_osx():
-    return platform.system() == "Darwin"
 
 def get_input_stream(input, process_all_frames: bool = True):
     if input["type"] == "video_file":
         return VideoFileStream(os.path.join(absolutepath, input["file"]), process_all_frames=process_all_frames)
     else:
-        return CameraStream(video_device=0 if is_mac_osx() else "/dev/video0")
+        return CameraStream(video_device=input["video_device"])
 
 class ExplorerPipeline():    
     def __init__(self, app, input, event_cb):
