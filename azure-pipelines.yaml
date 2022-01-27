@@ -54,7 +54,7 @@ stages:
         containerRegistry: 'Edgeworx GCP'
         repository: '$(repository)'
         command: 'buildAndPush'
-        Dockerfile: './Dockerfile'
+        Dockerfile: './Dockerfile.bundled'
         buildContext: '.'
         tags: |
           $(version)
@@ -76,7 +76,7 @@ stages:
         containerRegistry: 'Edgeworx GCP'
         repository: '$(repository)'
         command: 'buildAndPush'
-        Dockerfile: './Dockerfile.x86'
+        Dockerfile: './Dockerfile.x86.bundled'
         buildContext: '.'
         tags: |
           $(version)
