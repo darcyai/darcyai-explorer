@@ -11,6 +11,8 @@ trigger:
     - CHANGELOG.md
 
 variables:
+  ref: $(Build.SourceBranch)
+  commit: $(Build.SourceVersion)
   version: ''
   repository: 'focal-freedom-236620/darcy-ai-explorer'
 
