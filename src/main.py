@@ -87,6 +87,8 @@ pipeline_instance = None
 pipeline_error = None
 
 def set_video_path(id, video_device=default_video_device):
+  if video_device == '':
+    return
   for input in pipeline_inputs:
     if input['id'] == id:
       if input['type'] == 'live_feed':
