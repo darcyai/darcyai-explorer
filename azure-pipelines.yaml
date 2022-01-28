@@ -46,7 +46,7 @@ stages:
     - task: DownloadBuildArtifacts@0
       inputs:
         artifactName: ui_build
-        downloadPath: $(System.DefaultWorkingDirectory)
+        downloadPath: $(System.DefaultWorkingDirectory)/src/ui/build
       displayName: download ui_build artifacts
     - task: Docker@2
       displayName: 'Publish ARM Docker Image'
@@ -68,7 +68,7 @@ stages:
     - task: DownloadBuildArtifacts@0
       inputs:
         artifactName: ui_build
-        downloadPath: $(System.DefaultWorkingDirectory)
+        downloadPath: $(System.DefaultWorkingDirectory)/src/ui/build
       displayName: download ui_build artifacts
     - task: Docker@2
       displayName: 'Publish x86 Docker Image'
