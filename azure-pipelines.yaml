@@ -76,7 +76,7 @@ stages:
       displayName: 'Publish x86 Docker Image'
       inputs:
         containerRegistry: 'Edgeworx GCP'
-        repository: '$(repository)'
+        repository: '$(repository)-x86'
         command: 'buildAndPush'
         Dockerfile: './Dockerfile.x86.bundled'
         buildContext: '.'
