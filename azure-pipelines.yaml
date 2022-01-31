@@ -87,7 +87,7 @@ stages:
           latest
   
 - stage: Release
-  condition: $[variables['isRelease']]
+  condition: eq(variables['isRelease'], true)
   jobs:
   - job: ARM
     pool:
