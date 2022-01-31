@@ -63,6 +63,12 @@ stages:
         tags: |
           $(version)
           latest
+    - task: Docker@2
+      displayName: Login to Dockerhub
+      condition: eq(variables['isRelease'], true)
+      inputs:
+        command: login
+        containerRegistry: Edgeworx DockerHub
     - script: |
         docker tag gcr.io/$(repository):$(version) $(publicRepository):$(version)
         docker push $(publicRepository):$(version)
@@ -90,6 +96,12 @@ stages:
         tags: |
           $(version)
           latest
+    - task: Docker@2
+      displayName: Login to Dockerhub
+      condition: eq(variables['isRelease'], true)
+      inputs:
+        command: login
+        containerRegistry: Edgeworx DockerHub
     - script: |
         docker tag gcr.io/$(repository)-x86:$(version) $(publicRepository)-x86:$(version)
         docker push $(publicRepository)-x86:$(version)
