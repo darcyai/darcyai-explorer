@@ -63,6 +63,11 @@ stages:
         tags: |
           $(version)
           latest
+    - script: |
+        docker tag $(repository):$(version) $(publicRepository):$(version)
+        docker push $(publicRepository):$(version)
+      displayName: 'Publish ARM Docker Image'
+      condition: eq(variables['isRelease'], true)
 
   - job: x86
     pool:
@@ -85,25 +90,8 @@ stages:
         tags: |
           $(version)
           latest
-  
-- stage: Release
-  condition: eq(variables['isRelease'], true)
-  jobs:
-  - job: ARM
-    pool:
-      vmImage: 'Ubuntu 18.04'
-    steps:
-    - template: pipeline/setversion.yaml
-    - script: |
-        docker tag $(repository):$(version) $(publicRepository):$(version)
-        docker push $(publicRepository):$(version)
-      displayName: 'Publish ARM Docker Image'
-  - job: x86
-    pool:
-      vmImage: 'Ubuntu 18.04'
-    steps:
-    - template: pipeline/setversion.yaml
     - script: |
         docker tag $(repository)-x86:$(version) $(publicRepository)-x86:$(version)
         docker push $(publicRepository)-x86:$(version)
       displayName: 'Publish x86 Docker Image'
+      condition: eq(variables['isRelease'], true)
