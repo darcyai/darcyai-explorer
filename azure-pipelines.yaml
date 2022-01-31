@@ -15,6 +15,8 @@ variables:
   commit: $(Build.SourceVersion)
   version: ''
   repository: 'focal-freedom-236620/darcy-ai-explorer'
+  publicRepository: 'edgeworx/darcy-ai-explorer'
+  isRelease: $[startsWith(variables['Build.SourceBranch'], 'refs/tags/')]
 
 stages:
 - stage: Preflight
@@ -83,3 +85,25 @@ stages:
         tags: |
           $(version)
           latest
+  
+- stage: Release
+  condition: $[variables['isRelease']]
+  jobs:
+  - job: ARM
+    pool:
+      vmImage: 'Ubuntu 18.04'
+    steps:
+    - template: pipeline/setversion.yaml
+    - script: |
+        docker tag $(repository):$(version) $(publicRepository):$(version)
+        docker push $(publicRepository):$(version)
+      displayName: 'Publish ARM Docker Image'
+  - job: x86
+    pool:
+      vmImage: 'Ubuntu 18.04'
+    steps:
+    - template: pipeline/setversion.yaml
+    - script: |
+        docker tag $(repository)-x86:$(version) $(publicRepository)-x86:$(version)
+        docker push $(publicRepository)-x86:$(version)
+      displayName: 'Publish x86 Docker Image'
