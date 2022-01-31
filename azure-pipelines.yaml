@@ -64,7 +64,7 @@ stages:
           $(version)
           latest
     - script: |
-        docker tag $(repository):$(version) $(publicRepository):$(version)
+        docker tag gcr.io/$(repository):$(version) $(publicRepository):$(version)
         docker push $(publicRepository):$(version)
       displayName: 'Publish ARM Docker Image'
       condition: eq(variables['isRelease'], true)
@@ -91,7 +91,7 @@ stages:
           $(version)
           latest
     - script: |
-        docker tag $(repository)-x86:$(version) $(publicRepository)-x86:$(version)
+        docker tag gcr.io/$(repository)-x86:$(version) $(publicRepository)-x86:$(version)
         docker push $(publicRepository)-x86:$(version)
       displayName: 'Publish x86 Docker Image'
       condition: eq(variables['isRelease'], true)
