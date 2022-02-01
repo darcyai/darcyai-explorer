@@ -1,4 +1,4 @@
-FROM edgeworx/darcy-ai-coral-armv7l:dev
+FROM edgeworx/darcy-ai-coral:dev
 
 RUN apt-get update -y
 RUN apt-get install -y libzbar0
