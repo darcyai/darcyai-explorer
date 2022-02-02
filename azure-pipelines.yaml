@@ -50,8 +50,12 @@ stages:
     - task: DownloadBuildArtifacts@0
       inputs:
         artifactName: ui_build
-        downloadPath: $(System.DefaultWorkingDirectory)/src/ui/build
+        downloadPath: $(System.DefaultWorkingDirectory)
       displayName: download ui_build artifacts
+    - script: |
+        set -e
+        cp -R ui_build/* src/ui/build/
+      displayName: Set up ui bundle for Docker
     - task: Docker@2
       displayName: 'Publish ARM Docker Image'
       inputs:
@@ -83,8 +87,12 @@ stages:
     - task: DownloadBuildArtifacts@0
       inputs:
         artifactName: ui_build
-        downloadPath: $(System.DefaultWorkingDirectory)/src/ui/build
+        downloadPath: $(System.DefaultWorkingDirectory)
       displayName: download ui_build artifacts
+    - script: |
+        set -e
+        cp -R ui_build/* src/ui/build/
+      displayName: Set up ui bundle for Docker
     - task: Docker@2
       displayName: 'Publish x86 Docker Image'
       inputs:
