@@ -1,0 +1,11 @@
+steps:
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      artifactName: ui_build
+      downloadPath: $(System.DefaultWorkingDirectory)
+    displayName: download ui_build artifacts
+  - script: |
+      set -e
+      mkdir -p src/ui/build
+      cp -R ui_build/* src/ui/build/
+    displayName: Set up ui bundle for Docker

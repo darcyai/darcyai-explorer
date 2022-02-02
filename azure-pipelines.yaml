@@ -47,16 +47,7 @@ stages:
     pool: build-farm-rpi4
     steps:
     - template: pipeline/setversion.yaml
-    - task: DownloadBuildArtifacts@0
-      inputs:
-        artifactName: ui_build
-        downloadPath: $(System.DefaultWorkingDirectory)
-      displayName: download ui_build artifacts
-    - script: |
-        set -e
-        mkdir -p src/ui/build
-        cp -R ui_build/* src/ui/build/
-      displayName: Set up ui bundle for Docker
+    - template: pipeline/setup-bundle.yaml
     - task: Docker@2
       displayName: 'Publish ARM Docker Image'
       inputs:
@@ -85,16 +76,7 @@ stages:
       vmImage: 'Ubuntu 18.04'
     steps:
     - template: pipeline/setversion.yaml
-    - task: DownloadBuildArtifacts@0
-      inputs:
-        artifactName: ui_build
-        downloadPath: $(System.DefaultWorkingDirectory)
-      displayName: download ui_build artifacts
-    - script: |
-        set -e
-        mkdir -p src/ui/build
-        cp -R ui_build/* src/ui/build/
-      displayName: Set up ui bundle for Docker
+    - template: pipeline/setup-bundle.yaml
     - task: Docker@2
       displayName: 'Publish x86 Docker Image'
       inputs:
