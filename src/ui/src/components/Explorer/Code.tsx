@@ -154,11 +154,15 @@ def __perceptor_input_callback(input_data, pom, config):
   `,
   [PipelineStep.QRCODE]: `
 ## Usage of the qr code perceptor input callback
-## We don't need to modify the frame, so we are sending the original input
 
-# Passthrough callback
-def __perceptor_input_callback(input_data, pom, config):
-    return input_data.data.copy()
+__people_perceptor_name = 'people'
+
+# Only run QRCode perceptor if we have a person in front
+def __qr_code_input_callback(self, input_data, pom, config):
+    poi = pom.get_perceptor(self.__people_perceptor_name).personInFront()
+    if poi is not None:
+        return input_data.data.copy()
+    return None
   `,
   [PipelineStep.MASK]: `
 ## Usage of the face mask perceptor input callback

@@ -27,6 +27,8 @@ class QRCodePerceptor(ObjectDetectionPerceptor):
         ]
 
     def run(self, input_data:Any, config:ConfigRegistry=None) -> QRCodeDetectionModel:
+        if input_data is None:
+            return QRCodeDetectionModel([])
         perception_result, _ = super().run(input_data=input_data, config=config)
 
         filtered_results = list(filter(lambda x: x.score > self.get_config_value("threshold"), perception_result))

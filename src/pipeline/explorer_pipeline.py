@@ -66,7 +66,7 @@ class ExplorerPipeline():
         # QRCode Perceptor
         self.__qrcode_perceptor_name = "qrcode"
         qrcode_perceptor = QRCodePerceptor()
-        self.__pipeline.add_perceptor(self.__qrcode_perceptor_name, qrcode_perceptor, accelerator_idx=0, input_callback=self.__perceptor_input_callback)
+        self.__pipeline.add_perceptor(self.__qrcode_perceptor_name, qrcode_perceptor, accelerator_idx=0, parent=self.__people_perceptor_name, input_callback=self.__qr_code_input_callback)
 
         # Face mask Perceptor
         self.__face_mask_perceptor_name = "facemask"
@@ -213,6 +213,13 @@ class ExplorerPipeline():
             data.append({"input": rgb_face, "person_id": person_id})
 
         return data
+
+    # Only run QRCode perceptor if we have a person in front
+    def __qr_code_input_callback(self, input_data, pom, config):
+        poi = pom.get_perceptor(self.__people_perceptor_name).personInFront()
+        if poi is not None:
+            return input_data.data.copy()
+        return None
 
     def get_pom(self):
         return self.__pipeline.get_pom()
