@@ -9,7 +9,7 @@ COPY ./src/ui/ ./
 RUN npm run build
 
 # Stage 2 - Build the pipeline
-FROM edgeworx/darcy-ai-coral-armv7l:dev
+FROM darcyai/darcy-ai-coral:dev
 
 RUN apt-get update -y
 RUN apt-get install -y libzbar0
