@@ -11,7 +11,7 @@ import cv2
 
 absolutepath = os.path.dirname(os.path.abspath(__file__))
 
-def get_input_stream(input, process_all_frames: bool = True):
+def get_input_stream(input, process_all_frames: bool = False):
     if input["type"] == "video_file":
         return VideoFileStream(os.path.join(absolutepath, input["file"]), process_all_frames=process_all_frames)
     else:
@@ -189,7 +189,7 @@ class ExplorerPipeline():
     def __output_stream_callback(self, pom, input_data):
         return pom.get_perceptor(self.__people_perceptor_name).annotatedFrame()
 
-    def change_input(self, input, process_all_frames: bool = True):
+    def change_input(self, input, process_all_frames: bool = False):
         self.__stopped = True
         self.__pipeline.stop()
         self.__pipeline.update_input_stream(get_input_stream(input, process_all_frames))
