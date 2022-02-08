@@ -110,7 +110,7 @@ const InputStreamConfig: React.FC = () => {
   const [currentInputId, setCurrentInputId] = React.useState<number>(0)
   const { pushErrorFeedBack } = useFeedback()
   const { pauseLiveStream, playLiveStream } = usePipeline()
-  const [processAllFrames, setProcessAllFrames] = React.useState<boolean>(true)
+  const [processAllFrames, setProcessAllFrames] = React.useState<boolean>(false)
   const [videoDevice, setVideoDevice] = React.useState<string>('')
   const currentInput = React.useMemo(() => {
     const input = inputs.find(input => input.id === currentInputId)

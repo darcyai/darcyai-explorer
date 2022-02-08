@@ -184,7 +184,7 @@ def set_input(input_id):
     return jsonify({'message': 'Pipeline not initialized'}), 500
   global current_pipeline_input_id
   body = request.json
-  process_all_frames = True
+  process_all_frames = False
   if body is not None:
     if body["process_all_frames"] is not None:
       process_all_frames = body["process_all_frames"]
