@@ -76,7 +76,7 @@ const PipelineSVG: React.FC = () => {
             </g>
           </g>
         </g>
-        <g id='node-QP' transform='translate(332.631 186)' {...stepProps(PipelineStep.QRCODE)}>
+        <g id='node-QP' transform='translate(430.631 186)' {...stepProps(PipelineStep.QRCODE)}>
           <rect id='outline-3' data-name='outline' width='121.331' height='33.999' rx='2' transform='translate(3.884)' fill='transparent' stroke='#5ac8fa' strokeWidth='1' />
           <path id='blue_base' data-name='blue base' d='M2,0H34a0,0,0,0,1,0,0V34a0,0,0,0,1,0,0H2a2,2,0,0,1-2-2V2A2,2,0,0,1,2,0Z' transform='translate(3.884)' fill='#5ac8fa' />
           <text
@@ -133,13 +133,13 @@ const PipelineSVG: React.FC = () => {
         </g>
         <g id='connectors' transform='translate(141.889 118.5)'>
           <path id='Path_693' data-name='Path 693' d='M-17933.049,7805.512c-52.57,0-43.414-41.845-86.623-41.66' transform='translate(18440.016 -7763.172)' fill='none' stroke='#5ac8fa' strokeWidth='1' strokeDasharray='1 2' />
-          <path id='Path_696' data-name='Path 696' d='M-18019.676,7805.512c52.578,0,43.416-41.845,86.627-41.66' transform='translate(18019.676 -7763.172)' fill='none' stroke='#5ac8fa' strokeWidth='1' strokeDasharray='1 2' />
-          <path id='Path_694' data-name='Path 694' d='M0,.01C113.419-.222,93.571,41.665,186.789,41.288' transform='matrix(1, 0.017, -0.017, 1, 7.591, 40.882)' fill='none' stroke='#5ac8fa' strokeWidth='1' strokeDasharray='1 2' />
-          <path id='Path_695' data-name='Path 695' d='M-.14,38.046c113.42.232,93.577-39.271,186.794-38.9' transform='matrix(-1, 0.017, -0.017, -1, 506.714, 80.383)' fill='none' stroke='#5ac8fa' strokeWidth='1' strokeDasharray='1 2' />
-          <line id='Line_128' data-name='Line 128' x2='78.177' transform='translate(212.438)' fill='none' stroke='#5ac8fa' strokeWidth='1' strokeDasharray='1 2' />
+          <path id='Path_696' data-name='Path 696' d='M-18019.676,7805.512c52.578,0,43.416-41.845,86.627-41.66' transform='translate(18225.676 -7763.172)' fill='none' stroke='#5ac8fa' strokeWidth='1' strokeDasharray='1 2' />
+          <path id='Path_694' data-name='Path 694' d='M-18019.676,7805.512c-52.578,0,-43.416-41.845,-86.627-41.66' transform='translate(18320.676 -7720.172)' fill='none' stroke='#5ac8fa' strokeWidth='1' strokeDasharray='1 2' />
+          <path id='Path_695' data-name='Path 695' d='M-18019.676,7805.512c52.578,0,43.416-41.845,86.627-41.66' transform='translate(18435.676 -7720.172)' fill='none' stroke='#5ac8fa' strokeWidth='1' strokeDasharray='1 2' />
+          <line id='Line_128' data-name='Line 128' x2='78.177' transform='translate(10, 42.34)' fill='none' stroke='#5ac8fa' strokeWidth='1' strokeDasharray='1 2' />
           <line id='Line_129' data-name='Line 129' x2='78.177' transform='translate(631.838 42.34)' fill='none' stroke='#5ac8fa' strokeWidth='1' strokeDasharray='1 2' />
         </g>
-        <g id='node-PP' transform='translate(223.631 101)' {...stepProps(PipelineStep.PEOPLE)}>
+        <g id='node-PP' transform='translate(223.631 143)' {...stepProps(PipelineStep.PEOPLE)}>
           <rect id='outline-6' data-name='outline' width='121.578' height='33.999' rx='2' transform='translate(3.883)' fill='transparent' stroke='#5ac8fa' strokeWidth='1' />
           <path id='blue_base' data-name='blue base' d='M2,0H34a0,0,0,0,1,0,0V34a0,0,0,0,1,0,0H2a2,2,0,0,1-2-2V2A2,2,0,0,1,2,0Z' transform='translate(3.883)' fill='#5ac8fa' />
           <text

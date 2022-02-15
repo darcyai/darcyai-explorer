@@ -157,10 +157,10 @@ def __perceptor_input_callback(input_data, pom, config):
 
 __people_perceptor_name = 'people'
 
-# Only run QRCode perceptor if we have a person in front
+# Only run QRCode perceptor if we have at least one person in scene
 def __qr_code_input_callback(self, input_data, pom, config):
-    poi = pom.get_perceptor(self.__people_perceptor_name).personInFront()
-    if poi is not None:
+    peeps = pom.get_perceptor(self.__people_perceptor_name).peopleCount()()
+    if peeps > 0:
         return input_data.data.copy()
     return None
   `,
