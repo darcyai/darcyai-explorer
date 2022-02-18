@@ -43,8 +43,8 @@ stages:
 
 - stage: Build
   jobs:
-  - job: ARM
-    pool: build-farm-rpi4
+  - job: ARM64
+    pool: build-farm-coral
     steps:
     - template: pipeline/setversion.yaml
     - template: pipeline/setup-bundle.yaml
@@ -52,7 +52,7 @@ stages:
       displayName: 'Publish ARM Docker Image'
       inputs:
         containerRegistry: 'Edgeworx GCP'
-        repository: '$(repository)'
+        repository: '$(repository)-arm64'
         command: 'buildAndPush'
         Dockerfile: './Dockerfile.bundled'
         buildContext: '.'
@@ -64,10 +64,37 @@ stages:
       condition: eq(variables['isRelease'], true)
       inputs:
         command: login
-        containerRegistry: Edgeworx-DockerHub
+        containerRegistry: DarcyAI-Dockerhub
     - script: |
-        docker tag gcr.io/$(repository):$(version) $(publicRepository):$(version)
-        docker push $(publicRepository):$(version)
+        docker tag gcr.io/$(repository)-arm64:$(version) $(publicRepository)-arm64:$(version)
+        docker push $(publicRepository)-arm64:$(version)
+      displayName: 'Publish ARM Docker Image'
+      condition: eq(variables['isRelease'], true)
+  - job: ARM32
+    pool: build-farm-rpi4
+    steps:
+    - template: pipeline/setversion.yaml
+    - template: pipeline/setup-bundle.yaml
+    - task: Docker@2
+      displayName: 'Publish ARM Docker Image'
+      inputs:
+        containerRegistry: 'Edgeworx GCP'
+        repository: '$(repository)-arm32'
+        command: 'buildAndPush'
+        Dockerfile: './Dockerfile.bundled'
+        buildContext: '.'
+        tags: |
+          $(version)
+          latest
+    - task: Docker@2
+      displayName: Login to Dockerhub
+      condition: eq(variables['isRelease'], true)
+      inputs:
+        command: login
+        containerRegistry: DarcyAI-Dockerhub
+    - script: |
+        docker tag gcr.io/$(repository)-arm32:$(version) $(publicRepository)-arm32:$(version)
+        docker push $(publicRepository)-arm32:$(version)
       displayName: 'Publish ARM Docker Image'
       condition: eq(variables['isRelease'], true)
 
@@ -93,9 +120,37 @@ stages:
       condition: eq(variables['isRelease'], true)
       inputs:
         command: login
-        containerRegistry: Edgeworx-DockerHub
+        containerRegistry: DarcyAI-Dockerhub
     - script: |
         docker tag gcr.io/$(repository)-x86:$(version) $(publicRepository)-x86:$(version)
         docker push $(publicRepository)-x86:$(version)
       displayName: 'Publish x86 Docker Image'
       condition: eq(variables['isRelease'], true)
+- stage: Publish
+  condition: eq(variables['isRelease'], true)
+  jobs:
+  - job: Publish_manifest
+    pool:
+      vmImage: 'Ubuntu 18.04'
+    steps:
+    - template: pipeline/setversion.yaml
+    - task: Docker@2
+      displayName: Login to Dockerhub
+      inputs:
+        command: login
+        containerRegistry: DarcyAI-Dockerhub
+    - script: |
+        docker pull $(publicRepository)-x86:$(version)
+        docker pull $(publicRepository)-arm32:$(version)
+        docker pull $(publicRepository)-arm64:$(version)
+      displayName: 'Pull $(publicRepository) amd64, arm32v7, and arm64v8 docker images'
+    - script: |
+        docker manifest create \
+          $(publicRepository):$(version) \
+          --amend $(publicRepository)-x86:$(version) \
+          --amend $(publicRepository)-arm32:$(version) \
+          --amend $(publicRepository)-arm64:$(version)
+      displayName: 'Create $(publicRepository) image manifest'
+    - script: |
+        docker manifest push $(publicRepository):$(version)
+      displayName: 'Push $(publicRepository) image manifest'
