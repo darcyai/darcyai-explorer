@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    height: theme.spacing(31),
+    height: theme.spacing(30.5),
     overflowY: 'auto',
     borderBottom: `1px solid ${theme.palette.border ?? ''}`
   },
@@ -100,13 +100,19 @@ const Config: React.FC = () => {
   const classes = useStyles()
   const { selectedStep, config, updateConfig, saveConfig } = usePipeline()
 
+  const onEnterPress = (e: any): void => {
+    if (e.key === 'Enter') {
+      void saveConfig()
+    }
+  }
+
   const configInputByType = (configItem: ConfigItem): ReactElement => {
     switch (configItem.type) {
       case 'int':
       case 'float':
-        return <OutlinedInput size='small' className={classes.input} type='number' value={configItem.value} onChange={(e) => { updateConfig(configItem, e.target.value) }} onBlur={() => { saveConfig().catch(() => {}) }} />
+        return <OutlinedInput size='small' className={classes.input} type='number' value={configItem.value} onChange={(e) => { updateConfig(configItem, e.target.value) }} onKeyPress={onEnterPress} onBlur={() => { saveConfig().catch(() => {}) }} />
       case 'str':
-        return <OutlinedInput size='small' className={classes.input} type='text' value={configItem.value} onChange={(e) => { updateConfig(configItem, e.target.value) }} onBlur={() => { saveConfig().catch(() => {}) }} />
+        return <OutlinedInput size='small' className={classes.input} type='text' value={configItem.value} onChange={(e) => { updateConfig(configItem, e.target.value) }} onKeyPress={onEnterPress} onBlur={() => { saveConfig().catch(() => {}) }} />
       case 'bool':
         return (
           <Toggle value={configItem.value} onChange={(value) => { updateConfig(configItem, value) }} onBlur={() => { saveConfig().catch(() => {}) }} />

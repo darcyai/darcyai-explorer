@@ -59,9 +59,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     gap: theme.spacing(2),
     position: 'fixed',
     minHeight: 64,
-    width: theme.spacing(50),
-    right: theme.spacing(8),
-    top: theme.spacing(1),
+    width: '100%',
+    right: 0,
+    top: 0,
+    [theme.breakpoints.up('md')]: {
+      width: theme.spacing(50),
+      right: theme.spacing(1),
+      top: theme.spacing(1)
+    },
     zIndex: 9999
   },
   snackMessage: {

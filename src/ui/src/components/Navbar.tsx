@@ -2,7 +2,7 @@ import React from 'react'
 import { makeStyles } from '@mui/styles'
 import { Theme } from '@mui/material'
 
-import { ReactComponent as Logo } from '../assets/logo.svg'
+import Logo from '../assets/darcy-logo.png'
 import { ReactComponent as DocsIcon } from '../assets/docs.svg'
 import { ReactComponent as GithubIcon } from '../assets/github.svg'
 
@@ -50,7 +50,7 @@ const Navbar: React.FC = () => {
   return (
     <div className={classes.root}>
       <div className={classes.logo}>
-        <Logo />
+        <img src={Logo} alt='Darcy' />
         <span>Darcy AI Explorer</span>
       </div>
       <div className={classes.links}>

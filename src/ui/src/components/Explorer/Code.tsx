@@ -11,7 +11,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
-    minHeight: theme.spacing(10)
+    minHeight: theme.spacing(10),
+    width: '100vw',
+    [theme.breakpoints.up('md')]: {
+      maxWidth: '50vw'
+    }
   },
   noCode: {
     font: 'normal normal 500 13px/16px Gilroy',
@@ -32,7 +36,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     maxWidth: '100%',
     font: 'normal normal normal 13px/21px Source Code Pro',
     letterSpacing: 0,
-    height: '100%'
+    height: 'auto',
+    minHeight: '100%'
   }
 }))
 

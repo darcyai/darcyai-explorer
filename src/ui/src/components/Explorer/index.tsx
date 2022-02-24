@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     font: 'normal normal 500 13px/24px Gilroy',
     letterSpacing: 0.26,
     textTransform: 'uppercase',
-    padding: theme.spacing(0, 2),
+    padding: theme.spacing(2, 2),
     height: theme.spacing(5),
     display: 'flex',
     alignItems: 'center',
@@ -35,8 +35,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   contentSection: {
     backgroundColor: theme.palette.neutral[4],
     flex: 1,
-    overflowY: 'auto',
-    minHeight: 0
+    minHeight: 0,
+    [theme.breakpoints.up('md')]: {
+      maxWidth: '50vw'
+    }
   }
 }))
 

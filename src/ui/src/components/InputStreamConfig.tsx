@@ -159,6 +159,12 @@ const InputStreamConfig: React.FC = () => {
       })
   }, [])
 
+  const onEnterPress = (e: React.KeyboardEvent<HTMLInputElement>): void => {
+    if (e.key === 'Enter') {
+      void updateInput(currentInputId)
+    }
+  }
+
   return (
     <div className={classes.root}>
       <div className={classes.inputRow}>
@@ -189,7 +195,7 @@ const InputStreamConfig: React.FC = () => {
         <div className={classes.configRow}>
           <div className={classes.configItem}>
             <div>Video device</div>
-            <OutlinedInput size='small' type='text' value={videoDevice} onChange={(e) => { setVideoDevice(e.target.value) }} onBlur={() => { void updateInput(currentInputId) }} />
+            <OutlinedInput size='small' type='text' value={videoDevice} onChange={(e) => { setVideoDevice(e.target.value) }} onKeyPress={onEnterPress} onBlur={() => { void updateInput(currentInputId) }} />
           </div>
         </div>
       )}
