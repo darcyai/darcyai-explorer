@@ -109,7 +109,7 @@ const InputStreamConfig: React.FC = () => {
   const [inputs, setInputs] = React.useState<InputStreamInput[]>([])
   const [currentInputId, setCurrentInputId] = React.useState<number>(0)
   const { pushErrorFeedBack } = useFeedback()
-  const { pauseLiveStream, playLiveStream } = usePipeline()
+  const { playLiveStream, setLoading } = usePipeline()
   const [processAllFrames, setProcessAllFrames] = React.useState<boolean>(false)
   const [videoDevice, setVideoDevice] = React.useState<string>('')
   const currentInput = React.useMemo(() => {
@@ -130,7 +130,7 @@ const InputStreamConfig: React.FC = () => {
 
   async function updateInput (inputId: number, _processAllFrames?: boolean, _videoDevice?: string): Promise<void> {
     try {
-      await pauseLiveStream()
+      await setLoading()
       const res = await fetch(`/inputs/${inputId}`, {
         method: 'PUT',
         body: JSON.stringify({ process_all_frames: _processAllFrames ?? processAllFrames, video_device: _videoDevice ?? videoDevice }),

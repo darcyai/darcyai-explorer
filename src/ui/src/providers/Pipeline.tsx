@@ -3,7 +3,7 @@ import { useFeedback } from './Feedback'
 
 const liveFeedSrc = '/live_feed'
 
-const emptyImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKQAAABuCAQAAAADz3AYAAAAnUlEQVR42u3QMQEAAAwCoNm/9Er4CRHIUREFIkWKRKRIkSIRKVIkIkWKFIlIkSJFIlKkSESKFCkSkSJFikSkSJGIFClSJCJFikSkSJEiESlSpEhEihSJSJEiRSJSpEiRiBQpEpEiRYpEpEiRIhEpUiQiRYoUiUiRIhEpUqRIRIoUKRKRIkUiUqRIkYgUKVIkIkWKRKRIkSIRKVLkugc1EABvYNjcFAAAAABJRU5ErkJggg=='
+export const emptyImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKQAAABuCAQAAAADz3AYAAAAnUlEQVR42u3QMQEAAAwCoNm/9Er4CRHIUREFIkWKRKRIkSIRKVIkIkWKFIlIkSJFIlKkSESKFCkSkSJFikSkSJGIFClSJCJFikSkSJEiESlSpEhEihSJSJEiRSJSpEiRiBQpEpEiRYpEpEiRIhEpUiQiRYoUiUiRIhEpUqRIRIoUKRKRIkUiUqRIkYgUKVIkIkWKRKRIkSIRKVLkugc1EABvYNjcFAAAAABJRU5ErkJggg=='
 
 export declare interface ConfigItem {
   default_value: any
@@ -53,6 +53,8 @@ declare interface Pipeline {
   config: ConfigItem[]
   selectedStep: PipelineStep | undefined
   hoveredStep: PipelineStep | undefined
+  loading: boolean
+  setLoading: () => void
   selectStep: (step?: PipelineStep) => void
   hoverStep: (step?: PipelineStep) => void
   playLiveStream: () => void
@@ -81,7 +83,9 @@ const defaultValue: Pipeline = {
   showFrame: (frame: string) => {},
   updateConfig: (key: ConfigItem, value: any) => {},
   saveConfig: async () => {},
-  fetchSummary: async () => {}
+  fetchSummary: async () => {},
+  loading: false,
+  setLoading: () => {}
 }
 
 export enum PipelineStep {
@@ -158,6 +162,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   const [events, setEvents] = React.useState<EventItem[]>([])
   let [config, setConfig] = React.useState<ConfigItem[]>([])
   const isPlaying = React.useMemo(() => !imageSrc?.includes('base64'), [imageSrc])
+  const loading = React.useMemo(() => imageSrc === emptyImage, [imageSrc])
   const { pushErrorFeedBack } = useFeedback()
 
   const fetchEvents = async (): Promise<void> => {
@@ -291,6 +296,10 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
     }
   }
 
+  function _setLoading (): void {
+    setImageSrc(emptyImage)
+  }
+
   return (
     <PipelineContext.Provider
       value={{
@@ -309,6 +318,8 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
         pauseLiveStream: pause,
         fetchEvents: async () => await fetchEvents(),
         showFrame: (frame: string) => setImageSrc(frame),
+        setLoading: _setLoading,
+        loading: loading,
         updateConfig,
         saveConfig
       }}

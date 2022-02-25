@@ -54,7 +54,7 @@ const Navbar: React.FC = () => {
         <span>Darcy AI Explorer</span>
       </div>
       <div className={classes.links}>
-        <a className={classes.link} href='' target='_blank' rel='noreferrer'>
+        <a className={classes.link} href='https://darcyai.github.io/darcyai-sdk' target='_blank' rel='noreferrer'>
           <DocsIcon />
           <span>Developer docs</span>
         </a>

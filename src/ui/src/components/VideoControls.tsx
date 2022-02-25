@@ -5,18 +5,26 @@ import { usePipeline } from '../providers/Pipeline'
 
 import { ReactComponent as PlayIcon } from '../assets/play.svg'
 import { ReactComponent as PauseIcon } from '../assets/pause.svg'
+import Spinner from './Spinner'
 
 const useStyles = makeStyles<Theme>(theme => ({
-  root: {
+  playButton: {
     position: 'absolute',
     bottom: theme.spacing(4),
     right: theme.spacing(4)
-  }
+  },
+  spinner: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)'
+  },
+  root: {}
 }))
 
 const VideoControls: React.FC = () => {
   const classes = useStyles()
-  const { isPlaying, pauseLiveStream, playLiveStream } = usePipeline()
+  const { isPlaying, pauseLiveStream, playLiveStream, loading } = usePipeline()
 
   const toggleVideo = (): void => {
     if (isPlaying) {
@@ -28,7 +36,8 @@ const VideoControls: React.FC = () => {
 
   return (
     <div className={classes.root}>
-      <Button size='small' variant='contained' color='primary' style={{ minWidth: 0 }} onClick={toggleVideo}>{isPlaying ? <PauseIcon /> : <PlayIcon />}</Button>
+      {loading && <div className={classes.spinner}><Spinner size={24} /></div>}
+      <Button className={classes.playButton} size='small' variant='contained' color='primary' style={{ minWidth: 0 }} onClick={toggleVideo}>{isPlaying ? <PauseIcon /> : <PlayIcon />}</Button>
     </div>
   )
 }

@@ -64,14 +64,14 @@ pipeline_inputs = [
     "type": 'video_file',
     "description": 'People checking in at a school',
   },
-  {
-    "id": 2,
-    "title": 'Demo video',
-    "file": 'video_2.mp4',
-    "thumbnail": 'video_2.jpg',
-    "type": 'video_file',
-    "description": 'Spinning earth',
-  },
+  # {
+  #   "id": 2,
+  #   "title": 'Demo video',
+  #   "file": 'video_2.mp4',
+  #   "thumbnail": 'video_2.jpg',
+  #   "type": 'video_file',
+  #   "description": 'Spinning earth',
+  # },
   {
     "id": 3,
     "title": 'Live video',
