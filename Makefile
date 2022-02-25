@@ -30,7 +30,7 @@ build-bundled:
 
 .PHONY: run
 run:
-	sudo docker run --privileged -p 5001:5000 -v /dev:/dev edgeworx/darcy-ai-explorer:0.0.0-dev
+	sudo docker run --privileged -p 5001:5005 -v /dev:/dev edgeworx/darcy-ai-explorer:0.0.0-dev
 
 dev: build-ui build-bundled run
 

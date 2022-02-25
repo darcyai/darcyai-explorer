@@ -36,7 +36,7 @@ const VideoControls: React.FC = () => {
 
   return (
     <div className={classes.root}>
-      {loading && <div className={classes.spinner}><Spinner size={24} /></div>}
+      {loading && <div className={classes.spinner}><Spinner size={48} /></div>}
       <Button className={classes.playButton} size='small' variant='contained' color='primary' style={{ minWidth: 0 }} onClick={toggleVideo}>{isPlaying ? <PauseIcon /> : <PlayIcon />}</Button>
     </div>
   )
