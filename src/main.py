@@ -11,8 +11,22 @@ import datetime
 import base64
 import logging
 import time
-import json
 import platform
+import json
+
+# Create logger
+class JSONFormatter(logging.Formatter):
+	def __init__(self):
+		super().__init__()
+	def format(self, record):
+		record.msg = json.dumps(record.msg)
+		return super().format(record)
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+loggingStreamHandler = logging.StreamHandler()
+loggingStreamHandler.setFormatter(JSONFormatter())
+logger.addHandler(loggingStreamHandler)
 
 #----------------------------------------------------------------------------#
 # Configure and run SPA API
@@ -44,7 +58,7 @@ def store_latest_event(perceptor_name, event_name):
         'id': event_name + '_' + str(timestamp),
         'timestamp': timestamp
       }
-    logging.debug(json.dumps({ 'perceptor': perceptor_name, 'event_name': event_name, 'data': event_data }))
+    logger.debug({ 'perceptor': perceptor_name, 'event_name': event_name, 'data': event_data })
     if perceptor_name not in eventStore:
       eventStore[perceptor_name] = [format_event(event_data)]
     else:
@@ -110,7 +124,7 @@ try:
   pipeline_instance = ExplorerPipeline(app, get_current_pipeline_input(current_pipeline_input_id), store_latest_event)
 except Exception as e:
   pipeline_error = e
-  logging.error(json.dumps({'message': "Pipeline creation failed with: " + str(e)}))
+  logger.error("Pipeline creation failed with: %s", str(e))
 
 @app.route('/events')
 def get_all_events():
@@ -131,7 +145,7 @@ def get_events(perceptor_name):
       return jsonify({ "message": str(pipeline_error) }), 500
     return jsonify(pipeline_instance.get_summary())
   else:
-    logging.debug({'message': 'No events for ' + perceptor_name})
+    logger.debug({'message': 'No events for ' + perceptor_name})
     return jsonify([])
 
 
@@ -242,7 +256,7 @@ def main():
     try:
         pipeline_instance.run()
     except Exception as e:
-      logging.error(json.dumps({'message': "Pipeline run failed with: " + str(e)}))
+      logger.error("Pipeline run failed with: %s", str(e))
       while True:
         time.sleep(1)
   else:
