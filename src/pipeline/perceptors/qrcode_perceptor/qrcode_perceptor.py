@@ -4,9 +4,9 @@ import pathlib
 from pyzbar import pyzbar
 from typing import Any, List
 
-from darcyai_coral.object_detection_perceptor import ObjectDetectionPerceptor
-from darcyai_engine.config import Config
-from darcyai_engine.config_registry import ConfigRegistry
+from darcyai.perceptor.coral.object_detection_perceptor import ObjectDetectionPerceptor
+from darcyai.config import Config
+from darcyai.config_registry import ConfigRegistry
 from .qrcode_detection_model import QRCodeDetectionModel
 from .qrcode import QRCode
 

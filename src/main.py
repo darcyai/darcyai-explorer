@@ -1,4 +1,4 @@
-from darcyai_engine.perception_object_model import PerceptionObjectModel
+from darcyai.perception_object_model import PerceptionObjectModel
 from pipeline.explorer_pipeline import ExplorerPipeline
 from flask import Flask, send_from_directory, jsonify, stream_with_context, Response, request
 from flask_cors import CORS
@@ -17,7 +17,7 @@ import platform
 #----------------------------------------------------------------------------#
 absolutepath = os.path.dirname(os.path.abspath(__file__))
 ui_build_path = os.path.join(absolutepath, 'ui/build')
-swagger_path = 'usr/local/lib/python3.9/site-packages/darcyai_engine/swagger'
+swagger_path = 'usr/local/lib/python3.9/site-packages/darcyai/swagger'
 app = Flask(
   'API',
   static_folder=os.path.join(swagger_path, 'static'),

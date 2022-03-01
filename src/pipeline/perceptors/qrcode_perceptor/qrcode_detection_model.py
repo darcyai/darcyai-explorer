@@ -1,6 +1,6 @@
 from typing import List
 
-from darcyai_engine.serializable import Serializable
+from darcyai.serializable import Serializable
 from .qrcode import QRCode
 
 class QRCodeDetectionModel(Serializable):

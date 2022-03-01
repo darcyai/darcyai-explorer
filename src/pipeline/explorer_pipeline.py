@@ -1,8 +1,8 @@
-from darcyai_engine.pipeline import Pipeline
-from darcyai_engine.input.video_file_stream import VideoFileStream
-from darcyai_engine.input.camera_stream import CameraStream
-from darcyai_engine.output.live_feed_stream import LiveFeedStream
-from darcyai_coral.people_perceptor import PeoplePerceptor
+from darcyai.pipeline import Pipeline
+from darcyai.input.video_file_stream import VideoFileStream
+from darcyai.input.camera_stream import CameraStream
+from darcyai.output.live_feed_stream import LiveFeedStream
+from darcyai.perceptor.coral.people_perceptor import PeoplePerceptor
 from .perceptors.qrcode_perceptor import QRCodePerceptor
 from .perceptors.face_mask_perceptor import FaceMaskPerceptor
 import os

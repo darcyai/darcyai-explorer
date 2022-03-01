@@ -2,9 +2,9 @@ import os
 import pathlib
 from typing import Any, List
 
-from darcyai_coral.image_classification_perceptor import ImageClassificationPerceptor
-from darcyai_engine.config import Config
-from darcyai_engine.config_registry import ConfigRegistry
+from darcyai.perceptor.coral.image_classification_perceptor import ImageClassificationPerceptor
+from darcyai.config import Config
+from darcyai.config_registry import ConfigRegistry
 from .face_mask_detection_model import FaceMaskDetectionModel
 
 
