@@ -19,7 +19,7 @@ class JSONFormatter(logging.Formatter):
 	def __init__(self):
 		super().__init__()
 	def format(self, record):
-		record.msg = json.dumps(record.__dict__)
+		record.msg = json.dumps({'level': record.levelname, 'path': record.pathname, 'line': record.lineno, 'message': record.msg})
 		return super().format(record)
 
 logger = logging.getLogger(__name__)
