@@ -10,12 +10,15 @@ import time
 import cv2
 
 absolutepath = os.path.dirname(os.path.abspath(__file__))
+camera_streams = {}
 
 def get_input_stream(input, process_all_frames: bool = False):
     if input["type"] == "video_file":
         return VideoFileStream(os.path.join(absolutepath, input["file"]), process_all_frames=process_all_frames)
-    else:
-        return CameraStream(video_device=input["video_device"])
+    
+    if not input["video_device"] in camera_streams:
+        camera_streams[input["video_device"]] = CameraStream(video_device=input["video_device"])
+    return camera_streams[input["video_device"]]
 
 class ExplorerPipeline():    
     def __init__(self, app, input, event_cb):

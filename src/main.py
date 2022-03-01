@@ -1,4 +1,5 @@
 from darcyai.perception_object_model import PerceptionObjectModel
+from darcyai.input.camera_stream import CameraStream
 from pipeline.explorer_pipeline import ExplorerPipeline
 from flask import Flask, send_from_directory, jsonify, stream_with_context, Response, request
 from flask_cors import CORS
@@ -54,7 +55,6 @@ def store_latest_event(perceptor_name, event_name):
 def is_mac_osx():
     return platform.system() == "Darwin"
 
-default_video_device = 0 if is_mac_osx() else "/dev/video0"
 pipeline_inputs = [
   {
     "id": 1,
@@ -72,15 +72,20 @@ pipeline_inputs = [
   #   "type": 'video_file',
   #   "description": 'Spinning earth',
   # },
-  {
+]
+
+video_inputs = CameraStream.get_video_inputs()
+default_video_device = video_inputs[0] if len(video_inputs) > 0 else 0
+
+if len(video_inputs) > 0:
+  pipeline_inputs.append({
     "id": 3,
     "title": 'Live video',
     "description": 'Live feed from your source video',
     "type": 'live_feed',
     "video_device": default_video_device,
     "thumbnail": 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKQAAABuCAQAAAADz3AYAAAAnUlEQVR42u3QMQEAAAwCoNm/9Er4CRHIUREFIkWKRKRIkSIRKVIkIkWKFIlIkSJFIlKkSESKFCkSkSJFikSkSJGIFClSJCJFikSkSJEiESlSpEhEihSJSJEiRSJSpEiRiBQpEpEiRYpEpEiRIhEpUiQiRYoUiUiRIhEpUqRIRIoUKRKRIkUiUqRIkYgUKVIkIkWKRKRIkSIRKVLkugc1EABvYNjcFAAAAABJRU5ErkJggg==',
-  }
-]
+  })
 
 current_pipeline_input_id = 1
 pipeline_instance = None
@@ -176,7 +181,7 @@ def get_historical_pulse():
 
 @app.route('/inputs')
 def get_inputs():
-  return jsonify({ "inputs": pipeline_inputs, "current": current_pipeline_input_id })
+  return jsonify({ "inputs": pipeline_inputs, "current": current_pipeline_input_id, "videoDevices": video_inputs })
 
 @app.route('/inputs/<int:input_id>', methods=['PUT'])
 def set_input(input_id):
@@ -193,7 +198,7 @@ def set_input(input_id):
   eventStore.clear()
   current_pipeline_input_id = input_id
   pipeline_instance.change_input(get_current_pipeline_input(current_pipeline_input_id), process_all_frames)
-  return jsonify({ "inputs": pipeline_inputs, "current": current_pipeline_input_id })
+  return jsonify({ "inputs": pipeline_inputs, "current": current_pipeline_input_id, "videoDevices": video_inputs })
 
 # Serve static folder (and nested folders)
 # We should be using nginx for this
