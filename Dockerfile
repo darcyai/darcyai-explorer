@@ -2,7 +2,6 @@
 FROM node:14 as build-deps
 WORKDIR /usr/src/app/
 COPY ./src/ui/package.json ./src/ui/package-lock.json ./
-RUN ls -l
 RUN npm i -g npm
 RUN npm i
 COPY ./src/ui/ ./

@@ -11,6 +11,7 @@ import datetime
 import base64
 import logging
 import time
+import json
 import platform
 
 #----------------------------------------------------------------------------#
@@ -43,7 +44,7 @@ def store_latest_event(perceptor_name, event_name):
         'id': event_name + '_' + str(timestamp),
         'timestamp': timestamp
       }
-    print(perceptor_name, event_name, event_data)
+    logging.debug(json.dumps({ 'perceptor': perceptor_name, 'event_name': event_name, 'data': event_data }))
     if perceptor_name not in eventStore:
       eventStore[perceptor_name] = [format_event(event_data)]
     else:
@@ -109,7 +110,7 @@ try:
   pipeline_instance = ExplorerPipeline(app, get_current_pipeline_input(current_pipeline_input_id), store_latest_event)
 except Exception as e:
   pipeline_error = e
-  logging.error("Pipeline creation failed with: %s", str(e))
+  logging.error(json.dumps({'message': "Pipeline creation failed with: " + str(e)}))
 
 @app.route('/events')
 def get_all_events():
@@ -130,7 +131,7 @@ def get_events(perceptor_name):
       return jsonify({ "message": str(pipeline_error) }), 500
     return jsonify(pipeline_instance.get_summary())
   else:
-    print('No events for', perceptor_name)
+    logging.debug({'message': 'No events for ' + perceptor_name})
     return jsonify([])
 
 
@@ -205,8 +206,6 @@ def set_input(input_id):
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-  print("root path")
-  print(path)
   try:
     return send_from_directory(ui_build_path, path)
   except BaseException:
@@ -214,8 +213,6 @@ def catch_all(path):
 
 @app.route('/static/js/<path:path>')
 def catch_all_js(path):
-  print("js path")
-  print(path)
   try:
     return send_from_directory(ui_build_path + "/static/js", path)
   except BaseException:
@@ -223,8 +220,6 @@ def catch_all_js(path):
 
 @app.route('/static/css/<path:path>')
 def catch_all_css(path):
-  print("css path")
-  print(path)
   try:
     return send_from_directory(ui_build_path + "/static/css", path)
   except BaseException:
@@ -232,8 +227,6 @@ def catch_all_css(path):
 
 @app.route('/static/media/<path:path>')
 def catch_all_media(path):
-  print("media path")
-  print(path)
   try:
     return send_from_directory(ui_build_path + "/static/media", path)
   except BaseException:
@@ -249,7 +242,7 @@ def main():
     try:
         pipeline_instance.run()
     except Exception as e:
-      logging.error("Pipeline run failed with: %s", str(e))
+      logging.error(json.dumps({'message': "Pipeline run failed with: " + str(e)}))
       while True:
         time.sleep(1)
   else:

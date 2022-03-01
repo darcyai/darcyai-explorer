@@ -7,6 +7,8 @@ from .perceptors.qrcode_perceptor import QRCodePerceptor
 from .perceptors.face_mask_perceptor import FaceMaskPerceptor
 import os
 import time
+import logging
+import json
 import cv2
 
 absolutepath = os.path.dirname(os.path.abspath(__file__))
@@ -195,7 +197,7 @@ class ExplorerPipeline():
                     self.__pipeline.run()
                 except Exception as e:
                     time.sleep(1)
-                    print(e)
+                    logging.error(json.dumps({'message': str(e)}))
                     pass
 
     def __output_stream_callback(self, pom, input_data):

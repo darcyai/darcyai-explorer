@@ -58,7 +58,7 @@ const Navbar: React.FC = () => {
           <DocsIcon />
           <span>Developer docs</span>
         </a>
-        <a className={classes.link} href='https://github.com/edgeworx/darcyai-sdk' target='_blank' rel='noreferrer'>
+        <a className={classes.link} href='https://github.com/darcyai/darcyai-sdk' target='_blank' rel='noreferrer'>
           <GithubIcon />
           <span>Darcy AI SDK</span>
         </a>

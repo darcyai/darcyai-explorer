@@ -81,6 +81,43 @@ let darkTheme = createTheme({
         }
       }
     },
+    MuiSelect: {
+      styleOverrides: {
+      }
+    },
+    MuiList: {
+      styleOverrides: {
+        root: {
+          backgroundColor: edgeColors.neutral[4]
+        }
+      }
+    },
+    MuiSvgIcon: {
+      styleOverrides: {
+        root: {
+          '& path': {
+            fill: edgeColors.blue
+          }
+        }
+      }
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          height: 28,
+          backgroundColor: edgeColors.neutral[4],
+          '&.Mui-selected': {
+            backgroundColor: edgeColors.neutral[5],
+            '&:hover': {
+              backgroundColor: edgeColors.neutral[5]
+            }
+          },
+          '&:hover': {
+            backgroundColor: edgeColors.neutral[5]
+          }
+        }
+      }
+    },
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
@@ -91,6 +128,11 @@ let darkTheme = createTheme({
           },
           '&.Mui-focused .MuiOutlinedInput-input': {
             color: edgeColors.neutral[0]
+          },
+          '&.Mui-focused': {
+            '& .MuiSvgIcon-root-MuiSelect-icon path': {
+              fill: edgeColors.neutral[0]
+            }
           }
         },
         notchedOutline: {
