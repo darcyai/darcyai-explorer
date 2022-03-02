@@ -129,8 +129,7 @@ const InputStreamConfig: React.FC = () => {
     if (!res.ok) { throw new Error(res.statusText) }
     const data = await res.json()
     setInputs(data.inputs)
-    // setAvailableVideoDevices(data.videoDevices)
-    setAvailableVideoDevices([...data.videoDevices, 1, 2, 3])
+    setAvailableVideoDevices(data.videoDevices)
     data.inputs.forEach((input: InputStreamInput) => {
       if (input.type === 'live_feed') {
         setVideoDevice(input.video_device ?? 0)

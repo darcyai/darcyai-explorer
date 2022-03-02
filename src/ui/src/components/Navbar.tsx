@@ -2,7 +2,7 @@ import React from 'react'
 import { makeStyles } from '@mui/styles'
 import { Theme } from '@mui/material'
 
-import Logo from '../assets/darcy-logo.png'
+import { ReactComponent as Logo } from '../assets/logo.svg'
 import { ReactComponent as DocsIcon } from '../assets/docs.svg'
 import { ReactComponent as GithubIcon } from '../assets/github.svg'
 
@@ -27,7 +27,10 @@ const useStyles = makeStyles((theme: Theme) => {
       color: theme.palette.neutral[0],
       alignItems: 'center',
       font: 'normal normal 600 14px/17px Gilroy',
-      letterSpacing: '0.35px'
+      letterSpacing: '0.35px',
+      '& svg': {
+        height: 32
+      }
     },
     links: {
       display: 'flex',
@@ -63,8 +66,8 @@ const Navbar: React.FC = () => {
   return (
     <div className={classes.root}>
       <div className={classes.logo}>
-        <img src={Logo} alt='Darcy' />
-        <span>Darcy AI Explorer</span>
+        <Logo />
+        {/* <span>Darcy AI Explorer</span> */}
       </div>
       <div className={classes.links}>
         <a className={classes.link} href='https://darcyai.github.io/darcyai-sdk' target='_blank' rel='noreferrer'>
