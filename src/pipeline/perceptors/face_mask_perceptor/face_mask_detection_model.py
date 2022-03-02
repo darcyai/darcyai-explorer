@@ -1,4 +1,4 @@
-from darcyai_engine.serializable import Serializable
+from darcyai.serializable import Serializable
 
 class FaceMaskDetectionModel(Serializable):
     def __init__(self, has_mask:bool, person_id: str):

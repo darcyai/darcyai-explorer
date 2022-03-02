@@ -1,4 +1,5 @@
-from darcyai_engine.perception_object_model import PerceptionObjectModel
+from darcyai.perception_object_model import PerceptionObjectModel
+from darcyai.input.camera_stream import CameraStream
 from pipeline.explorer_pipeline import ExplorerPipeline
 from flask import Flask, send_from_directory, jsonify, stream_with_context, Response, request
 from flask_cors import CORS
@@ -11,13 +12,28 @@ import base64
 import logging
 import time
 import platform
+import json
+
+# Create logger
+class JSONFormatter(logging.Formatter):
+	def __init__(self):
+		super().__init__()
+	def format(self, record):
+		record.msg = json.dumps({'level': record.levelname, 'path': record.pathname, 'line': record.lineno, 'message': record.msg})
+		return super().format(record)
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+loggingStreamHandler = logging.StreamHandler()
+loggingStreamHandler.setFormatter(JSONFormatter())
+logger.addHandler(loggingStreamHandler)
 
 #----------------------------------------------------------------------------#
 # Configure and run SPA API
 #----------------------------------------------------------------------------#
 absolutepath = os.path.dirname(os.path.abspath(__file__))
 ui_build_path = os.path.join(absolutepath, 'ui/build')
-swagger_path = 'usr/local/lib/python3.9/site-packages/darcyai_engine/swagger'
+swagger_path = 'usr/local/lib/python3.9/site-packages/darcyai/swagger'
 app = Flask(
   'API',
   static_folder=os.path.join(swagger_path, 'static'),
@@ -42,7 +58,7 @@ def store_latest_event(perceptor_name, event_name):
         'id': event_name + '_' + str(timestamp),
         'timestamp': timestamp
       }
-    print(perceptor_name, event_name, event_data)
+    logger.debug({ 'perceptor': perceptor_name, 'event_name': event_name, 'data': event_data })
     if perceptor_name not in eventStore:
       eventStore[perceptor_name] = [format_event(event_data)]
     else:
@@ -54,7 +70,6 @@ def store_latest_event(perceptor_name, event_name):
 def is_mac_osx():
     return platform.system() == "Darwin"
 
-default_video_device = 0 if is_mac_osx() else "/dev/video0"
 pipeline_inputs = [
   {
     "id": 1,
@@ -72,15 +87,20 @@ pipeline_inputs = [
   #   "type": 'video_file',
   #   "description": 'Spinning earth',
   # },
-  {
+]
+
+video_inputs = CameraStream.get_video_inputs()
+default_video_device = video_inputs[0] if len(video_inputs) > 0 else 0
+
+if len(video_inputs) > 0:
+  pipeline_inputs.append({
     "id": 3,
     "title": 'Live video',
     "description": 'Live feed from your source video',
     "type": 'live_feed',
     "video_device": default_video_device,
     "thumbnail": 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKQAAABuCAQAAAADz3AYAAAAnUlEQVR42u3QMQEAAAwCoNm/9Er4CRHIUREFIkWKRKRIkSIRKVIkIkWKFIlIkSJFIlKkSESKFCkSkSJFikSkSJGIFClSJCJFikSkSJEiESlSpEhEihSJSJEiRSJSpEiRiBQpEpEiRYpEpEiRIhEpUiQiRYoUiUiRIhEpUqRIRIoUKRKRIkUiUqRIkYgUKVIkIkWKRKRIkSIRKVLkugc1EABvYNjcFAAAAABJRU5ErkJggg==',
-  }
-]
+  })
 
 current_pipeline_input_id = 1
 pipeline_instance = None
@@ -104,7 +124,7 @@ try:
   pipeline_instance = ExplorerPipeline(app, get_current_pipeline_input(current_pipeline_input_id), store_latest_event)
 except Exception as e:
   pipeline_error = e
-  logging.error("Pipeline creation failed with: %s", str(e))
+  logger.error("Pipeline creation failed with: %s", str(e))
 
 @app.route('/events')
 def get_all_events():
@@ -125,7 +145,7 @@ def get_events(perceptor_name):
       return jsonify({ "message": str(pipeline_error) }), 500
     return jsonify(pipeline_instance.get_summary())
   else:
-    print('No events for', perceptor_name)
+    logger.debug({'message': 'No events for ' + perceptor_name})
     return jsonify([])
 
 
@@ -176,7 +196,7 @@ def get_historical_pulse():
 
 @app.route('/inputs')
 def get_inputs():
-  return jsonify({ "inputs": pipeline_inputs, "current": current_pipeline_input_id })
+  return jsonify({ "inputs": pipeline_inputs, "current": current_pipeline_input_id, "videoDevices": video_inputs })
 
 @app.route('/inputs/<int:input_id>', methods=['PUT'])
 def set_input(input_id):
@@ -193,15 +213,13 @@ def set_input(input_id):
   eventStore.clear()
   current_pipeline_input_id = input_id
   pipeline_instance.change_input(get_current_pipeline_input(current_pipeline_input_id), process_all_frames)
-  return jsonify({ "inputs": pipeline_inputs, "current": current_pipeline_input_id })
+  return jsonify({ "inputs": pipeline_inputs, "current": current_pipeline_input_id, "videoDevices": video_inputs })
 
 # Serve static folder (and nested folders)
 # We should be using nginx for this
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-  print("root path")
-  print(path)
   try:
     return send_from_directory(ui_build_path, path)
   except BaseException:
@@ -209,8 +227,6 @@ def catch_all(path):
 
 @app.route('/static/js/<path:path>')
 def catch_all_js(path):
-  print("js path")
-  print(path)
   try:
     return send_from_directory(ui_build_path + "/static/js", path)
   except BaseException:
@@ -218,8 +234,6 @@ def catch_all_js(path):
 
 @app.route('/static/css/<path:path>')
 def catch_all_css(path):
-  print("css path")
-  print(path)
   try:
     return send_from_directory(ui_build_path + "/static/css", path)
   except BaseException:
@@ -227,8 +241,6 @@ def catch_all_css(path):
 
 @app.route('/static/media/<path:path>')
 def catch_all_media(path):
-  print("media path")
-  print(path)
   try:
     return send_from_directory(ui_build_path + "/static/media", path)
   except BaseException:
@@ -244,7 +256,7 @@ def main():
     try:
         pipeline_instance.run()
     except Exception as e:
-      logging.error("Pipeline run failed with: %s", str(e))
+      logger.error("Pipeline run failed with: %s", str(e))
       while True:
         time.sleep(1)
   else:

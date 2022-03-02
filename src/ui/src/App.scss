@@ -2,3 +2,11 @@
 @import './scss/font-source-sans.scss';
 @import './scss/font-gilroy.scss';
 @import './scss/spinner.scss';
+
+.MuiOutlinedInput-root.Mui-focused path {
+  fill: #fff;
+}
+
+.MuiOutlinedInput-root:hover path {
+  fill: #fff;
+}

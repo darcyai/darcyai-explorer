@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { makeStyles } from '@mui/styles'
-import { Theme, OutlinedInput } from '@mui/material'
+import { Theme, Select, MenuItem } from '@mui/material'
 
 import { ReactComponent as PlayIcon } from '../assets/play.svg'
 import { useFeedback } from '../providers/Feedback'
@@ -11,7 +11,8 @@ import { Toggle } from './Config'
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    flex: 1
   },
   item: {
     display: 'flex',
@@ -72,13 +73,14 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   inputRow: {
     display: 'flex',
-    padding: theme.spacing(2),
-    borderBottom: `1px solid ${theme.palette.border ?? ''}`,
+    flex: 1,
+    padding: theme.spacing(2, 2, 1, 2),
     gap: theme.spacing(2)
   },
   configRow: {
     display: 'flex',
     padding: theme.spacing(0, 2),
+    borderTop: `1px solid ${theme.palette.border ?? ''}`,
     gap: theme.spacing(2)
   },
   configItem: {
@@ -91,7 +93,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     letterSpacing: 0,
     color: theme.palette.neutral[2],
     minHeight: theme.spacing(5)
-  }
+  },
+  input: {}
 }))
 
 declare interface InputStreamInput {
@@ -100,22 +103,23 @@ declare interface InputStreamInput {
   file?: string
   thumbnail?: string
   type: 'video_file' | 'live_feed'
-  video_device?: string
+  video_device?: number
   description: string
 }
 
 const InputStreamConfig: React.FC = () => {
   const classes = useStyles()
   const [inputs, setInputs] = React.useState<InputStreamInput[]>([])
+  const [availableVideoDevices, setAvailableVideoDevices] = React.useState<number[]>([])
   const [currentInputId, setCurrentInputId] = React.useState<number>(0)
   const { pushErrorFeedBack } = useFeedback()
   const { playLiveStream, setLoading } = usePipeline()
   const [processAllFrames, setProcessAllFrames] = React.useState<boolean>(false)
-  const [videoDevice, setVideoDevice] = React.useState<string>('')
+  const [videoDevice, setVideoDevice] = React.useState<number>(0)
   const currentInput = React.useMemo(() => {
     const input = inputs.find(input => input.id === currentInputId)
     if ((input != null) && input.type === 'live_feed') {
-      setVideoDevice(input.video_device ?? '')
+      setVideoDevice(input.video_device ?? 0)
     }
     return input
   }, [currentInputId])
@@ -125,10 +129,16 @@ const InputStreamConfig: React.FC = () => {
     if (!res.ok) { throw new Error(res.statusText) }
     const data = await res.json()
     setInputs(data.inputs)
+    setAvailableVideoDevices(data.videoDevices)
+    data.inputs.forEach((input: InputStreamInput) => {
+      if (input.type === 'live_feed') {
+        setVideoDevice(input.video_device ?? 0)
+      }
+    })
     setCurrentInputId(data.current)
   }
 
-  async function updateInput (inputId: number, _processAllFrames?: boolean, _videoDevice?: string): Promise<void> {
+  async function updateInput (inputId: number, _processAllFrames?: boolean, _videoDevice?: number): Promise<void> {
     try {
       await setLoading()
       const res = await fetch(`/inputs/${inputId}`, {
@@ -142,7 +152,13 @@ const InputStreamConfig: React.FC = () => {
       }
       const data = await res.json()
       setInputs(data.inputs)
+      setAvailableVideoDevices(data.videoDevices)
       setCurrentInputId(data.current)
+      data.inputs.forEach((input: InputStreamInput) => {
+        if (input.type === 'live_feed' && input.id === data.current) {
+          setVideoDevice(input.video_device ?? 0)
+        }
+      })
       playLiveStream()
     } catch (e: any) {
       pushErrorFeedBack(e)
@@ -159,9 +175,11 @@ const InputStreamConfig: React.FC = () => {
       })
   }, [])
 
-  const onEnterPress = (e: React.KeyboardEvent<HTMLInputElement>): void => {
-    if (e.key === 'Enter') {
-      void updateInput(currentInputId)
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        width: 100
+      }
     }
   }
 
@@ -191,11 +209,20 @@ const InputStreamConfig: React.FC = () => {
           </div>
         </div>
       )}
-      {currentInput?.type === 'live_feed' && (
+      {currentInput?.type === 'live_feed' && availableVideoDevices.length > 1 && (
         <div className={classes.configRow}>
           <div className={classes.configItem}>
             <div>Video device</div>
-            <OutlinedInput size='small' type='text' value={videoDevice} onChange={(e) => { setVideoDevice(e.target.value) }} onKeyPress={onEnterPress} onBlur={() => { void updateInput(currentInputId) }} />
+            <Select
+              size='small'
+              style={{ width: 100 }}
+              className={classes.input}
+              value={videoDevice}
+              onChange={(e) => { setVideoDevice(e.target.value as number); void updateInput(currentInputId, undefined, e.target.value as number) }}
+              MenuProps={MenuProps}
+            >
+              {availableVideoDevices.map((deviceId) => (<MenuItem key={`option_${deviceId}`} value={deviceId}>{deviceId}</MenuItem>))}
+            </Select>
           </div>
         </div>
       )}

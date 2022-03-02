@@ -1,4 +1,4 @@
-from darcyai_engine.serializable import Serializable
+from darcyai.serializable import Serializable
 
 class QRCode(Serializable):
     def __init__(self, qrcode_data, bbox):
