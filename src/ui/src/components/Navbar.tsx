@@ -9,22 +9,22 @@ import { ReactComponent as GithubIcon } from '../assets/github.svg'
 const useStyles = makeStyles((theme: Theme) => {
   return {
     root: {
-      backgroundColor: theme.palette.neutral[0],
-      color: theme.palette.neutral[4],
+      backgroundColor: theme.palette.neutral[5],
+      color: theme.palette.neutral[0],
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
       padding: theme.spacing(2),
       alignItems: 'center',
       width: '100%',
-      height: theme.spacing(5),
+      height: theme.spacing(7),
       font: 'Gilroy',
       textTransform: 'uppercase'
     },
     logo: {
       display: 'flex',
       gap: theme.spacing(1),
-      color: theme.palette.neutral[2],
+      color: theme.palette.neutral[0],
       alignItems: 'center',
       font: 'normal normal 600 14px/17px Gilroy',
       letterSpacing: '0.35px'
@@ -37,10 +37,23 @@ const useStyles = makeStyles((theme: Theme) => {
     link: {
       display: 'flex',
       gap: theme.spacing(1),
-      color: theme.palette.neutral[3],
+      color: theme.palette.primary.main,
       textDecoration: 'none',
       font: 'normal normal 500 12px/16px Gilroy',
-      letterSpacing: '0.24px'
+      letterSpacing: '0.24px',
+      '& svg': {
+        '& path': {
+          fill: theme.palette.primary.main
+        }
+      },
+      '&:hover': {
+        color: theme.palette.neutral[0],
+        '& svg': {
+          '& path': {
+            fill: theme.palette.neutral[0]
+          }
+        }
+      }
     }
   }
 })

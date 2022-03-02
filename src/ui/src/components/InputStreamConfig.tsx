@@ -11,7 +11,8 @@ import { Toggle } from './Config'
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    flex: 1
   },
   item: {
     display: 'flex',
@@ -73,13 +74,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   inputRow: {
     display: 'flex',
     flex: 1,
-    padding: theme.spacing(2),
-    borderBottom: `1px solid ${theme.palette.border ?? ''}`,
+    padding: theme.spacing(2, 2, 1, 2),
     gap: theme.spacing(2)
   },
   configRow: {
     display: 'flex',
     padding: theme.spacing(0, 2),
+    borderTop: `1px solid ${theme.palette.border ?? ''}`,
     gap: theme.spacing(2)
   },
   configItem: {
@@ -128,6 +129,7 @@ const InputStreamConfig: React.FC = () => {
     if (!res.ok) { throw new Error(res.statusText) }
     const data = await res.json()
     setInputs(data.inputs)
+    // setAvailableVideoDevices(data.videoDevices)
     setAvailableVideoDevices([...data.videoDevices, 1, 2, 3])
     data.inputs.forEach((input: InputStreamInput) => {
       if (input.type === 'live_feed') {
