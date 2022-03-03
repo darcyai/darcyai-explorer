@@ -7,6 +7,7 @@ import { ReactComponent as PlayIcon } from '../assets/play.svg'
 import { useFeedback } from '../providers/Feedback'
 import { usePipeline } from '../providers/Pipeline'
 import { Toggle } from './Config'
+import clsx from 'clsx'
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -32,7 +33,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%',
     height: theme.spacing(13.75),
     backgroundColor: theme.palette.neutral[2],
-    borderRadius: theme.spacing(0.25)
+    borderRadius: theme.spacing(0.25),
+    '&.selected': {
+      borderColor: theme.palette.neutral[0],
+      border: '1px solid'
+    }
   },
   itemImgOverlay: {
     width: '100%',
@@ -125,17 +130,21 @@ const InputStreamConfig: React.FC = () => {
   }, [currentInputId])
 
   async function fetchInputs (): Promise<void> {
-    const res = await fetch('/inputs')
-    if (!res.ok) { throw new Error(res.statusText) }
-    const data = await res.json()
-    setInputs(data.inputs)
-    setAvailableVideoDevices(data.videoDevices)
-    data.inputs.forEach((input: InputStreamInput) => {
-      if (input.type === 'live_feed') {
-        setVideoDevice(input.video_device ?? 0)
-      }
-    })
-    setCurrentInputId(data.current)
+    try {
+      const res = await fetch('/inputs')
+      if (!res.ok) { throw new Error(res.statusText) }
+      const data = await res.json()
+      setInputs(data.inputs)
+      setAvailableVideoDevices(data.videoDevices)
+      data.inputs.forEach((input: InputStreamInput) => {
+        if (input.type === 'live_feed') {
+          setVideoDevice(input.video_device ?? 0)
+        }
+      })
+      setCurrentInputId(data.current)
+    } catch (e: any) {
+      pushErrorFeedBack(e)
+    }
   }
 
   async function updateInput (inputId: number, _processAllFrames?: boolean, _videoDevice?: number): Promise<void> {
@@ -147,6 +156,7 @@ const InputStreamConfig: React.FC = () => {
         headers: { 'Content-Type': 'application/json' }
       })
       if (!res.ok) {
+        console.log({ res })
         pushErrorFeedBack(res as any)
         return
       }
@@ -161,18 +171,14 @@ const InputStreamConfig: React.FC = () => {
       })
       playLiveStream()
     } catch (e: any) {
+      console.log({ e })
       pushErrorFeedBack(e)
       playLiveStream()
     }
   }
 
   React.useEffect(() => {
-    fetchInputs()
-      .catch((e: any) => {
-        pushErrorFeedBack(e)
-        console.error(e)
-        setInputs([])
-      })
+    void fetchInputs()
   }, [])
 
   const MenuProps = {
@@ -189,7 +195,7 @@ const InputStreamConfig: React.FC = () => {
         {inputs.map((input) => (
           <div key={input.id} className={classes.item}>
             <div className={classes.itemImgContainer}>
-              <img className={classes.itemImg} src={input.thumbnail ?? ''} />
+              <img className={clsx(classes.itemImg, currentInputId === input.id ? 'selected' : '')} src={input.thumbnail ?? ''} />
               {currentInputId !== input.id && <div className={classes.itemImgOverlay} onClick={() => { void updateInput(input.id) }}><PlayIcon /></div>}
             </div>
             <div className={classes.itemContent}>

@@ -34,11 +34,12 @@ const VideoControls: React.FC = () => {
     }
   }
 
+  if (loading) {
+    return <div className={classes.spinner}><Spinner size={48} /></div>
+  }
+
   return (
-    <div className={classes.root}>
-      {loading && <div className={classes.spinner}><Spinner size={48} /></div>}
-      <Button className={classes.playButton} size='small' variant='contained' color='primary' style={{ minWidth: 0 }} onClick={toggleVideo}>{isPlaying ? <PauseIcon /> : <PlayIcon />}</Button>
-    </div>
+    <Button className={classes.playButton} size='small' variant='contained' color='primary' style={{ minWidth: 0, position: 'absolute' }} onClick={toggleVideo}>{isPlaying ? <PauseIcon /> : <PlayIcon />}</Button>
   )
 }
 

@@ -125,18 +125,20 @@ export const FeedbackProvider: React.FC = (props) => {
 
   const processError = async (err: any): Promise<string> => {
     // Actual error
+    console.log({ err })
     if (err instanceof Error) {
       return err.message
     }
     // API Error / Response
-    if (typeof err.json === 'function') {
-      const jsonError = await err.json()
-      return jsonError.message ?? JSON.stringify(jsonError)
-    }
-    if (typeof err.text === 'function') {
+    if (err.headers != null) {
+      if (err.headers.get('Content-Type') === 'application/json') {
+        const error = await err.json()
+        return error.message ?? JSON.stringify(error)
+      }
       return err.text()
     }
     // Default case
+    console.log('Default case')
     return err.message ?? 'Unknown error'
   }
 
