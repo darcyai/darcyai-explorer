@@ -251,17 +251,16 @@ def runAPI():
   app.run(host='0.0.0.0', port=port, threaded=True)
 
 def main():
-  threading.Thread(target=runAPI, daemon=True).start()
+  api_thread = threading.Thread(target=runAPI, daemon=True)
+  api_thread.start()
   if pipeline_instance is not None:
     try:
         pipeline_instance.run()
     except Exception as e:
       logger.error("Pipeline run failed with: %s", str(e))
-      while True:
-        time.sleep(1)
+      api_thread.join()
   else:
-    while True:
-      time.sleep(1)
+    api_thread.join()
 
 if __name__ == "__main__":
     main()
