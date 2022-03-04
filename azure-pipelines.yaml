@@ -90,10 +90,37 @@ stages:
         docker push $(publicRepository):$(version)-$(imageTagSuffix)
       displayName: 'Publish Public Docker Image'
       condition: eq(variables['isRelease'], true)
+    
 - stage: Publish
-  condition: eq(variables['isRelease'], true)
   jobs:
-  - job: Publish_manifest
+  - job: Dev
+    pool:
+      vmImage: 'Ubuntu 18.04'
+    steps:
+    - template: pipeline/setversion.yaml
+    - task: Docker@2
+      displayName: Login to Dockerhub
+      inputs:
+        command: login
+        containerRegistry: Edgeworx GCP
+    - script: |
+        docker pull $(repository):$(version)-amd64
+        docker pull $(repository):$(version)-arm32v7
+        docker pull $(repository):$(version)-arm64v8
+      displayName: 'Pull $(repository) amd64, arm32v7, and arm64v8 docker images'
+    - script: |
+        docker manifest create \
+          $(repository):dev \
+          --amend $(repository):$(version)-amd64 \
+          --amend $(repository):$(version)-arm32v7 \
+          --amend $(repository):$(version)-arm64v8
+      displayName: 'Create $(repository) image manifest'
+    - script: |
+        docker manifest push $(repository):$(version)
+      displayName: 'Push $(repository) image manifest'
+      
+  - job: Prod
+    condition: eq(variables['isRelease'], true)
     pool:
       vmImage: 'Ubuntu 18.04'
     steps:
