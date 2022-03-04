@@ -4,6 +4,7 @@ from pipeline.explorer_pipeline import ExplorerPipeline
 from flask import Flask, send_from_directory, jsonify, stream_with_context, Response, request
 from flask_cors import CORS
 import os
+import sys
 import threading
 
 from datetime import timezone
@@ -13,13 +14,19 @@ import logging
 import time
 import platform
 import json
+import traceback
+
 
 # Create logger
 class JSONFormatter(logging.Formatter):
 	def __init__(self):
 		super().__init__()
+
 	def format(self, record):
-		record.msg = json.dumps({'level': record.levelname, 'path': record.pathname, 'line': record.lineno, 'message': record.msg})
+		data = {'level': record.levelname, 'path': record.pathname, 'line': record.lineno, 'message': record.msg}
+		if record.exc_info is not None:
+			data['stack'] = traceback.format_exception(record.exc_info)
+		record.msg = json.dumps(data)
 		return super().format(record)
 
 logger = logging.getLogger(__name__)
@@ -271,7 +278,7 @@ def main():
   else:
     api_thread.join()
   if api_error is not None:
-    raise api_error
+    sys.exit(1)
 
 if __name__ == "__main__":
     main()
