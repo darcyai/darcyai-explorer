@@ -42,6 +42,7 @@ app = Flask(
 CORS(app)
 
 eventStore = {}
+api_error = None
 
 def utc_now():
   dt = datetime.datetime.now(timezone.utc)
@@ -247,8 +248,14 @@ def catch_all_media(path):
     return send_from_directory(ui_build_path, 'index.html')
 
 def runAPI():
-  port = int(os.environ.get('PORT', 5005))
-  app.run(host='0.0.0.0', port=port, threaded=True)
+  try:
+    port = int(os.environ.get('PORT', 5005))
+    app.run(host='0.0.0.0', port=port, threaded=True)
+  except Exception as e:
+    logger.error("API failed with: %s", str(e))
+    api_error = e
+
+  
 
 def main():
   api_thread = threading.Thread(target=runAPI, daemon=True)
@@ -261,6 +268,8 @@ def main():
       api_thread.join()
   else:
     api_thread.join()
+  if api_error is not None:
+    raise api_error
 
 if __name__ == "__main__":
     main()
