@@ -104,19 +104,19 @@ stages:
         command: login
         containerRegistry: Edgeworx GCP
     - script: |
-        docker pull $(repository):$(version)-amd64
-        docker pull $(repository):$(version)-arm32v7
-        docker pull $(repository):$(version)-arm64v8
+        docker pull gcr.io/$(repository):$(version)-amd64
+        docker pull gcr.io/$(repository):$(version)-arm32v7
+        docker pull gcr.io/$(repository):$(version)-arm64v8
       displayName: 'Pull $(repository) amd64, arm32v7, and arm64v8 docker images'
     - script: |
         docker manifest create \
-          $(repository):dev \
-          --amend $(repository):$(version)-amd64 \
-          --amend $(repository):$(version)-arm32v7 \
-          --amend $(repository):$(version)-arm64v8
+          gcr.io/$(repository):dev \
+          --amend gcr.io/$(repository):$(version)-amd64 \
+          --amend gcr.io/$(repository):$(version)-arm32v7 \
+          --amend gcr.io/$(repository):$(version)-arm64v8
       displayName: 'Create $(repository) image manifest'
     - script: |
-        docker manifest push $(repository):$(version)
+        docker manifest push gcr.io/$(repository):$(version)
       displayName: 'Push $(repository) image manifest'
       
   - job: Prod
