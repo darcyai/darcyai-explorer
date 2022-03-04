@@ -248,6 +248,7 @@ def catch_all_media(path):
     return send_from_directory(ui_build_path, 'index.html')
 
 def runAPI():
+  global api_error
   try:
     port = int(os.environ.get('PORT', 5005))
     app.run(host='0.0.0.0', port=port, threaded=True)
@@ -258,6 +259,7 @@ def runAPI():
   
 
 def main():
+  global api_error
   api_thread = threading.Thread(target=runAPI, daemon=True)
   api_thread.start()
   if pipeline_instance is not None:
