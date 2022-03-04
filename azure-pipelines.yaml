@@ -116,7 +116,7 @@ stages:
           --amend gcr.io/$(repository):$(version)-arm64v8
       displayName: 'Create $(repository) image manifest'
     - script: |
-        docker manifest push gcr.io/$(repository):$(version)
+        docker manifest push gcr.io/$(repository):dev
       displayName: 'Push $(repository) image manifest'
       
   - job: Prod
