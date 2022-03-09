@@ -142,7 +142,7 @@ class ExplorerPipeline():
             "faceMasks": 0,
             "qrCodes": 0
         }
-        self.__previous_mask_results = []
+        self.__previous_mask_results = {}
         self.__previous_qr_codes_results = []
         self.__detected_face_masks = {}
         self.__detected_qr_codes = {}
