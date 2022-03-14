@@ -2,7 +2,7 @@ import cv2
 import os
 import pathlib
 from pyzbar import pyzbar
-from typing import Any, List
+from typing import Any
 
 from darcyai.perceptor.coral.object_detection_perceptor import ObjectDetectionPerceptor
 from darcyai.config import Config
@@ -24,6 +24,7 @@ class QRCodePerceptor(ObjectDetectionPerceptor):
 
         self.config_schema = [
             Config("threshold", "float", 0.85, "Threshold"),
+            Config("color", "str", "0,255,0", "Rectangle Color"),
         ]
 
     def run(self, input_data:Any, config:ConfigRegistry=None) -> QRCodeDetectionModel:
@@ -48,7 +49,6 @@ class QRCodePerceptor(ObjectDetectionPerceptor):
             y1 = min(int(qrcode.bbox.ymax * (1 + factor)), frame_height)
 
             qrcode_frame = input_data[y0:y1, x0:x1]
-            color_cvt = cv2.cvtColor(qrcode_frame, cv2.COLOR_RGB2BGR)
             barcodes = pyzbar.decode(qrcode_frame)
 
             if len(barcodes) == 0:
@@ -62,4 +62,5 @@ class QRCodePerceptor(ObjectDetectionPerceptor):
 
                 qrcodes.append(QRCode(qrcode_data, qrcode.bbox))
 
-        return QRCodeDetectionModel(qrcodes)
+        (r, g, b) = map(int, self.get_config_value("color").split(","))
+        return QRCodeDetectionModel(qrcodes=qrcodes, rectangle_color=(r, g, b))

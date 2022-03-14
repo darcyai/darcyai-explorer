@@ -10,9 +10,7 @@ deps:
 	python3 -m pip install -U numpy
 	python3 -m pip install imutils==0.5.4
 	python3 -m pip install opencv-python==4.5.3.56
-	python3 -m pip install -U darcyai-engine
-	python3 -m pip install -U darcyai-coral
-	python3 -m pip install -U pycoral
+	python3 -m pip install -U darcyai
 	python3 -m pip install -U flask_cors
 	python3 -m pip install -U pyzbar==0.1.8
 

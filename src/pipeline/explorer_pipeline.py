@@ -164,7 +164,9 @@ class ExplorerPipeline():
                     pass
 
     def __output_stream_callback(self, pom, input_data):
-        return pom.get_perceptor(self.__people_perceptor_name).annotatedFrame()
+        annotated_frame = pom.get_perceptor(self.__people_perceptor_name).annotatedFrame()
+        annotated_frame = pom.get_perceptor(self.__qrcode_perceptor_name).draw_rectangles(annotated_frame)
+        return annotated_frame
 
     def change_input(self, input, process_all_frames: bool = False):
         self.__stopped = True

@@ -11,7 +11,6 @@ from datetime import timezone
 import datetime
 import base64
 import logging
-import time
 import platform
 import json
 import traceback
