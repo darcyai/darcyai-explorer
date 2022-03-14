@@ -23,7 +23,7 @@ class QRCodePerceptor(ObjectDetectionPerceptor):
                          threshold=0)
 
         self.config_schema = [
-            Config("threshold", "float", 0.85, "Threshold"),
+            Config("threshold", "float", 85, "Confidence percentage threshold for QRCode detection."),
         ]
 
     def run(self, input_data:Any, config:ConfigRegistry=None) -> QRCodeDetectionModel:
@@ -31,7 +31,8 @@ class QRCodePerceptor(ObjectDetectionPerceptor):
             return QRCodeDetectionModel([])
         perception_result, _ = super().run(input_data=input_data, config=config)
 
-        filtered_results = list(filter(lambda x: x.score > self.get_config_value("threshold"), perception_result))
+        threshold = self.get_config_value("threshold") / 100
+        filtered_results = list(filter(lambda x: x.score > threshold, perception_result))
 
         if len(filtered_results) == 0:
             return QRCodeDetectionModel([])
@@ -59,6 +60,7 @@ class QRCodePerceptor(ObjectDetectionPerceptor):
                     continue
 
                 qrcode_data = barcode.data.decode("utf-8")
+                self.emit("qrcode_detected", qrcode_data)
 
                 qrcodes.append(QRCode(qrcode_data, qrcode.bbox))
 

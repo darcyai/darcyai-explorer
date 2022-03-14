@@ -29,7 +29,7 @@ class FaceMaskPerceptor(ImageClassificationPerceptor):
                          labels=labels)
 
         self.config_schema = [
-            Config("threshold", "float", 0.85, "Threshold"),
+            Config("threshold", "float", 85, "Confidence percentage threshold for mask detection."),
         ]
 
 
@@ -53,8 +53,11 @@ class FaceMaskPerceptor(ImageClassificationPerceptor):
         else:
             try:
                 idx = perception_result[1].index("Mask")
-                has_mask = bool(perception_result[0][idx][1] >= self.get_config_value("threshold"))
+                threshold = self.get_config_value("threshold") / 100
+                has_mask = bool(perception_result[0][idx][1] >= threshold)
+                self.emit("mask_detected", person_id)
             except:
                 has_mask = False
+                self.emit("no_mask", person_id)
 
         return FaceMaskDetectionModel(has_mask, person_id)
