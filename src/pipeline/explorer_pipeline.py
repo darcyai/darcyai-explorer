@@ -86,7 +86,7 @@ class ExplorerPipeline():
         face_mask_perceptor.on("no_mask", self.__event_cb(self.__face_mask_perceptor_name, "no_mask"))
         
         # Update configuration
-        self.__pipeline.set_perceptor_config(self.__face_mask_perceptor_name, "threshold", 0.85)
+        self.__pipeline.set_perceptor_config(self.__face_mask_perceptor_name, "threshold", 95)
 
         self.__qrcode_person_id = None
 
