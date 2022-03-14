@@ -28,6 +28,8 @@ class FaceMaskPerceptor(ImageClassificationPerceptor):
                          top_k=2,
                          labels=labels)
 
+        self.event_names = ["mask_detected", "no_mask"]
+        
         self.config_schema = [
             Config("threshold", "float", 85, "Confidence percentage threshold for mask detection."),
         ]

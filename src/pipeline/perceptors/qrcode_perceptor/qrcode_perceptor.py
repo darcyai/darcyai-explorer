@@ -22,6 +22,8 @@ class QRCodePerceptor(ObjectDetectionPerceptor):
         super().__init__(model_path=model_file,
                          threshold=0)
 
+        self.event_names = ["qrcode_detected"]
+
         self.config_schema = [
             Config("threshold", "float", 85, "Confidence percentage threshold for QRCode detection."),
         ]
