@@ -55,6 +55,7 @@ class FaceMaskPerceptor(ImageClassificationPerceptor):
 
         if len(perception_result[1]) == 0:
             has_mask = False
+            self.emit(NO_MASK_EVENT, person_id)
         else:
             try:
                 idx = perception_result[1].index("Mask")
@@ -63,6 +64,5 @@ class FaceMaskPerceptor(ImageClassificationPerceptor):
                 self.emit(RAW_MASK_EVENT, person_id)
             except:
                 has_mask = False
-                self.emit(NO_MASK_EVENT, person_id)
 
         return FaceMaskDetectionModel(has_mask, person_id)
