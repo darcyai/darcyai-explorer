@@ -13,7 +13,7 @@ trigger:
 variables:
   ref: $(Build.SourceBranch)
   commit: $(Build.SourceVersion)
-  version: ''
+  version: 'dev'
   repository: 'focal-freedom-236620/darcy-ai-explorer'
   publicRepository: 'darcyai/darcy-ai-explorer'
   isRelease: $[startsWith(variables['Build.SourceBranch'], 'refs/tags/')]
