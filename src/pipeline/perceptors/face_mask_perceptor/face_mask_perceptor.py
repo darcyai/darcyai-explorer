@@ -8,6 +8,9 @@ from darcyai.config_registry import ConfigRegistry
 from .face_mask_detection_model import FaceMaskDetectionModel
 
 
+RAW_MASK_EVENT = "raw_mask_event"
+NO_MASK_EVENT = "no_mask"
+
 class FaceMaskPerceptor(ImageClassificationPerceptor):
     """
     This class is a subclass of ImageClassificationPerceptor.
@@ -28,7 +31,7 @@ class FaceMaskPerceptor(ImageClassificationPerceptor):
                          top_k=2,
                          labels=labels)
 
-        self.event_names = ["mask_detected", "no_mask"]
+        self.event_names = [RAW_MASK_EVENT, NO_MASK_EVENT]
         
         self.config_schema = [
             Config("threshold", "float", 85, "Confidence percentage threshold for mask detection."),
@@ -57,9 +60,9 @@ class FaceMaskPerceptor(ImageClassificationPerceptor):
                 idx = perception_result[1].index("Mask")
                 threshold = self.get_config_value("threshold") / 100
                 has_mask = bool(perception_result[0][idx][1] >= threshold)
-                self.emit("mask_detected", person_id)
+                self.emit(RAW_MASK_EVENT, person_id)
             except:
                 has_mask = False
-                self.emit("no_mask", person_id)
+                self.emit(NO_MASK_EVENT, person_id)
 
         return FaceMaskDetectionModel(has_mask, person_id)

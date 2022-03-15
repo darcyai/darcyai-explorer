@@ -10,6 +10,7 @@ from darcyai.config_registry import ConfigRegistry
 from .qrcode_detection_model import QRCodeDetectionModel
 from .qrcode import QRCode
 
+RAW_QRCODE_EVENT = "raw_qrcode_event"
 
 class QRCodePerceptor(ObjectDetectionPerceptor):
     """
@@ -22,7 +23,7 @@ class QRCodePerceptor(ObjectDetectionPerceptor):
         super().__init__(model_path=model_file,
                          threshold=0)
 
-        self.event_names = ["qrcode_detected"]
+        self.event_names = [RAW_QRCODE_EVENT]
 
         self.config_schema = [
             Config("threshold", "float", 85, "Confidence percentage threshold for QRCode detection."),
@@ -62,7 +63,7 @@ class QRCodePerceptor(ObjectDetectionPerceptor):
                     continue
 
                 qrcode_data = barcode.data.decode("utf-8")
-                self.emit("qrcode_detected", qrcode_data)
+                self.emit(RAW_QRCODE_EVENT, qrcode_data)
 
                 qrcodes.append(QRCode(qrcode_data, qrcode.bbox))
 

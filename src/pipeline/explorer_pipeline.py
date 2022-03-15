@@ -3,8 +3,9 @@ from darcyai.input.video_file_stream import VideoFileStream
 from darcyai.input.camera_stream import CameraStream
 from darcyai.output.live_feed_stream import LiveFeedStream
 from darcyai.perceptor.coral.people_perceptor import PeoplePerceptor
-from .perceptors.qrcode_perceptor import QRCodePerceptor
-from .perceptors.face_mask_perceptor import FaceMaskPerceptor
+
+from .perceptors.qrcode_perceptor import QRCodePerceptor, RAW_QRCODE_EVENT
+from .perceptors.face_mask_perceptor import FaceMaskPerceptor, NO_MASK_EVENT, RAW_MASK_EVENT
 import os
 import time
 import logging
@@ -75,15 +76,15 @@ class ExplorerPipeline():
         qrcode_perceptor = QRCodePerceptor()
         self.__pipeline.add_perceptor(self.__qrcode_perceptor_name, qrcode_perceptor, accelerator_idx=0, parent=self.__people_perceptor_name, input_callback=self.__qr_code_input_callback)
         ## Event callbacks
-        qrcode_perceptor.on("qrcode_detected", self.__event_cb(self.__qrcode_perceptor_name, "qrcode_detected"))
+        qrcode_perceptor.on(RAW_QRCODE_EVENT, self.__event_cb(self.__qrcode_perceptor_name, RAW_QRCODE_EVENT))
         
         # Face mask Perceptor
         self.__face_mask_perceptor_name = "facemask"
         face_mask_perceptor = FaceMaskPerceptor()
         self.__pipeline.add_perceptor(self.__face_mask_perceptor_name, face_mask_perceptor, accelerator_idx=0, parent=self.__people_perceptor_name, input_callback=self.__face_mask_input_callback, multi=True)
         ## Event callbacks
-        face_mask_perceptor.on("mask_detected", self.__event_cb(self.__face_mask_perceptor_name, "mask_detected"))
-        face_mask_perceptor.on("no_mask", self.__event_cb(self.__face_mask_perceptor_name, "no_mask"))
+        face_mask_perceptor.on(RAW_MASK_EVENT, self.__event_cb(self.__face_mask_perceptor_name, RAW_MASK_EVENT))
+        face_mask_perceptor.on(NO_MASK_EVENT, self.__event_cb(self.__face_mask_perceptor_name, NO_MASK_EVENT))
         
         # Update configuration
         self.__pipeline.set_perceptor_config(self.__face_mask_perceptor_name, "threshold", 95)
