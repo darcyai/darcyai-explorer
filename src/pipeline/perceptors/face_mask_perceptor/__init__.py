@@ -1,1 +1,1 @@
-from .face_mask_perceptor import FaceMaskPerceptor
+from .face_mask_perceptor import FaceMaskPerceptor, RAW_MASK_EVENT, NO_MASK_EVENT

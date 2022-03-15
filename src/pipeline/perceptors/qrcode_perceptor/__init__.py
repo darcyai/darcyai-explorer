@@ -1,1 +1,1 @@
-from .qrcode_perceptor import QRCodePerceptor
+from .qrcode_perceptor import QRCodePerceptor, RAW_QRCODE_EVENT
