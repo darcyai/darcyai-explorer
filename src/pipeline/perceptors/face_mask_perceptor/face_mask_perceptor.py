@@ -62,8 +62,6 @@ class FaceMaskPerceptor(ImageClassificationPerceptor):
             try:
                 idx = perception_result[1].index("Mask")
                 threshold = self.get_config_value("threshold") / 100
-                print("threshold:", threshold)
-                print("perception result:", perception_result[0][idx])
                 has_mask = bool(perception_result[0][idx][1] >= threshold)
                 if has_mask:
                     self.emit(RAW_MASK_EVENT, person_id)
