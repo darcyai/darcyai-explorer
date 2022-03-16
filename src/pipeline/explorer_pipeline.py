@@ -46,9 +46,6 @@ class ExplorerPipeline():
         }
         ## Store the last 10 pulses for facemask and qr codes
         self.__previous_mask_results = {}
-        self.__detected_face_masks = {}
-        self.__previous_qr_codes_results = []
-        self.__detected_qr_codes = {}
         ## Store the latest completed pom,
         ## allows for "pausing" and inspecting the latest POM in UI 
         self.__latest_pom = None
@@ -85,9 +82,6 @@ class ExplorerPipeline():
         ## Event callbacks
         face_mask_perceptor.on(RAW_MASK_EVENT, self.__event_cb(self.__face_mask_perceptor_name, RAW_MASK_EVENT))
         face_mask_perceptor.on(NO_MASK_EVENT, self.__event_cb(self.__face_mask_perceptor_name, NO_MASK_EVENT))
-        
-        # Update configuration
-        self.__pipeline.set_perceptor_config(self.__face_mask_perceptor_name, "threshold", 95)
 
         self.__qrcode_person_id = None
 
@@ -150,9 +144,7 @@ class ExplorerPipeline():
             "qrCodes": 0
         }
         self.__previous_mask_results = {}
-        self.__previous_qr_codes_results = []
-        self.__detected_face_masks = {}
-        self.__detected_qr_codes = {}
+        self.__qrcode_person_id = ''
 
     def __on_new_person_entered_scene(self, event_data):
         self.__summary["visitors"] += 1
