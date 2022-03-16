@@ -28,8 +28,9 @@ class JSONFormatter(logging.Formatter):
 		record.msg = json.dumps(data)
 		return super().format(record)
 
+log_level = os.getenv('LOG_LEVEL', 'INFO')
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(log_level)
 loggingStreamHandler = logging.StreamHandler()
 loggingStreamHandler.setFormatter(JSONFormatter())
 logger.addHandler(loggingStreamHandler)
