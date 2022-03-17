@@ -107,7 +107,7 @@ class ExplorerPipeline():
 
             # Rolling window of 10 frames
             self.__previous_mask_results[person_id]["count"].append(1 if mask_result.has_mask() else 0)
-            if len(self.__previous_mask_results[person_id]["count"] > 10):
+            if len(self.__previous_mask_results[person_id]["count"]) > 10:
                 self.__previous_mask_results[person_id]["count"].pop(0)
             
             # Store latest pulse number where we saw the person
