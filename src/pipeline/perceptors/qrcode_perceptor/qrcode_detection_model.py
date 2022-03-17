@@ -6,15 +6,16 @@ from darcyai.serializable import Serializable
 from .qrcode import QRCode
 
 class QRCodeDetectionModel(Serializable):
-    def __init__(self, qrcodes:List[QRCode], rectangle_color=(0, 255, 0)):
+    def __init__(self, qrcodes:List[QRCode], person_uuid, rectangle_color=(0, 255, 0)):
         self.__qrcodes = qrcodes
         self.__rectangle_color = rectangle_color
+        self.__person_uuid = person_uuid
 
     def get_qrcodes(self) -> List[QRCode]:
         """
         Returns the list of detected qrcodes
         """
-        return self.__qrcodes
+        return (self.__qrcodes, self.__person_uuid)
     
     def serialize(self):
         return { "qrcodes": [qrcode.serialize() for qrcode in self.__qrcodes] }

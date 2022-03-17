@@ -32,27 +32,31 @@ class QRCodePerceptor(ObjectDetectionPerceptor):
 
     def run(self, input_data:Any, config:ConfigRegistry=None) -> QRCodeDetectionModel:
         if input_data is None:
-            return QRCodeDetectionModel([])
-        perception_result, _ = super().run(input_data=input_data, config=config)
+            return QRCodeDetectionModel([], None)
+
+        frame = input_data[0]
+        person_uuid = input_data[1]
+
+        perception_result, _ = super().run(input_data=frame, config=config)
 
         threshold = self.get_config_value("threshold") / 100
         filtered_results = list(filter(lambda x: x.score > threshold, perception_result))
 
         if len(filtered_results) == 0:
-            return QRCodeDetectionModel([])
+            return QRCodeDetectionModel([], None)
 
-        frame_height = input_data.shape[0]
-        frame_width = input_data.shape[1]
+        frame_height = frame.shape[0]
+        frame_width = frame.shape[1]
 
         qrcodes = []
         for qrcode in filtered_results:
-            factor = 0.01
+            factor = 0.03
             x0 = max(int(qrcode.bbox.xmin * (1 - factor)), 0)
             y0 = max(int(qrcode.bbox.ymin * (1 - factor)), 0)
             x1 = min(int(qrcode.bbox.xmax * (1 + factor)), frame_width)
             y1 = min(int(qrcode.bbox.ymax * (1 + factor)), frame_height)
 
-            qrcode_frame = input_data[y0:y1, x0:x1]
+            qrcode_frame = frame[y0:y1, x0:x1]
             barcodes = pyzbar.decode(qrcode_frame)
 
             if len(barcodes) == 0:
@@ -68,4 +72,4 @@ class QRCodePerceptor(ObjectDetectionPerceptor):
                 qrcodes.append(QRCode(qrcode_data, qrcode.bbox))
 
         (r, g, b) = map(int, self.get_config_value("color").split(","))
-        return QRCodeDetectionModel(qrcodes=qrcodes, rectangle_color=(r, g, b))
+        return QRCodeDetectionModel(qrcodes=qrcodes, person_uuid=person_uuid, rectangle_color=(r, g, b))

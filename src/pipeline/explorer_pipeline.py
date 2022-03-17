@@ -65,8 +65,8 @@ class ExplorerPipeline():
         self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "face_rectangle_color", "255,255,255")
         self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "show_person_id", True)
         self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "person_data_identity_text_font_size", 0.5)
-        self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "object_tracking_allowed_missed_frames", 10)
-        self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "object_tracking_removal_count", 15)
+        self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "object_tracking_allowed_missed_frames", 5)
+        self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "object_tracking_removal_count", 5)
 
         # QRCode Perceptor
         self.__qrcode_perceptor_name = "qrcode"
@@ -84,6 +84,10 @@ class ExplorerPipeline():
         face_mask_perceptor.on(NO_MASK_EVENT, self.__event_cb(self.__face_mask_perceptor_name, NO_MASK_EVENT))
 
         self.__qrcode_person_id = None
+        self.__previous_qr_code_frame_number = 0
+        self.__minimum_face_height = int(os.getenv("MINIMUM_FACE_HEIGHT", 200))
+        self.__minimum_body_width = int(os.getenv("MINIMUM_BODY_WIDTH", 210))
+        self.__qrcode_frame_number_interval = int(os.getenv("QRCODE_FRAME_NUMBER_INTERVAL", 25))
 
     def __update_masks_count(self, pom):
         pulse_number = pom.get_pulse_number()
@@ -117,7 +121,7 @@ class ExplorerPipeline():
 
     def __update_qr_code_count(self, pom):
         qr_code_results = pom.get_perceptor(self.__qrcode_perceptor_name).get_qrcodes()
-        if len(qr_code_results) > 0:
+        if len(qr_code_results[0]) > 0:
             self.__summary["qrCodes"] += 1
 
     def __on_perception_complete(self, pom):
@@ -130,11 +134,12 @@ class ExplorerPipeline():
         # Pipeline has completed
         self.__latest_pom = pom
 
-        people_perceptor_pom = pom.get_perceptor(self.__people_perceptor_name)
         qrcode_perceptor_pom = pom.get_perceptor(self.__qrcode_perceptor_name)
-        poi = people_perceptor_pom.personInFront()
-        if poi is not None and len(qrcode_perceptor_pom.get_qrcodes()) > 0:
-            self.__qrcode_person_id = poi["person_uuid"]
+        qrcode_results = qrcode_perceptor_pom.get_qrcodes()
+        if len(qrcode_results[0]) > 0:
+            self.__qrcode_person_id = qrcode_results[1]
+            frame_number = self.__pipeline.get_current_pulse_number()
+            self.__previous_qr_code_frame_number = frame_number
 
     def __reset_summary(self):
         self.__summary = {
@@ -145,6 +150,7 @@ class ExplorerPipeline():
         }
         self.__previous_mask_results = {}
         self.__qrcode_person_id = ''
+        self.__previous_qr_code_frame_number = 0
 
     def __on_new_person_entered_scene(self, event_data):
         self.__summary["visitors"] += 1
@@ -195,19 +201,47 @@ class ExplorerPipeline():
     # Only run QRCode perceptor if we have a person in front
     def __qr_code_input_callback(self, input_data, pom, config):
         people_perceptor_pom = pom.get_perceptor(self.__people_perceptor_name)
-        peeps = people_perceptor_pom.peopleCount()
+        people_count = people_perceptor_pom.peopleCount()
 
-        if peeps == 0:
+        if people_count == 0:
             return None
 
-        poi = people_perceptor_pom.personInFront()
-        if poi is None or not poi["has_face"] or self.__get_face_height(poi) < 200:
+        poi = self.__get_poi(people_perceptor_pom.people())
+
+        if poi is None:
+            return None
+
+        if self.__get_face_height(poi) < self.__minimum_face_height \
+            and self.__get_body_width(poi) < self.__minimum_body_width:
             return None
 
         if poi["person_uuid"] == self.__qrcode_person_id:
             return None
 
-        return input_data.data.copy()
+        frame_number = self.__pipeline.get_current_pulse_number()
+        if frame_number - self.__previous_qr_code_frame_number < self.__qrcode_frame_number_interval:
+            return None
+
+        return (input_data.data.copy(), poi["person_uuid"])
+
+    def __get_poi(self, people):
+        poi = None
+        max_body_width = 0
+        for person_id in people:
+            person = people[person_id]
+
+            if person["is_poi"]:
+                return person
+
+            if not person["has_body"]:
+                continue
+
+            body_width = self.__get_body_width(person)
+            if body_width >= max_body_width:
+                poi = person
+                max_body_width = body_width
+
+        return poi
 
     def __get_face_height(self, person):
         if not person["has_face"]:
@@ -215,6 +249,13 @@ class ExplorerPipeline():
 
         rectangle = person["face_rectangle"]
         return rectangle[1][1] - rectangle[0][1]
+
+    def __get_body_width(self, person):
+        if not person["has_body"]:
+            return 0
+
+        rectangle = person["body_rectangle"]
+        return rectangle[1][0] - rectangle[0][0]
 
     def get_pom(self):
         return self.__pipeline.get_pom()
