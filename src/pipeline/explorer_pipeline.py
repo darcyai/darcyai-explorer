@@ -96,22 +96,34 @@ class ExplorerPipeline():
             return
 
         for mask_result in mask_results:
-            if not mask_result.has_mask():
-                continue
-
             person_id = mask_result.get_person_id()
             if not person_id in self.__previous_mask_results:
                 self.__previous_mask_results[person_id] = {
-                    "count": 1,
+                    "count": [1 if mask_result.has_mask() else 0],
                     "pulse_number": pulse_number,
+                    "has_mask": False
                 }
                 continue
 
-            self.__previous_mask_results[person_id]["count"] += 1
+            # Rolling window of 10 frames
+            self.__previous_mask_results[person_id]["count"].append(1 if mask_result.has_mask() else 0)
+            if len(self.__previous_mask_results[person_id]["count"] > 10):
+                self.__previous_mask_results[person_id]["count"].pop(0)
+            
+            # Store latest pulse number where we saw the person
             self.__previous_mask_results[person_id]["pulse_number"] = pulse_number
-            if self.__previous_mask_results[person_id]["count"] == 5:
-                self.__summary["faceMasks"] += 1
-        
+
+            # If we have seen a mask for at least 6 frames out of the last 10, we consider them wearing a mask
+            if sum(self.__previous_mask_results[person_id]["count"]) >= 6:
+                # If we haven't counted the mask yet, we update the counter
+                if self.__previous_mask_results[person_id]["has_mask"] == False:
+                    self.__summary["faceMasks"] += 1
+                    self.__previous_mask_results[person_id]["has_mask"] = True
+            # Otherwise, the person is not wearing a mask
+            else:
+                self.__previous_mask_results[person_id]["has_mask"] = False
+
+        # Remove from memory any person we haven't seen in the last 20 pulses
         to_delete = []
         for person_id in self.__previous_mask_results:
             if self.__previous_mask_results[person_id]["pulse_number"] < pulse_number - 20:
