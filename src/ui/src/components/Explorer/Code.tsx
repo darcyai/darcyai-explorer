@@ -61,43 +61,47 @@ __detected_face_masks = {}
 __previous_qr_codes_results = []
 __detected_qr_codes = {}
 
-def __update_masks_count(pom):
-mask_results = pom.get_perceptor(__face_mask_perceptor_name)
-__previous_mask_results.append(mask_results)
-if len(__previous_mask_results) < 10:
-    # Less than 10 pulses, the data is not reliable enough
+def __update_masks_count(self, pom):
+pulse_number = pom.get_pulse_number()
+mask_results = pom.get_perceptor(self.__face_mask_perceptor_name)
+if len(mask_results) == 0:
     return
-__previous_mask_results.pop(0)
-# For the last 10 pulses, check to see which person had a mask in >= 6 pulses
-mask_count_per_person_id = {}
-for frame in __previous_mask_results:
-    for mask_result in frame:
-        if mask_result.has_mask():
-            person_id = mask_result.get_person_id()
-            if person_id in mask_count_per_person_id:
-                mask_count_per_person_id[person_id] += 1
-            else:
-                mask_count_per_person_id[person_id] = 1
-for person_id, mask_count in mask_count_per_person_id.items():
-    if mask_count >= 6:
-        if person_id not in __detected_face_masks:
-            __summary["faceMasks"] += 1
-            __detected_face_masks[person_id] = True
-# Remove persons we haven't seen for 10 frames
-to_remove = []
-for person_id in __detected_face_masks:
-    found = False
-    for frame in __previous_mask_results:
-        for mask_result in frame:
-            if mask_result.get_person_id() == person_id:
-                found = True
-                break
-        if found:
-            break
-    if not found:
-        to_remove.append(person_id)
-for person_id in to_remove:
-    __detected_face_masks.pop(person_id)
+
+for mask_result in mask_results:
+    person_id = mask_result.get_person_id()
+    if not person_id in self.__previous_mask_results:
+        self.__previous_mask_results[person_id] = {
+            "count": [1 if mask_result.has_mask() else 0],
+            "pulse_number": pulse_number,
+            "has_mask": False
+        }
+        continue
+
+    # Rolling window of 10 frames
+    self.__previous_mask_results[person_id]["count"].append(1 if mask_result.has_mask() else 0)
+    if len(self.__previous_mask_results[person_id]["count"]) > 10:
+        self.__previous_mask_results[person_id]["count"].pop(0)
+    
+    # Store latest pulse number where we saw the person
+    self.__previous_mask_results[person_id]["pulse_number"] = pulse_number
+
+    # If we have seen a mask for at least 6 frames out of the last 10, we consider them wearing a mask
+    if sum(self.__previous_mask_results[person_id]["count"]) >= 6:
+        # If we haven't counted the mask yet, we update the counter
+        if self.__previous_mask_results[person_id]["has_mask"] == False:
+            self.__summary["faceMasks"] += 1
+            self.__previous_mask_results[person_id]["has_mask"] = True
+    # Otherwise, the person is not wearing a mask
+    else:
+        self.__previous_mask_results[person_id]["has_mask"] = False
+
+# Remove from memory any person we haven't seen in the last 20 pulses
+to_delete = []
+for person_id in self.__previous_mask_results:
+    if self.__previous_mask_results[person_id]["pulse_number"] < pulse_number - 20:
+        to_delete.append(person_id)
+for person_id in to_delete:
+    del self.__previous_mask_results[person_id]
 
 
 def __update_qr_code_count(pom):
