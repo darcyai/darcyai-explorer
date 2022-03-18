@@ -148,6 +148,8 @@ def get_all_pom():
 def get_events(perceptor_name):
   if perceptor_name in eventStore:
     return jsonify(eventStore[perceptor_name])
+  elif perceptor_name == 'all':
+    return jsonify(eventStore)
   elif perceptor_name == 'summary':
     if pipeline_error is not None:
       return jsonify({ "message": str(pipeline_error) }), 500

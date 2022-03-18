@@ -97,7 +97,7 @@ export enum PipelineStep {
   OUTPUT = 'Output stream'
 }
 
-export const perceptorNameByStep: (step: PipelineStep) => string = (step: PipelineStep) => {
+export const perceptorNameByStep: (step?: PipelineStep) => string = (step?: PipelineStep) => {
   switch (step) {
     case PipelineStep.INPUT:
       return 'basic'
@@ -135,23 +135,17 @@ const stepConfigURL: (step: PipelineStep) => string = (step: PipelineStep) => {
   }
 }
 
-const stepEventURL: (step: PipelineStep) => string = (step: PipelineStep) => {
-  switch (step) {
-    case PipelineStep.PEOPLE:
-      return `/events/${perceptorNameByStep(step)}`
-    case PipelineStep.MASK:
-      return `/events/${perceptorNameByStep(step)}`
-    case PipelineStep.QRCODE:
-      return `/events/${perceptorNameByStep(step)}`
-    case PipelineStep.CALLBACK:
-      return `/events/${perceptorNameByStep(step)}`
-    default:
-      return ''
-  }
-}
-
 export const PipelineContext = React.createContext(defaultValue)
 export const usePipeline: () => Pipeline = () => React.useContext(PipelineContext)
+
+const defaultEvents: Record<PipelineStep, EventItem[]> = {
+  [PipelineStep.INPUT]: [],
+  [PipelineStep.PEOPLE]: [],
+  [PipelineStep.CALLBACK]: [],
+  [PipelineStep.QRCODE]: [],
+  [PipelineStep.MASK]: [],
+  [PipelineStep.OUTPUT]: []
+}
 
 export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, children }) => {
   const [imageSrc, setImageSrc] = React.useState < string >(liveFeedSrc)
@@ -159,22 +153,22 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   const [hoveredStep, setHoveredStep] = React.useState<PipelineStep | undefined>(undefined)
   const [summary, setSummary] = React.useState<SummaryState>(defaultSummaryState)
   const [latestPulse, setLatestPulse] = React.useState<Pulse | undefined>(undefined)
-  const [events, setEvents] = React.useState<EventItem[]>([])
+  const [events, setEvents] = React.useState<Record<PipelineStep, EventItem[]>>(defaultEvents)
   let [config, setConfig] = React.useState<ConfigItem[]>([])
   const isPlaying = React.useMemo(() => !imageSrc?.includes('base64'), [imageSrc])
   const loading = React.useMemo(() => imageSrc === emptyImage, [imageSrc])
   const { pushErrorFeedBack } = useFeedback()
-  const [eventController, setEventController] = React.useState<AbortController>(new window.AbortController())
 
   const fetchEvents = async (): Promise<void> => {
-    if (selectedStep === undefined || stepEventURL(selectedStep) === '') {
-      setEvents([])
+    if (!isPlaying) {
+      return
+    }
+    if (selectedStep === undefined) {
+      setEvents(defaultEvents)
       return
     }
     try {
-      const newEventController = new window.AbortController()
-      setEventController(newEventController)
-      const res = await window.fetch(`${stepEventURL(selectedStep)}`, { signal: newEventController.signal })
+      const res = await window.fetch('/events/all')
       if (!res.ok) {
         pushErrorFeedBack(res as any)
         return
@@ -229,16 +223,10 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
         .catch(err => {
           console.error(err)
           pushErrorFeedBack(err)
-          setEvents([])
+          setEvents(defaultEvents)
         })
     }
   }, [selectedStep])
-
-  React.useEffect(() => {
-    if (!isPlaying) {
-      eventController.abort()
-    }
-  }, [isPlaying])
 
   const saveConfig = async (): Promise<void> => {
     if (selectedStep === undefined) return
@@ -311,7 +299,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   return (
     <PipelineContext.Provider
       value={{
-        events,
+        events: selectedStep == null ? [] : events[selectedStep] ?? [],
         isPlaying,
         latestPulse,
         config,

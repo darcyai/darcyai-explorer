@@ -43,13 +43,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
   },
   label: {
-    font: 'normal normal 500 0.68rem/1rem Gilroy',
+    font: 'normal normal 500 0.68rem/0.68rem Gilroy',
     letterSpacing: 0.26,
     color: theme.palette.neutral[3],
     textTransform: 'uppercase',
     [theme.breakpoints.up('md')]: {
       fontSize: '0.8125rem',
-      lineHeight: '1.25rem'
+      lineHeight: '0.8125rem'
     }
   }
 }))
