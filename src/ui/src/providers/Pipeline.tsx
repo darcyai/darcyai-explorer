@@ -164,6 +164,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   const isPlaying = React.useMemo(() => !imageSrc?.includes('base64'), [imageSrc])
   const loading = React.useMemo(() => imageSrc === emptyImage, [imageSrc])
   const { pushErrorFeedBack } = useFeedback()
+  const [eventController, setEventController] = React.useState<AbortController>(new window.AbortController())
 
   const fetchEvents = async (): Promise<void> => {
     if (selectedStep === undefined || stepEventURL(selectedStep) === '') {
@@ -171,13 +172,14 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
       return
     }
     try {
-      const res = await window.fetch(`${stepEventURL(selectedStep)}`)
+      const newEventController = new window.AbortController()
+      setEventController(newEventController)
+      const res = await window.fetch(`${stepEventURL(selectedStep)}`, { signal: newEventController.signal })
       if (!res.ok) {
         pushErrorFeedBack(res as any)
         return
       }
-      const data = await res.json()
-      setEvents(data)
+      setEvents(await res.json())
     } catch (e: any) {
       console.error(e)
       pushErrorFeedBack(e)
@@ -231,6 +233,12 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
         })
     }
   }, [selectedStep])
+
+  React.useEffect(() => {
+    if (!isPlaying) {
+      eventController.abort()
+    }
+  }, [isPlaying])
 
   const saveConfig = async (): Promise<void> => {
     if (selectedStep === undefined) return
