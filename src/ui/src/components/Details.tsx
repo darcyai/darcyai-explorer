@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
     backgroundColor: theme.palette.neutral[4],
     [theme.breakpoints.up('md')]: {
-      minHeight: 'calc(100vh - 40px)',
+      minHeight: 'calc(100vh - 56px)',
       maxHeight: 0
     }
   },

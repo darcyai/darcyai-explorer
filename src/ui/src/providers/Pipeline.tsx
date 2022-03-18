@@ -138,13 +138,13 @@ const stepConfigURL: (step: PipelineStep) => string = (step: PipelineStep) => {
 export const PipelineContext = React.createContext(defaultValue)
 export const usePipeline: () => Pipeline = () => React.useContext(PipelineContext)
 
-const defaultEvents: Record<PipelineStep, EventItem[]> = {
-  [PipelineStep.INPUT]: [],
-  [PipelineStep.PEOPLE]: [],
-  [PipelineStep.CALLBACK]: [],
-  [PipelineStep.QRCODE]: [],
-  [PipelineStep.MASK]: [],
-  [PipelineStep.OUTPUT]: []
+const defaultEvents: Record<string, EventItem[]> = {
+  [perceptorNameByStep(PipelineStep.INPUT)]: [],
+  [perceptorNameByStep(PipelineStep.PEOPLE)]: [],
+  [perceptorNameByStep(PipelineStep.CALLBACK)]: [],
+  [perceptorNameByStep(PipelineStep.QRCODE)]: [],
+  [perceptorNameByStep(PipelineStep.MASK)]: [],
+  [perceptorNameByStep(PipelineStep.OUTPUT)]: []
 }
 
 export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, children }) => {
@@ -153,20 +153,14 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   const [hoveredStep, setHoveredStep] = React.useState<PipelineStep | undefined>(undefined)
   const [summary, setSummary] = React.useState<SummaryState>(defaultSummaryState)
   const [latestPulse, setLatestPulse] = React.useState<Pulse | undefined>(undefined)
-  const [events, setEvents] = React.useState<Record<PipelineStep, EventItem[]>>(defaultEvents)
+  const [events, setEvents] = React.useState<Record<string, EventItem[]>>(defaultEvents)
   let [config, setConfig] = React.useState<ConfigItem[]>([])
   const isPlaying = React.useMemo(() => !imageSrc?.includes('base64'), [imageSrc])
   const loading = React.useMemo(() => imageSrc === emptyImage, [imageSrc])
   const { pushErrorFeedBack } = useFeedback()
 
   const fetchEvents = async (): Promise<void> => {
-    if (!isPlaying) {
-      return
-    }
-    if (selectedStep === undefined) {
-      setEvents(defaultEvents)
-      return
-    }
+    if (!isPlaying) { return }
     try {
       const res = await window.fetch('/events/all')
       if (!res.ok) {
@@ -299,7 +293,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   return (
     <PipelineContext.Provider
       value={{
-        events: selectedStep == null ? [] : events[selectedStep] ?? [],
+        events: selectedStep == null ? [] : events[perceptorNameByStep(selectedStep)] ?? [],
         isPlaying,
         latestPulse,
         config,

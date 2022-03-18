@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) => {
       maxWidth: '1980px',
       margin: '0 auto',
       flexDirection: 'column',
-      minHeight: 'calc(100vh - 40px)',
+      minHeight: 'calc(100vh - 56px)',
       [theme.breakpoints.up('md')]: {
         flexDirection: 'row'
       }

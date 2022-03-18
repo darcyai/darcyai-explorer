@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
+    overflowY: 'auto',
     minHeight: theme.spacing(10)
   },
   details: {
@@ -39,7 +40,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',
-    width: '100%'
+    width: '100%',
+    padding: theme.spacing(4, 0)
   },
   row: {
     display: 'flex',
@@ -122,12 +124,18 @@ const Events: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = React.useState<string>('')
   const { events, fetchEvents, selectedStep, isPlaying } = usePipeline()
   const timeoutRef = React.useRef<number | null>(null)
+  // Using a ref to avoid memoization of the isPlaying value.
+  const isPlayingRef = React.useRef<boolean>(isPlaying)
 
   async function pollEvents (): Promise<void> {
+    console.log('Polling events', { isPlayingRef: isPlayingRef.current, isPlaying })
+    if (!isPlayingRef.current) { return } // Using a ref to avoid memoization of the isPlaying value.
     try {
       await fetchEvents()
-    } catch (e) { }
-    timeoutRef.current = window.setTimeout(() => { pollEvents().catch(() => {}) }, 1.5 * 1000)
+    } catch (e) {
+      console.error('Error while polling events', e)
+    }
+    timeoutRef.current = window.setTimeout(() => { void pollEvents() }, 1.5 * 1000)
   }
 
   React.useEffect(() => {
@@ -139,17 +147,15 @@ const Events: React.FC = () => {
   }, [])
 
   React.useEffect(() => {
-    if (timeoutRef.current != null) {
-      window.clearTimeout(timeoutRef.current)
-    }
+    isPlayingRef.current = isPlaying
     if (isPlaying) {
-      if (selectedStep != null) {
-        pollEvents().catch(() => {})
-      }
+      void pollEvents()
     } else {
-      fetchEvents().catch(() => {})
+      if (timeoutRef.current != null) {
+        window.clearTimeout(timeoutRef.current)
+      }
     }
-  }, [isPlaying, selectedStep])
+  }, [isPlaying])
 
   const selectEvent = (event: EventItem): void => {
     setSelectedEvent(currentID => currentID === event.id ? '' : event.id)
