@@ -13,6 +13,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
+    maxWidth: '100vw',
+    [theme.breakpoints.up('md')]: {
+      maxWidth: '50vw'
+    },
     height: 0
   },
   title: {

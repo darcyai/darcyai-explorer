@@ -83,6 +83,8 @@ const useStyles = makeStyles((theme: Theme) => {
       width: '100%',
       minHeight: theme.spacing(20),
       lineHeight: 0,
+      display: 'flex',
+      justifyContent: 'center',
       '& img': {
         width: '100%'
       },
@@ -158,7 +160,7 @@ const Landing: React.FC<LandingProps> = ({ inspect, showInspect }) => {
         <VideoControls />
       </div>
       <div className={classes.summarySection}>
-        <Summary />
+        <Summary detailsOpened={!showInspect} />
       </div>
     </div>
   )

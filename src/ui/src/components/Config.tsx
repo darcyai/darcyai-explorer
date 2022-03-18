@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    height: theme.spacing(30.5),
+    height: theme.spacing(40),
     overflowY: 'auto',
     borderBottom: `1px solid ${theme.palette.border ?? ''}`
   },

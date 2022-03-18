@@ -3,10 +3,17 @@ import React from 'react'
 import { makeStyles } from '@mui/styles'
 import { Theme } from '@mui/material'
 import { usePipeline } from '../providers/Pipeline'
+import clsx from 'clsx'
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     width: '100%',
+    [theme.breakpoints.up('md')]: {
+      '&.detailsOpened': {
+        maxWidth: '50vw'
+      }
+    },
+    overflowX: 'hidden',
     display: 'flex',
     justifyContent: 'center'
   },
@@ -14,6 +21,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     maxWidth: 990,
     flex: 1,
     display: 'flex',
+    justifyContent: 'center',
     alignItems: 'center',
     gap: 1,
     backgroundColor: theme.palette.neutral[5]
@@ -26,12 +34,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     minHeight: theme.spacing(11),
     padding: theme.spacing(1),
     display: 'flex',
-    [theme.breakpoints.up('md')]: {
-      padding: theme.spacing(2),
-      alignItems: 'flex-start',
-      justifyContent: 'flex-start',
-      flexDirection: 'row'
-    }
+    alignItems: 'center'
+    // [theme.breakpoints.up('md')]: {
+    //   padding: theme.spacing(2),
+    //   alignItems: 'flex-start',
+    //   justifyContent: 'flex-start',
+    //   flexDirection: 'row'
+    // }
   },
   number: {
     font: 'normal normal normal 1.5rem/1.5rem Gilroy',
@@ -39,22 +48,27 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.neutral[3],
     [theme.breakpoints.up('md')]: {
       fontSize: '2.25rem',
-      lineHeight: '2.25rem'
+      lineHeight: '2.25rem',
+      '&.detailsOpened': {
+        fontSize: '1.5rem',
+        lineHeight: '1.5rem'
+      }
     }
   },
   label: {
-    font: 'normal normal 500 0.68rem/1rem Gilroy',
+    font: 'normal normal 500 0.68rem/0.68rem Gilroy',
     letterSpacing: 0.26,
     color: theme.palette.neutral[3],
     textTransform: 'uppercase',
+    textAlign: 'center',
     [theme.breakpoints.up('md')]: {
       fontSize: '0.8125rem',
-      lineHeight: '1.25rem'
+      lineHeight: '0.8125rem'
     }
   }
 }))
 
-const Summary: React.FC = () => {
+const Summary: React.FC<{detailsOpened: boolean}> = ({ detailsOpened }) => {
   const classes = useStyles()
   const timeoutRef = React.useRef<number | null>(null)
   const { isPlaying, summary, fetchSummary } = usePipeline()
@@ -91,7 +105,7 @@ const Summary: React.FC = () => {
   }, [isPlaying])
 
   return (
-    <div className={classes.root}>
+    <div className={clsx(classes.root, detailsOpened ? 'detailsOpened' : '')}>
       <div className={classes.container}>
         <div className={classes.item}>
           <span className={classes.number}>{summary.inScene}</span>
