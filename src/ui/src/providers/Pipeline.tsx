@@ -158,18 +158,12 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   const isPlaying = React.useMemo(() => !imageSrc?.includes('base64'), [imageSrc])
   const loading = React.useMemo(() => imageSrc === emptyImage, [imageSrc])
   const { pushErrorFeedBack } = useFeedback()
-  const [eventController, setEventController] = React.useState<AbortController>(new window.AbortController())
+  const updateTimeoutRef = React.useRef<number | undefined>(undefined)
 
   const fetchEvents = async (): Promise<void> => {
     if (!isPlaying) { return }
     try {
-<<<<<<< HEAD
       const res = await window.fetch('/events/all')
-=======
-      const newEventController = new window.AbortController()
-      setEventController(newEventController)
-      const res = await window.fetch(`${stepEventURL(selectedStep)}`, { signal: newEventController.signal })
->>>>>>> c5102e2 (WIP: Fix event race condtion)
       if (!res.ok) {
         pushErrorFeedBack(res as any)
         return
@@ -180,6 +174,26 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
       pushErrorFeedBack(e)
     }
   }
+
+  const _updateLiveStreamURL = (): void => {
+    setImageSrc(previousLiveFeedSrc => {
+      if (previousLiveFeedSrc.startsWith('http')) {
+        const [url] = previousLiveFeedSrc.split('?')
+        return `${url}?time=${Date.now()}`
+      }
+      return previousLiveFeedSrc
+    })
+    updateTimeoutRef.current = window.setTimeout(_updateLiveStreamURL, 1000 * 10)
+  }
+
+  React.useEffect(() => {
+    updateTimeoutRef.current = window.setTimeout(_updateLiveStreamURL, 1000 * 10)
+    return () => {
+      if (updateTimeoutRef.current != null) {
+        window.clearTimeout(updateTimeoutRef.current)
+      }
+    }
+  }, [])
 
   async function fetchPerceptorConfig (step: PipelineStep): Promise<void> {
     const url = stepConfigURL(step)
@@ -228,12 +242,6 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
         })
     }
   }, [selectedStep])
-
-  React.useEffect(() => {
-    if (!isPlaying) {
-      eventController.abort()
-    }
-  }, [isPlaying])
 
   const saveConfig = async (): Promise<void> => {
     if (selectedStep === undefined) return
