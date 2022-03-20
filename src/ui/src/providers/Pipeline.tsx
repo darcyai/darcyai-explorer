@@ -177,7 +177,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
 
   const _updateLiveStreamURL = (): void => {
     setImageSrc(previousLiveFeedSrc => {
-      if (previousLiveFeedSrc.startsWith('http')) {
+      if (!previousLiveFeedSrc?.startsWith('data:')) {
         const [url] = previousLiveFeedSrc.split('?')
         return `${url}?time=${Date.now()}`
       }
