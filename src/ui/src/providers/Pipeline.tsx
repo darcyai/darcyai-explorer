@@ -158,11 +158,18 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   const isPlaying = React.useMemo(() => !imageSrc?.includes('base64'), [imageSrc])
   const loading = React.useMemo(() => imageSrc === emptyImage, [imageSrc])
   const { pushErrorFeedBack } = useFeedback()
+  const [eventController, setEventController] = React.useState<AbortController>(new window.AbortController())
 
   const fetchEvents = async (): Promise<void> => {
     if (!isPlaying) { return }
     try {
+<<<<<<< HEAD
       const res = await window.fetch('/events/all')
+=======
+      const newEventController = new window.AbortController()
+      setEventController(newEventController)
+      const res = await window.fetch(`${stepEventURL(selectedStep)}`, { signal: newEventController.signal })
+>>>>>>> c5102e2 (WIP: Fix event race condtion)
       if (!res.ok) {
         pushErrorFeedBack(res as any)
         return
@@ -221,6 +228,12 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
         })
     }
   }, [selectedStep])
+
+  React.useEffect(() => {
+    if (!isPlaying) {
+      eventController.abort()
+    }
+  }, [isPlaying])
 
   const saveConfig = async (): Promise<void> => {
     if (selectedStep === undefined) return
