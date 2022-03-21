@@ -87,7 +87,11 @@ const useStyles = makeStyles((theme: Theme) => {
       display: 'flex',
       justifyContent: 'center',
       '& img': {
-        width: '100%'
+        width: '100%',
+        backgroundImage: `url(${liveIcon})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        backgroundSize: '100px 50px'
       },
       '& img:before': {
         content: ' ',
@@ -147,10 +151,6 @@ const Landing: React.FC<LandingProps> = ({ inspect, showInspect }) => {
     const img: HTMLImageElement = e.currentTarget
     if (img.src !== '') {
       img.src = ''
-      img.style.backgroundImage = `url(${liveIcon})`
-      img.style.backgroundRepeat = 'no-repeat'
-      img.style.backgroundPosition = 'center'
-      img.style.backgroundSize = '100px 50px'
       img.alt = ''
     }
   }

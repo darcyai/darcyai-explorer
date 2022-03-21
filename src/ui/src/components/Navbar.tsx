@@ -35,7 +35,10 @@ const useStyles = makeStyles((theme: Theme) => {
     links: {
       display: 'flex',
       alignItems: 'center',
-      gap: theme.spacing(4)
+      gap: theme.spacing(4),
+      [theme.breakpoints.up('md')]: {
+        gap: theme.spacing(4)
+      }
     },
     link: {
       display: 'flex',
@@ -57,6 +60,12 @@ const useStyles = makeStyles((theme: Theme) => {
           }
         }
       }
+    },
+    linkText: {
+      display: 'none',
+      [theme.breakpoints.up('md')]: {
+        display: 'block'
+      }
     }
   }
 })
@@ -72,11 +81,11 @@ const Navbar: React.FC = () => {
       <div className={classes.links}>
         <a className={classes.link} href='https://darcyai.github.io/darcyai-sdk' target='_blank' rel='noreferrer'>
           <DocsIcon />
-          <span>Developer docs</span>
+          <span className={classes.linkText}>Developer docs</span>
         </a>
         <a className={classes.link} href='https://github.com/darcyai/darcyai-sdk' target='_blank' rel='noreferrer'>
           <GithubIcon />
-          <span>Darcy AI SDK</span>
+          <span className={classes.linkText}>Darcy AI SDK</span>
         </a>
       </div>
     </div>

@@ -15,8 +15,8 @@ const useStyles = makeStyles<Theme>(theme => ({
   },
   spinner: {
     position: 'absolute',
-    top: '50%',
-    left: '50%',
+    top: 'calc(50% - 2px)',
+    left: 'calc(50% - 10px)',
     transform: 'translate(-50%, -50%)'
   },
   root: {}
