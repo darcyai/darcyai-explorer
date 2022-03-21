@@ -5,6 +5,7 @@ import Pipeline from './Pipeline'
 
 import { ReactComponent as InspectIcon } from '../assets/inspect.svg'
 import { usePipeline, PipelineStep } from '../providers/Pipeline'
+import liveIcon from '../assets/live.svg'
 import VideoControls from './VideoControls'
 import Summary from './Summary'
 
@@ -88,6 +89,12 @@ const useStyles = makeStyles((theme: Theme) => {
       '& img': {
         width: '100%'
       },
+      '& img:before': {
+        content: ' ',
+        display: 'block',
+        position: 'absolute',
+        backgroundImage: `url(${liveIcon})`
+      },
       [theme.breakpoints.up('md')]: {
         minHeight: theme.spacing(40)
       }
@@ -136,6 +143,18 @@ const Landing: React.FC<LandingProps> = ({ inspect, showInspect }) => {
     )
   }, [selectedStep, hoveredStep])
 
+  const _imgError: React.ReactEventHandler<HTMLImageElement> = (e) => {
+    const img: HTMLImageElement = e.currentTarget
+    if (img.src !== '') {
+      img.src = ''
+      img.style.backgroundImage = `url(${liveIcon})`
+      img.style.backgroundRepeat = 'no-repeat'
+      img.style.backgroundPosition = 'center'
+      img.style.backgroundSize = '100px 50px'
+      img.alt = ''
+    }
+  }
+
   return (
     <div className={classes.root}>
       <div className={classes.header}>
@@ -156,7 +175,7 @@ const Landing: React.FC<LandingProps> = ({ inspect, showInspect }) => {
         </div>
       </div>
       <div className={classes.videoSection}>
-        <img src={imageSrc} alt='live_feed' />
+        <img src={imageSrc} alt='live_feed' onError={_imgError} />
         <VideoControls />
       </div>
       <div className={classes.summarySection}>
