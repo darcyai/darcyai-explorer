@@ -22,8 +22,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
     backgroundColor: theme.palette.neutral[4],
     [theme.breakpoints.up('md')]: {
-      minHeight: 'calc(100vh - 56px)',
-      maxHeight: 0
+      minHeight: 'calc(100vh - 56px)' // 56px is the fixed height of the navbar
+      // 347px is the fixed height of the elements above the video.
+      // This allows for the video to be fully visible while scrolling the inspector
+      // maxHeight: 'calc(100vh + 56px + 346px)'
     }
   },
   title: {

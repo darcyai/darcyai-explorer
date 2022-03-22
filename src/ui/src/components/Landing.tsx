@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme: Theme) => {
   return {
     root: {
       display: 'flex',
+      backgroundColor: theme.palette.primary.main,
       flexDirection: 'column',
       [theme.breakpoints.up('md')]: {
         flex: 1,
@@ -114,6 +115,11 @@ const useStyles = makeStyles((theme: Theme) => {
       [theme.breakpoints.up('md')]: {
         flex: 1
       }
+    },
+    stickyContainer: {
+      position: 'sticky',
+      top: 0,
+      backgroundColor: theme.palette.primary.main
     }
   }
 })
@@ -174,12 +180,14 @@ const Landing: React.FC<LandingProps> = ({ inspect, showInspect }) => {
           {showInspect && <Button style={{ position: 'absolute', bottom: 16, right: 0, display: 'flex', gap: 8 }} onClick={inspect} size='small' variant='contained' color='primary'><InspectIcon /><span>Inspect</span></Button>}
         </div>
       </div>
-      <div className={classes.videoSection}>
-        <img src={imageSrc} alt='live_feed' onError={_imgError} />
-        <VideoControls />
-      </div>
-      <div className={classes.summarySection}>
-        <Summary detailsOpened={!showInspect} />
+      <div className={classes.stickyContainer}>
+        <div className={classes.videoSection}>
+          <img src={imageSrc} alt='live_feed' onError={_imgError} />
+          <VideoControls />
+        </div>
+        <div className={classes.summarySection}>
+          <Summary detailsOpened={!showInspect} />
+        </div>
       </div>
     </div>
   )

@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     minHeight: theme.spacing(10),
     width: '100vw',
     [theme.breakpoints.up('md')]: {
-      maxWidth: '50vw'
+      maxWidth: '49.5vw'
     }
   },
   noCode: {
