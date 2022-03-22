@@ -43,6 +43,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%'
   },
   input: {
+  },
+  inputColor: {
+    minWidth: '45px',
+    cursor: 'pointer',
+    '& input': {
+      padding: 2,
+      height: '100%'
+    }
   }
 }))
 
@@ -118,7 +126,7 @@ const Config: React.FC = () => {
           <Toggle value={configItem.value} onChange={(value) => { updateConfig(configItem, value) }} onBlur={() => { saveConfig().catch(() => {}) }} />
         )
       case 'rgb':
-        return <OutlinedInput size='small' className={classes.input} type='color' value={configItem.value} onChange={(e) => { updateConfig(configItem, e.target.value) }} onKeyPress={onEnterPress} onBlur={() => { saveConfig().catch(() => {}) }} />
+        return <OutlinedInput size='small' className={clsx(classes.input, classes.inputColor)} type='color' value={configItem.value} onChange={(e) => { updateConfig(configItem, e.target.value) }} onKeyPress={onEnterPress} onBlur={() => { saveConfig().catch(() => {}) }} />
       default:
         return <span>{JSON.stringify(configItem.value)}</span>
     }

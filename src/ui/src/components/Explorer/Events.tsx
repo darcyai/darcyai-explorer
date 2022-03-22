@@ -128,7 +128,6 @@ const Events: React.FC = () => {
   const isPlayingRef = React.useRef<boolean>(isPlaying)
 
   async function pollEvents (): Promise<void> {
-    console.log('Polling events', { isPlayingRef: isPlayingRef.current, isPlaying })
     if (!isPlayingRef.current) { return } // Using a ref to avoid memoization of the isPlaying value.
     try {
       await fetchEvents()
