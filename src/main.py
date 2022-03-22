@@ -1,4 +1,5 @@
 from darcyai.perception_object_model import PerceptionObjectModel
+from darcyai.pipeline import CustomJSONEncoder
 from darcyai.input.camera_stream import CameraStream
 from pipeline.explorer_pipeline import ExplorerPipeline
 from flask import Flask, send_from_directory, jsonify, stream_with_context, Response, request
@@ -46,6 +47,7 @@ app = Flask(
   static_folder=os.path.join(swagger_path, 'static'),
   template_folder=os.path.join(swagger_path, 'templates')
 )
+app.json_encoder = CustomJSONEncoder
 CORS(app)
 
 eventStore = {}
