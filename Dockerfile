@@ -13,7 +13,7 @@ FROM darcyai/darcy-ai-coral:dev
 RUN apt-get update -y
 RUN apt-get install -y libzbar0
 
-RUN python3 -m pip install --upgrade darcyai==1.0.4
+RUN python3 -m pip install --upgrade darcyai==1.0.6
 RUN python3 -m pip install --upgrade flask_cors
 RUN python3 -m pip install --upgrade pyzbar==0.1.8
 

@@ -158,7 +158,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   const isPlaying = React.useMemo(() => !imageSrc?.includes('base64'), [imageSrc])
   const loading = React.useMemo(() => imageSrc === emptyImage, [imageSrc])
   const { pushErrorFeedBack } = useFeedback()
-  const updateTimeoutRef = React.useRef<number | undefined>(undefined)
+  // const updateTimeoutRef = React.useRef<number | undefined>(undefined)
 
   const fetchEvents = async (): Promise<void> => {
     if (!isPlaying) { return }
@@ -175,25 +175,25 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
     }
   }
 
-  const _updateLiveStreamURL = (): void => {
-    setImageSrc(previousLiveFeedSrc => {
-      if (!previousLiveFeedSrc?.startsWith('data:')) {
-        const [url] = previousLiveFeedSrc.split('?')
-        return `${url}?time=${Date.now()}`
-      }
-      return previousLiveFeedSrc
-    })
-    updateTimeoutRef.current = window.setTimeout(_updateLiveStreamURL, 1000 * 10)
-  }
+  // const _updateLiveStreamURL = (): void => {
+  //   setImageSrc(previousLiveFeedSrc => {
+  //     if (!previousLiveFeedSrc?.startsWith('data:')) {
+  //       const [url] = previousLiveFeedSrc.split('?')
+  //       return `${url}?time=${Date.now()}`
+  //     }
+  //     return previousLiveFeedSrc
+  //   })
+  //   updateTimeoutRef.current = window.setTimeout(_updateLiveStreamURL, 1000 * 10)
+  // }
 
-  React.useEffect(() => {
-    updateTimeoutRef.current = window.setTimeout(_updateLiveStreamURL, 1000 * 10)
-    return () => {
-      if (updateTimeoutRef.current != null) {
-        window.clearTimeout(updateTimeoutRef.current)
-      }
-    }
-  }, [])
+  // React.useEffect(() => {
+  //   updateTimeoutRef.current = window.setTimeout(_updateLiveStreamURL, 1000 * 10)
+  //   return () => {
+  //     if (updateTimeoutRef.current != null) {
+  //       window.clearTimeout(updateTimeoutRef.current)
+  //     }
+  //   }
+  // }, [])
 
   async function fetchPerceptorConfig (step: PipelineStep): Promise<void> {
     const url = stepConfigURL(step)
