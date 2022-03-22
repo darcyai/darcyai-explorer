@@ -271,6 +271,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
   }
 
   const updateConfig = (item: ConfigItem, newValue: any): void => {
+    console.log({ newValue })
     const newConfig = config.map(i => {
       if (i.name === item.name) {
         const value = item.type === 'int' || item.type === 'float' ? Number(newValue) : newValue
