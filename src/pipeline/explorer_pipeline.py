@@ -1,4 +1,5 @@
 from darcyai.pipeline import Pipeline
+from darcyai.config import RGB
 from darcyai.input.video_file_stream import VideoFileStream
 from darcyai.input.camera_stream import CameraStream
 from darcyai.output.live_feed_stream import LiveFeedStream
@@ -60,9 +61,9 @@ class ExplorerPipeline():
         people_perceptor.on("person_occluded", self.__event_cb(self.__people_perceptor_name, "person_occluded"))
         ## Update configuration
         self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "show_body_rectangle", True)
-        self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "body_rectangle_color", "255,255,255")
+        self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "body_rectangle_color", RGB(255, 255, 255))
         self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "show_face_rectangle", True)
-        self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "face_rectangle_color", "255,255,255")
+        self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "face_rectangle_color", RGB(255, 255, 255))
         self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "show_person_id", True)
         self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "person_data_identity_text_font_size", 0.5)
         self.__pipeline.set_perceptor_config(self.__people_perceptor_name, "object_tracking_allowed_missed_frames", 5)
