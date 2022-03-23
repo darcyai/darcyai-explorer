@@ -61,7 +61,7 @@ declare interface Pipeline {
   pauseLiveStream: () => Promise<void>
   showFrame: (frame: string) => void
   fetchEvents: () => Promise<void>
-  updateConfig: (key: ConfigItem, value: any) => void
+  updateConfig: (key: ConfigItem, value: any, save?: boolean) => void
   saveConfig: () => Promise<void>
   fetchSummary: () => Promise<void>
 }
@@ -270,7 +270,7 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
     }
   }
 
-  const updateConfig = (item: ConfigItem, newValue: any): void => {
+  const updateConfig = (item: ConfigItem, newValue: any, save?: boolean): void => {
     console.log({ newValue })
     const newConfig = config.map(i => {
       if (i.name === item.name) {
@@ -281,8 +281,9 @@ export const PipelineProvider: React.FC<PipelineProps> = ({ setShowDetails, chil
     })
     setConfig(newConfig)
     config = newConfig // This will update the value on config in case saveConfig is called before the state update happens
-    // saveConfig(newConfig)
-    //   ?.catch(err => console.error(err))
+    if (save === true) {
+      void saveConfig()
+    }
   }
 
   async function fetchSummary (): Promise<void> {

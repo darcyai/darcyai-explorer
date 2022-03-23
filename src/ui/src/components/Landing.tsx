@@ -82,12 +82,16 @@ const useStyles = makeStyles((theme: Theme) => {
     },
     videoSection: {
       position: 'relative',
+      backgroundColor: theme.palette.neutral[4],
+      paddingTop: '75%',
       width: '100%',
       minHeight: theme.spacing(20),
       lineHeight: 0,
       display: 'flex',
       justifyContent: 'center',
       '& img': {
+        position: 'absolute',
+        top: 0,
         width: '100%',
         backgroundImage: `url(${liveIcon})`,
         backgroundRepeat: 'no-repeat',

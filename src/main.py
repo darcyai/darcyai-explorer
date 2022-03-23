@@ -87,7 +87,7 @@ pipeline_inputs = [
     "file": 'video.mp4',
     "thumbnail": 'video.jpg',
     "type": 'video_file',
-    "description": 'People checking in at a school',
+    "description": 'People checking in at work',
   },
   # {
   #   "id": 2,
