@@ -26,9 +26,13 @@ The video display area will scale to fit the available width in your browser win
 
 ## Inspect sidebar
 
+<img src="./docs/img/darcy-ai-explorer-inspect-button.png" />
+
 Click on "inspect" to open the inspection sidebar panel. This area contains a variety of interactive elements that are described in detail below. You can also collapse the inspect sidebar at any time.
 
 ## Pipeline
+
+<img src="./docs/img/darcy-ai-explorer-pipeline.png" />
 
 The top section of the screen is a diagram of the Darcy AI pipeline that has been setup for this application. Every Darcy AI application has a pipeline that runs constantly as input data arrives. In this case the input data is video. The Darcy AI pipeline is a powerful concept that allows you to run multiple AI models in a sequence that you specify. The AI processing is applied to every frame of video that passes through the pipeline.
 
