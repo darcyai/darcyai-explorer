@@ -8,6 +8,7 @@ import { usePipeline, PipelineStep } from '../providers/Pipeline'
 import liveIcon from '../assets/live.svg'
 import VideoControls from './VideoControls'
 import Summary from './Summary'
+import clsx from 'clsx'
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -57,12 +58,15 @@ const useStyles = makeStyles((theme: Theme) => {
       borderTop: `2px solid ${theme.palette.border ?? ''}`,
       paddingTop: theme.spacing(2),
       paddingBottom: theme.spacing(2),
-      paddingRight: theme.spacing(20),
+      paddingRight: theme.spacing(17),
       width: '100%',
       position: 'relative',
-      minHeight: theme.spacing(14),
+      minHeight: theme.spacing(16.5),
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      '&.wide': {
+        paddingRight: theme.spacing(2)
+      }
     },
     infoText: {
       display: 'flex',
@@ -179,7 +183,7 @@ const Landing: React.FC<LandingProps> = ({ inspect, showInspect }) => {
         <div className={classes.pipelineContainer}>
           <Pipeline />
         </div>
-        <div className={classes.headerBottomSection}>
+        <div className={clsx(classes.headerBottomSection, !showInspect ? 'wide' : '')}>
           {infoText}
           {showInspect && <Button style={{ position: 'absolute', bottom: 16, right: 0, display: 'flex', gap: 8 }} onClick={inspect} size='small' variant='contained' color='primary'><InspectIcon /><span>Inspect</span></Button>}
         </div>
