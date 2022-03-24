@@ -46,6 +46,8 @@ The "Output Stream" step is executed at the end of each pipeline cycle. The Darc
 
 ## Configuration
 
+<img src="./docs/img/darcy-ai-explorer-config-section.png" />
+
 The top portion of the inspect sidebar is the "config" section. In this section you will see different configuration options for each of the pipeline items. Try clicking on different pipeline items so you can see the variety of configuration options offered.
 
 In the Darcy AI platform, every pipeline item is allowed to publish configuration options and Darcy AI will gather up the config options and turn them into a configuration REST API that is available while the application is running. While you explore the configuration options in the inspect sidebar, you are interacting with the Darcy AI configuration API in real time.
@@ -53,6 +55,8 @@ In the Darcy AI platform, every pipeline item is allowed to publish configuratio
 This portion of the Darcy AI Explorer application shows how easy it is for you to make edge AI applications that provide configuration options while the app is running!
 
 ## Video input selector
+
+<img src="./docs/img/darcy-ai-explorer-video-input-selector.png" />
 
 The video input selector is found under the "config" section when the "input stream" pipeline item is selected. Use the video input selector to choose between the recorded looping sample video or your own live camera. When you change which video source you are displaying, the Darcy AI Explorer application will take a moment to start the new video source. When you are watching the recorded video, the AI results are being computed in real time. This means that you can get the same AI processing applied to your own live camera feed. Change to the live camera video source and see how the AI is applied to the video in real time!
 
