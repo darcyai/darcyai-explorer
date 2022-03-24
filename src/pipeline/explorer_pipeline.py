@@ -46,10 +46,20 @@ class ExplorerPipeline():
             "faceMasks": 0,
             "qrCodes": 0
         }
+
+        # Set up PPS stats
+        try:
+            pps_time_interval = int(os.getenv("PPS_TIME_INTERVAL", "5"))
+            show_pps_stats = os.getenv("SHOW_PPS_STATS", "false").lower() == "true"
+        except ValueError:
+            pps_time_interval = 5
         self.__pps_stats = {
             "last_pps_time": 0,
-            "pps": []
+            "pps": [],
+            "time_interval": pps_time_interval,
+            "show_pps_stats": show_pps_stats
         }
+        self._logger.info({"pps_time_interval": pps_time_interval, "show_pps_stats": show_pps_stats})
         ## Store the last 10 pulses for facemask and qr codes
         self.__previous_mask_results = {}
         ## Store the latest completed pom,
@@ -159,22 +169,19 @@ class ExplorerPipeline():
             frame_number = self.__pipeline.get_current_pulse_number()
             self.__previous_qr_code_frame_number = frame_number
         
-        # Show Pulse per second for debug purposes
-        now = time.time()
-        current_pps = pom.get_pps()
-        self.__pps_stats["pps"].append(current_pps)
-        try:
-            pps_time_interval = int(os.getenv("PPS_TIME_INTERVAL", "5"))
-        except ValueError:
-            pps_time_interval = 5
-        if now - self.__pps_stats["last_pps_time"] > pps_time_interval:
-            highest_pps = max(self.__pps_stats["pps"])
-            lowest_pps = min(self.__pps_stats["pps"])
-            average_pps = sum(self.__pps_stats["pps"]) / len(self.__pps_stats["pps"])
-            self._logger.info({ "interval": pps_time_interval, "latest_PPS": current_pps, "highest_PPS": highest_pps, "lowest_PPS": lowest_pps, "average_PPS": average_pps })
-            # Reset stats
-            self.__pps_stats["pps"] = []
-            self.__pps_stats["last_pps_time"] = now
+        # Pulse per second stats
+        if (self.__pps_stats["show_pps_stats"]):
+            now = time.time()
+            current_pps = pom.get_pps()
+            self.__pps_stats["pps"].append(current_pps)
+            if now - self.__pps_stats["last_pps_time"] > self.__pps_stats["pps_time_interval"]:
+                highest_pps = max(self.__pps_stats["pps"])
+                lowest_pps = min(self.__pps_stats["pps"])
+                average_pps = sum(self.__pps_stats["pps"]) / len(self.__pps_stats["pps"])
+                self._logger.info({ "latest_PPS": current_pps, "highest_PPS": highest_pps, "lowest_PPS": lowest_pps, "average_PPS": average_pps })
+                # Reset stats
+                self.__pps_stats["pps"] = []
+                self.__pps_stats["last_pps_time"] = now
         
 
     def __reset_summary(self):
