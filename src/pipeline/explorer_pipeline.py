@@ -57,7 +57,7 @@ class ExplorerPipeline():
             "last_pps_time": 0,
             "pps": [],
             "time_interval": pps_time_interval,
-            "show_pps_stats": show_pps_stats
+            "show": show_pps_stats
         }
         self._logger.info({"pps_time_interval": pps_time_interval, "show_pps_stats": show_pps_stats})
         ## Store the last 10 pulses for facemask and qr codes
@@ -170,11 +170,11 @@ class ExplorerPipeline():
             self.__previous_qr_code_frame_number = frame_number
         
         # Pulse per second stats
-        if (self.__pps_stats["show_pps_stats"]):
+        if (self.__pps_stats["show"]):
             now = time.time()
             current_pps = pom.get_pps()
             self.__pps_stats["pps"].append(current_pps)
-            if now - self.__pps_stats["last_pps_time"] > self.__pps_stats["pps_time_interval"]:
+            if now - self.__pps_stats["last_pps_time"] > self.__pps_stats["time_interval"]:
                 highest_pps = max(self.__pps_stats["pps"])
                 lowest_pps = min(self.__pps_stats["pps"])
                 average_pps = sum(self.__pps_stats["pps"]) / len(self.__pps_stats["pps"])
