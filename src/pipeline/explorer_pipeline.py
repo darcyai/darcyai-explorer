@@ -160,7 +160,7 @@ class ExplorerPipeline():
             self.__previous_qr_code_frame_number = frame_number
         
         # Show Pulse per second for debug purposes
-        now = time()
+        now = time.time()
         current_pps = pom.get_pps()
         self.__pps_stats["pps"].append(current_pps)
         try:
@@ -171,7 +171,7 @@ class ExplorerPipeline():
             highest_pps = max(self.__pps_stats["pps"])
             lowest_pps = min(self.__pps_stats["pps"])
             average_pps = sum(self.__pps_stats["pps"]) / len(self.__pps_stats["pps"])
-            self._logger.info({ pps_time_interval: pps_time_interval, current_pps: current_pps, highest_pps: highest_pps, lowest_pps: lowest_pps, average_pps: average_pps })
+            self._logger.info({ "interval": pps_time_interval, "latest_PPS": current_pps, "highest_PPS": highest_pps, "lowest_PPS": lowest_pps, "average_PPS": average_pps })
             # Reset stats
             self.__pps_stats["pps"] = []
             self.__pps_stats["last_pps_time"] = now
