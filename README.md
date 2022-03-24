@@ -74,7 +74,11 @@ sdfsdf
 
 ## Code
 
-sdfsdf
+<img src="./docs/img/darcy-ai-explorer-code-section.png" />
+
+The "code" section of the inspect sidebar shows pieces of code that are associated with each item in the pipeline. Try clicking on the different pipeline items to see the code for each one. The most complex code is found under the "callback" pipeline item. That's because the callback is the step in the pipeline where most of the business logic resides for Darcy AI applications.
+
+Note the semantic structure of the code being displayed. Most of the data structures and functions in the Darcy AI platform are available using phrasing that is easy to understand. Darcy AI was designed this way intentionally to make edge AI application development more accessible and more similar to other programming models, such as web app development.
 
 ## Developer docs
 
