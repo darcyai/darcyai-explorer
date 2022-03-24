@@ -25,7 +25,8 @@ def get_input_stream(input, process_all_frames: bool = False):
     return camera_streams[input["video_device"]]
 
 class ExplorerPipeline():    
-    def __init__(self, app, input, event_cb):
+    def __init__(self, app, input, event_cb, logger):
+        self._logger = logger
         self.__stopped = False
         self.__pipeline = Pipeline(input_stream=get_input_stream(input),
                                    universal_rest_api=True,
@@ -44,6 +45,10 @@ class ExplorerPipeline():
             "visitors": 0,
             "faceMasks": 0,
             "qrCodes": 0
+        }
+        self.__pps_stats = {
+            "last_pps_time": 0,
+            "pps": []
         }
         ## Store the last 10 pulses for facemask and qr codes
         self.__previous_mask_results = {}
@@ -153,6 +158,24 @@ class ExplorerPipeline():
             self.__qrcode_person_id = qrcode_results[1]
             frame_number = self.__pipeline.get_current_pulse_number()
             self.__previous_qr_code_frame_number = frame_number
+        
+        # Show Pulse per second for debug purposes
+        now = time()
+        current_pps = pom.get_pps()
+        self.__pps_stats["pps"].append(current_pps)
+        try:
+            pps_time_interval = int(os.getenv("PPS_TIME_INTERVAL", "5"))
+        except ValueError:
+            pps_time_interval = 5
+        if now - self.__pps_stats["last_pps_time"] > pps_time_interval:
+            highest_pps = max(self.__pps_stats["pps"])
+            lowest_pps = min(self.__pps_stats["pps"])
+            average_pps = sum(self.__pps_stats["pps"]) / len(self.__pps_stats["pps"])
+            self._logger.info({ pps_time_interval: pps_time_interval, current_pps: current_pps, highest_pps: highest_pps, lowest_pps: lowest_pps, average_pps: average_pps })
+            # Reset stats
+            self.__pps_stats["pps"] = []
+            self.__pps_stats["last_pps_time"] = now
+        
 
     def __reset_summary(self):
         self.__summary = {

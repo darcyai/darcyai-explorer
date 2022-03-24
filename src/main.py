@@ -131,7 +131,7 @@ def get_current_pipeline_input(id):
   return None
 
 try:
-  pipeline_instance = ExplorerPipeline(app, get_current_pipeline_input(current_pipeline_input_id), store_latest_event)
+  pipeline_instance = ExplorerPipeline(app, get_current_pipeline_input(current_pipeline_input_id), store_latest_event, logger)
 except Exception as e:
   pipeline_error = e
   logger.error("Pipeline creation failed with: %s", str(e))
