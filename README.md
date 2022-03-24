@@ -20,6 +20,8 @@ Use the Darcy AI Explorer Guide document in the Darcy AI SDK to set up your devi
 
 ## Video display
 
+<img src="./docs/img/darcy-ai-explorer-video-display.png" />
+
 The video display area will show either the live video from your attached camera or the looping video file provided with the application. You can use the pause and play controls to stop and start the video playback. The video continues playing as a live stream in order to match the functionality of the recorded video with the experience of the live camera. This means that when you unpause the video the display will jump to the current frame that is running in the background. This is how the live camera operates, so the recorded video follows the same pattern.
 
 The video display area will scale to fit the available width in your browser window and will reduce in size when you open the "inspect" sidebar.
@@ -66,9 +68,13 @@ The video input selector is found under the "config" section when the "input str
 
 ## Events
 
+<img src="./docs/img/darcy-ai-explorer-event-section.png" />
+
 sdfsdf
 
 ## Perception Object Model (POM)
+
+<img src="./docs/img/darcy-ai-explorer-pom-section.png" />
 
 sdfsdf
 
