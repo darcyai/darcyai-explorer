@@ -70,13 +70,23 @@ The video input selector is found under the "config" section when the "input str
 
 <img src="./docs/img/darcy-ai-explorer-event-section.png" />
 
-sdfsdf
+Darcy AI Perceptors can produce events that are related to the processing that is happening in the Perceptor. The People Perceptor, for example, generates events related to people coming into the field of view and leaving the screen.
+
+As a Darcy AI application developer, you can subscribe to events and add your own code that will be run every time that type of event occurs. This is a great way to add business logic to real-time events such as a new person approaching the camera.
+
+Click through the Perceptor items in the pipeline to watch events stream into the "event" section of the inspect sidebar.
 
 ## Perception Object Model (POM)
 
 <img src="./docs/img/darcy-ai-explorer-pom-section.png" />
 
-sdfsdf
+The Perception Object Model (or POM for short) is one of the most exciting and innovative programming concepts in the Darcy AI platform. Similar to the Document Object Model (DOM) that is found in web development, the POM is a data structure that can be navigated easily with code and can even be browsed directly to examine the data flowing through the Darcy AI pipeline.
+
+Every item in the Darcy AI pipeline adds to the POM as the processing for that item is completed. This results in cleanly structured data that is ready for business logic processing.
+
+To view the POM details, pause the video and then explore the "POM" section of the inspect sidebar. Once you have become familiar with the data structure, try playing the video again and then pausing on a different place in the video. You will see that the data in the POM has changed to reflect what is currently happening in the Darcy AI system!
+
+Get familiar with how the POM works by looking at it here in the Darcy AI Explorer application, and then you will be ready to work with the POM programmatically in your own Darcy AI application.
 
 ## Code
 
