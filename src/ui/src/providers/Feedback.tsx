@@ -89,7 +89,7 @@ const reducer = (state: FeedbackState, action: FeedbackAction): FeedbackState =>
                 action.dispatch({ type: Actions.REMOVE, data: { id: state.nextId } })
               }, (window as any).Cypress != null ? 10000 : action.data.timeout ?? AUTO_HIDE), // Set timeout to 10s in Cypress
             id: state.nextId
-          }],
+          }].slice(-5),
         nextId: state.nextId + 1
       }
     case Actions.REMOVE: {
