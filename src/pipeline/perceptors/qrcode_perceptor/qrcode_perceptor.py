@@ -5,7 +5,7 @@ from pyzbar import pyzbar
 from typing import Any
 
 from darcyai.perceptor.coral.object_detection_perceptor import ObjectDetectionPerceptor
-from darcyai.config import Config
+from darcyai.config import Config, RGB
 from darcyai.config_registry import ConfigRegistry
 from .qrcode_detection_model import QRCodeDetectionModel
 from .qrcode import QRCode
@@ -27,7 +27,7 @@ class QRCodePerceptor(ObjectDetectionPerceptor):
 
         self.config_schema = [
             Config("threshold", "float", 85, "Confidence percentage threshold for QRCode detection."),
-            Config("color", "str", "0,255,0", "Rectangle Color"),
+            Config("color", "rgb", RGB(0,255,0), "Rectangle Color"),
         ]
 
     def run(self, input_data:Any, config:ConfigRegistry=None) -> QRCodeDetectionModel:
