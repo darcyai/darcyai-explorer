@@ -70,6 +70,5 @@ class QRCodePerceptor(ObjectDetectionPerceptor):
                 self.emit(RAW_QRCODE_EVENT, qrcode_data)
 
                 qrcodes.append(QRCode(qrcode_data, qrcode.bbox))
-
-        (r, g, b) = map(int, self.get_config_value("color").split(","))
-        return QRCodeDetectionModel(qrcodes=qrcodes, person_uuid=person_uuid, rectangle_color=(r, g, b))
+        color: RGB = self.get_config_value("color")
+        return QRCodeDetectionModel(qrcodes=qrcodes, person_uuid=person_uuid, rectangle_color=(color.red(), color.green(), color.blue()))
