@@ -9,6 +9,7 @@ import liveIcon from '../assets/live.svg'
 import VideoControls from './VideoControls'
 import Summary from './Summary'
 import clsx from 'clsx'
+import config from '../../package.json'
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -128,6 +129,16 @@ const useStyles = makeStyles((theme: Theme) => {
       position: 'sticky',
       top: 0,
       backgroundColor: theme.palette.primary.main
+    },
+    footer: {
+      display: 'flex',
+      width: '100%',
+      color: theme.palette.neutral[5],
+      font: 'normal normal normal 10px/10px Gilroy',
+      letterSpacing: '0.26px',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: theme.spacing(1)
     }
   }
 })
@@ -196,6 +207,7 @@ const Landing: React.FC<LandingProps> = ({ inspect, showInspect }) => {
         <div className={classes.summarySection}>
           <Summary detailsOpened={!showInspect} />
         </div>
+        <footer className={classes.footer}><span>&copy; Edgeworx {new Date().getFullYear()} - v{config.version}</span></footer>
       </div>
     </div>
   )
