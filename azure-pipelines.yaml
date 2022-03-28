@@ -31,9 +31,10 @@ stages:
       displayName: 'Install Node.js'
     - template: pipeline/setversion.yaml
     - script: |
-        apt-get install jq -y
+        sudo apt-get install jq -y
         contents="$(jq '.version = "$(version)"' package.json)" && echo -E "${contents}" > package.json
         cat package.json
+      workingDirectory: ./src/ui
       displayName: Update version in package.json
     - script: |
         npm i -g npm
