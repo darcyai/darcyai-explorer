@@ -26,8 +26,8 @@ class QRCodePerceptor(ObjectDetectionPerceptor):
         self.event_names = [RAW_QRCODE_EVENT]
 
         self.config_schema = [
-            Config("threshold", "float", 85, "Confidence percentage threshold for QRCode detection."),
-            Config("color", "rgb", RGB(0,255,0), "Rectangle Color"),
+            Config("threshold", "Confidence percentage threshold for QRCode detection.", "float", 85, "Percentage of confidence from the AI model above which the QRCode is considered detected."),
+            Config("color", "Rectangle Color", "rgb", RGB(0,255,0), "Rectangle Color"),
         ]
 
     def run(self, input_data:Any, config:ConfigRegistry=None) -> QRCodeDetectionModel:
