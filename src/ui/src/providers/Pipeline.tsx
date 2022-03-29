@@ -8,6 +8,7 @@ export const emptyImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKQAAAB
 export declare interface ConfigItem {
   default_value: any
   description: string
+  label: string
   name: string
   type: string
   value: any
