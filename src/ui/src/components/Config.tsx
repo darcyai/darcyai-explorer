@@ -143,8 +143,8 @@ const Config: React.FC = () => {
         </div>
       )}
       {config.map(item => (
-        <div key={item.name} className={classes.item}>
-          <div title={item.description}>{item.label ?? item.description}</div>
+        <div title={item.description} key={item.name} className={classes.item}>
+          <div>{item.label ?? item.description}</div>
           <div>{configInputByType(item)}</div>
         </div>
       ))}

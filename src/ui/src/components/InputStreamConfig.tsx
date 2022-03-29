@@ -217,8 +217,8 @@ const InputStreamConfig: React.FC = () => {
       )}
       {currentInput?.type === 'live_feed' && availableVideoDevices.length > 1 && (
         <div className={classes.configRow}>
-          <div className={classes.configItem}>
-            <div title='Select which video device the input stream should use'>Video device</div>
+          <div className={classes.configItem} title='Select which video device the input stream should use'>
+            <div>Video device</div>
             <Select
               size='small'
               style={{ width: 100 }}
