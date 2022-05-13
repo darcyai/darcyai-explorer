@@ -75,6 +75,11 @@ stages:
     steps:
     - template: pipeline/setversion.yaml
     - template: pipeline/setup-bundle.yaml
+    - task: Docker@2
+      inputs:
+        command: login
+        containerRegistry: DarcyAI-Dockerhub
+      displayName: Login to Dockerhub
     - script: |
         docker buildx create --name darcyai-explorer-builder
         docker buildx use darcyai-explorer-builder
