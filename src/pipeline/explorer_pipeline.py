@@ -3,7 +3,7 @@ from darcyai.config import RGB
 from darcyai.input.video_file_stream import VideoFileStream
 from darcyai.input.camera_stream import CameraStream
 from darcyai.output.live_feed_stream import LiveFeedStream
-from darcyai.perceptor.coral.people_perceptor import PeoplePerceptor
+from darcyai.perceptor.people_perceptor import PeoplePerceptor
 
 from .perceptors.qrcode_perceptor import QRCodePerceptor, RAW_QRCODE_EVENT
 from .perceptors.face_mask_perceptor import FaceMaskPerceptor, NO_MASK_EVENT, RAW_MASK_EVENT
