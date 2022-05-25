@@ -58,12 +58,14 @@ stages:
     - template: pipeline/setversion.yaml
     - template: pipeline/setup-bundle.yaml
     - script: |
-        docker buildx create --name darcyai-explorer-builder
-        docker buildx use darcyai-explorer-builder
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        docker buildx create --name darcyai-explorer-builder --driver docker-container --use
+        docker buildx inspect --bootstrap
       displayName: 'Setup docker buildx builder'
     - script: |
         docker buildx build -t gcr.io/$(repository):dev \
           --platform linux/amd64,linux/arm64,linux/arm/v7 \
+          --no-cache \
           --push \
           --file Dockerfile.bundled .
       displayName: 'Build and push dev images'
@@ -75,12 +77,14 @@ stages:
     - template: pipeline/setversion.yaml
     - template: pipeline/setup-bundle.yaml
     - script: |
-        docker buildx create --name darcyai-explorer-builder
-        docker buildx use darcyai-explorer-builder
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        docker buildx create --name darcyai-explorer-builder --driver docker-container --use
+        docker buildx inspect --bootstrap
       displayName: 'Setup docker buildx builder'
     - script: |
         docker buildx build -t $(publicRepository):$(version) \
           --platform linux/amd64,linux/arm64,linux/arm/v7 \
+          --no-cache \
           --push \
           --file Dockerfile.bundled .
       displayName: 'Build and push dev images'
