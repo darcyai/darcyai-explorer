@@ -10,8 +10,10 @@ RUN npm run build
 # Stage 2 - Build the pipeline
 FROM darcyai/darcy-ai-coral:dev
 
-RUN apt-get update -y
-RUN apt-get install -y libzbar0
+RUN apt-get update -y \
+    && apt-get install -y libzbar0 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m pip install --upgrade darcyai==2.0.1
 RUN python3 -m pip install --upgrade flask_cors
