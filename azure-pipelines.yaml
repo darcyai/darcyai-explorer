@@ -57,18 +57,16 @@ stages:
     steps:
     - template: pipeline/setversion.yaml
     - template: pipeline/setup-bundle.yaml
-    - script: |
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-        docker buildx create --name darcyai-explorer-builder --driver docker-container --use
-        docker buildx inspect --bootstrap
-      displayName: 'Setup docker buildx builder'
-    - script: |
-        docker buildx build -t gcr.io/$(repository):dev \
-          --platform linux/amd64,linux/arm64,linux/arm/v7 \
-          --no-cache \
-          --push \
-          --file Dockerfile.bundled .
-      displayName: 'Build and push dev images'
+    - task: Docker@2
+      displayName: Login to Edgeworx GCP
+      inputs:
+        command: login
+        containerRegistry: 'Edgeworx GCP'
+    - template: pipeline/docker.yaml
+      parameters:
+        imageName: gcr.io/$(repository):dev
+        dockerFile: Dockerfile.bundled
+        step: dev
   - job: prod
     condition: eq(variables['isRelease'], true)
     timeoutInMinutes: 240
@@ -76,15 +74,13 @@ stages:
     steps:
     - template: pipeline/setversion.yaml
     - template: pipeline/setup-bundle.yaml
-    - script: |
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-        docker buildx create --name darcyai-explorer-builder --driver docker-container --use
-        docker buildx inspect --bootstrap
-      displayName: 'Setup docker buildx builder'
-    - script: |
-        docker buildx build -t $(publicRepository):$(version) \
-          --platform linux/amd64,linux/arm64,linux/arm/v7 \
-          --no-cache \
-          --push \
-          --file Dockerfile.bundled .
-      displayName: 'Build and push dev images'
+    - task: Docker@2
+      displayName: Login to Dockerhub
+      inputs:
+        command: login
+        containerRegistry: DarcyAI-Dockerhub
+    - template: pipeline/docker.yaml
+      parameters:
+        imageName: $(publicRepository):$(version)
+        dockerFile: Dockerfile.bundled
+        step: prod
