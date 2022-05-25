@@ -48,107 +48,39 @@ stages:
         ArtifactName: ui_build
       displayName: 'Publish ui build'
 
-- stage: Build
+- stage: Images
+  pool: 'Azure Pipelines'
+
   jobs:
-  - job: images
+  - job: dev
     timeoutInMinutes: 240
-    strategy:
-      matrix:
-        amd64:
-          poolImageName: 'Azure Pipelines'
-          imageTagSuffix: 'amd64'
-          dockerFile: 'Dockerfile'
-        arm32v7:
-          poolImageName: 'build-farm-rpi4'
-          imageTagSuffix: 'arm32v7'
-          dockerFile: 'Dockerfile'
-        arm64v8:
-          poolImageName: 'build-farm-coral'
-          imageTagSuffix: 'arm64v8'
-          dockerFile: 'Dockerfile'
-
-    pool: $(poolImageName)
-
-    variables:
-      imageName: 'darcyai/darcy-ai-explorer'
-      imageTag: 'dev'
+    steps:
+    - template: pipeline/setversion.yaml
+    - template: pipeline/setup-bundle.yaml
+    - script: |
+        docker buildx create --name darcyai-explorer-builder
+        docker buildx use darcyai-explorer-builder
+      displayName: 'Setup docker buildx builder'
+    - script: |
+        docker buildx build -t gcr.io/$(repository):dev \
+          --platform linux/amd64,linux/arm64,linux/arm/v7 \
+          --push \
+          --file Dockerfile.bundled .
+      displayName: 'Build and push dev images'
+  - job: prod
+    condition: eq(variables['isRelease'], true)
+    timeoutInMinutes: 240
 
     steps:
     - template: pipeline/setversion.yaml
     - template: pipeline/setup-bundle.yaml
-    - task: Docker@2
-      displayName: 'Publish Private Docker Image'
-      inputs:
-        containerRegistry: 'Edgeworx GCP'
-        repository: '$(repository)'
-        command: 'buildAndPush'
-        Dockerfile: './Dockerfile.bundled'
-        buildContext: '.'
-        tags: |
-          $(version)-$(imageTagSuffix)
-    - task: Docker@2
-      displayName: Login to Dockerhub
-      condition: eq(variables['isRelease'], true)
-      inputs:
-        command: login
-        containerRegistry: DarcyAI-Dockerhub
     - script: |
-        docker tag gcr.io/$(repository):$(version)-$(imageTagSuffix) $(publicRepository):$(version)-$(imageTagSuffix)
-        docker push $(publicRepository):$(version)-$(imageTagSuffix)
-      displayName: 'Publish Public Docker Image'
-      condition: eq(variables['isRelease'], true)
-    
-- stage: Publish
-  jobs:
-  - job: Dev
-    pool:
-      vmImage: 'Ubuntu 18.04'
-    steps:
-    - template: pipeline/setversion.yaml
-    - task: Docker@2
-      displayName: Login to Dockerhub
-      inputs:
-        command: login
-        containerRegistry: Edgeworx GCP
+        docker buildx create --name darcyai-explorer-builder
+        docker buildx use darcyai-explorer-builder
+      displayName: 'Setup docker buildx builder'
     - script: |
-        docker pull gcr.io/$(repository):$(version)-amd64
-        docker pull gcr.io/$(repository):$(version)-arm32v7
-        docker pull gcr.io/$(repository):$(version)-arm64v8
-      displayName: 'Pull $(repository) amd64, arm32v7, and arm64v8 docker images'
-    - script: |
-        docker manifest create \
-          gcr.io/$(repository):dev \
-          --amend gcr.io/$(repository):$(version)-amd64 \
-          --amend gcr.io/$(repository):$(version)-arm32v7 \
-          --amend gcr.io/$(repository):$(version)-arm64v8
-      displayName: 'Create $(repository) image manifest'
-    - script: |
-        docker manifest push gcr.io/$(repository):dev
-      displayName: 'Push $(repository) image manifest'
-      
-  - job: Prod
-    condition: eq(variables['isRelease'], true)
-    pool:
-      vmImage: 'Ubuntu 18.04'
-    steps:
-    - template: pipeline/setversion.yaml
-    - task: Docker@2
-      displayName: Login to Dockerhub
-      inputs:
-        command: login
-        containerRegistry: DarcyAI-Dockerhub
-    - script: |
-        docker pull $(publicRepository):$(version)-amd64
-        docker pull $(publicRepository):$(version)-arm32v7
-        docker pull $(publicRepository):$(version)-arm64v8
-      displayName: 'Pull $(publicRepository) amd64, arm32v7, and arm64v8 docker images'
-    - script: |
-        docker manifest create \
-          $(publicRepository):$(version) \
-          --amend $(publicRepository):$(version)-amd64 \
-          --amend $(publicRepository):$(version)-arm32v7 \
-          --amend $(publicRepository):$(version)-arm64v8
-      displayName: 'Create $(publicRepository) image manifest'
-    - script: |
-        docker manifest push $(publicRepository):$(version)
-      displayName: 'Push $(publicRepository) image manifest'
+        docker buildx build -t $(publicRepository):$(version) \
+          --platform linux/amd64,linux/arm64,linux/arm/v7 \
+          --push \
+          --file Dockerfile.bundled .
+      displayName: 'Build and push dev images'
