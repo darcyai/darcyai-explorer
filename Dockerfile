@@ -8,7 +8,7 @@ COPY ./src/ui/ ./
 RUN npm run build
 
 # Stage 2 - Build the pipeline
-FROM darcyai/darcy-ai-coral:dev
+FROM darcyai/darcyai-coral:dev
 
 RUN apt-get update -y \
     && apt-get install -y libzbar0 \
