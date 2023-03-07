@@ -79,13 +79,13 @@ const Navbar: React.FC = () => {
         {/* <span>Darcy AI Explorer</span> */}
       </div>
       <div className={classes.links}>
-        <a className={classes.link} href='https://darcyai.github.io/darcyai-sdk' target='_blank' rel='noreferrer'>
+        <a className={classes.link} href='https://docs.darcy.ai/docs/ai/' target='_blank' rel='noreferrer'>
           <DocsIcon />
           <span className={classes.linkText}>Developer docs</span>
         </a>
-        <a className={classes.link} href='https://github.com/darcyai/darcyai-sdk' target='_blank' rel='noreferrer'>
+        <a className={classes.link} href='https://github.com/darcyai/darcyai' target='_blank' rel='noreferrer'>
           <GithubIcon />
-          <span className={classes.linkText}>Darcy AI SDK</span>
+          <span className={classes.linkText}>Darcy AI Engine</span>
         </a>
       </div>
     </div>
